@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Core\Plugin\PluginAutoloader;
 use App\Core\Plugin\PluginDiscovery;
 use App\Core\Plugin\PluginManager;
-use App\Core\Plugin\PluginAutoloader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,7 +13,7 @@ class PluginServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(PluginAutoloader::class, function () {
-            $autoloader = new PluginAutoloader();
+            $autoloader = new PluginAutoloader;
             $autoloader->register();
 
             return $autoloader;
@@ -30,6 +30,7 @@ class PluginServiceProvider extends ServiceProvider
     {
         if ($this->doitIgnorer()) {
             $this->enregistrerDirectivesBlade();
+
             return;
         }
 
@@ -45,12 +46,12 @@ class PluginServiceProvider extends ServiceProvider
     private function enregistrerDirectivesBlade(): void
     {
         // @hook('dashboard.widgets')
-        Blade::directive("hook", function (string $expression) {
+        Blade::directive('hook', function (string $expression) {
             return "<?php echo implode('', app(\App\Core\Plugin\PluginManager::class)->executerHook({$expression})); ?>";
         });
 
         // @pluginActif('ai-analytics') ... @endpluginActif
-        Blade::if("pluginActif", function (string $identifiant) {
+        Blade::if('pluginActif', function (string $identifiant) {
             return app(PluginManager::class)->estActif($identifiant);
         });
     }
@@ -61,26 +62,26 @@ class PluginServiceProvider extends ServiceProvider
      */
     private function doitIgnorer(): bool
     {
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             return false;
         }
 
         // Commandes artisan qui ne doivent PAS déclencher l'init des plugins
         $commandesIgnorees = [
-            "migrate",
-            "migrate:fresh",
-            "migrate:rollback",
-            "migrate:reset",
-            "migrate:refresh",
-            "migrate:status",
-            "db:seed",
-            "db:wipe",
-            "schema:dump",
+            'migrate',
+            'migrate:fresh',
+            'migrate:rollback',
+            'migrate:reset',
+            'migrate:refresh',
+            'migrate:status',
+            'db:seed',
+            'db:wipe',
+            'schema:dump',
         ];
 
         // Récupère la commande artisan en cours d'exécution
-        $argv = $_SERVER["argv"] ?? [];
-        $commandeEnCours = $argv[1] ?? "";
+        $argv = $_SERVER['argv'] ?? [];
+        $commandeEnCours = $argv[1] ?? '';
 
         foreach ($commandesIgnorees as $commande) {
             if (str_starts_with($commandeEnCours, $commande)) {

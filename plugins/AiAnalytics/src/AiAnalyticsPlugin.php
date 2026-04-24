@@ -8,17 +8,17 @@ class AiAnalyticsPlugin extends AbstractPlugin
 {
     public function getIdentifiant(): string
     {
-        return "ai-analytics";
+        return 'ai-analytics';
     }
 
     public function getNom(): string
     {
-        return "Analyse par Intelligence Artificielle";
+        return 'Analyse par Intelligence Artificielle';
     }
 
     public function getVersion(): string
     {
-        return "1.0.0";
+        return '1.0.0';
     }
 
     /**
@@ -26,7 +26,7 @@ class AiAnalyticsPlugin extends AbstractPlugin
      */
     public function getHooks(): array
     {
-        return ["dashboard.widgets"];
+        return ['dashboard.widgets'];
     }
 
     /**
@@ -36,11 +36,11 @@ class AiAnalyticsPlugin extends AbstractPlugin
     public function rendrePourHook(string $hook, array $donnees = []): string
     {
         return match ($hook) {
-            "dashboard.widgets" => view(
-                "ai-analytics::widget",
+            'dashboard.widgets' => view(
+                'ai-analytics::widget',
                 $donnees,
             )->render(),
-            default => "",
+            default => '',
         };
     }
 

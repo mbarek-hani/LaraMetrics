@@ -14,7 +14,7 @@ class PluginDiscovery
 
     public function __construct(private PluginAutoloader $autoloader)
     {
-        $this->dossierPlugins = base_path("plugins");
+        $this->dossierPlugins = base_path('plugins');
     }
 
     /**
@@ -24,14 +24,15 @@ class PluginDiscovery
     {
         $plugins = [];
 
-        if (!is_dir($this->dossierPlugins)) {
+        if (! is_dir($this->dossierPlugins)) {
             Log::warning(
                 "Le dossier plugins n'existe pas : {$this->dossierPlugins}",
             );
+
             return $plugins;
         }
 
-        $dossiers = glob($this->dossierPlugins . "/*", GLOB_ONLYDIR);
+        $dossiers = glob($this->dossierPlugins.'/*', GLOB_ONLYDIR);
 
         foreach ($dossiers as $dossier) {
             $plugin = $this->chargerPlugin($dossier);
@@ -52,10 +53,11 @@ class PluginDiscovery
             return null;
         }
 
-        $classePlugin = $manifest["classe"] ?? null;
+        $classePlugin = $manifest['classe'] ?? null;
 
-        if (!$classePlugin) {
+        if (! $classePlugin) {
             Log::error("Clé 'classe' manquante dans {$dossier}/manifest.json");
+
             return null;
         }
 
@@ -63,20 +65,23 @@ class PluginDiscovery
 
         if ($namespaceRacine === null) {
             Log::error("Namespace plugin invalide : {$classePlugin}");
+
             return null;
         }
 
-        $this->autoloader->addNamespace($namespaceRacine, $dossier . "/src");
+        $this->autoloader->addNamespace($namespaceRacine, $dossier.'/src');
 
-        if (!class_exists($classePlugin)) {
+        if (! class_exists($classePlugin)) {
             Log::error("Classe plugin introuvable : {$classePlugin}");
+
             return null;
         }
 
-        if (!is_subclass_of($classePlugin, PluginInterface::class)) {
+        if (! is_subclass_of($classePlugin, PluginInterface::class)) {
             Log::error(
                 "La classe {$classePlugin} n'implémente pas PluginInterface",
             );
+
             return null;
         }
 
@@ -88,9 +93,9 @@ class PluginDiscovery
      */
     private function lireManifest(string $dossier): ?array
     {
-        $cheminManifest = $dossier . "/manifest.json";
+        $cheminManifest = $dossier.'/manifest.json';
 
-        if (!file_exists($cheminManifest)) {
+        if (! file_exists($cheminManifest)) {
             return null;
         }
 
@@ -99,9 +104,10 @@ class PluginDiscovery
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             Log::error(
-                "JSON invalide dans {$cheminManifest} : " .
+                "JSON invalide dans {$cheminManifest} : ".
                     json_last_error_msg(),
             );
+
             return null;
         }
 
@@ -110,12 +116,12 @@ class PluginDiscovery
 
     private function extraireNamespacePlugin(string $classePlugin): ?string
     {
-        $parties = explode("\\", trim($classePlugin, "\\"));
+        $parties = explode('\\', trim($classePlugin, '\\'));
 
-        if (count($parties) < 2 || $parties[0] !== "Plugins") {
+        if (count($parties) < 2 || $parties[0] !== 'Plugins') {
             return null;
         }
 
-        return $parties[0] . "\\" . $parties[1];
+        return $parties[0].'\\'.$parties[1];
     }
 }
