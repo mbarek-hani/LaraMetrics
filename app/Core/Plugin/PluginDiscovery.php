@@ -17,7 +17,7 @@ class PluginDiscovery
 
     public function __construct()
     {
-        $this->dossierPlugins = base_path("plugins");
+        $this->dossierPlugins = base_path('plugins');
     }
 
     /**
@@ -29,13 +29,13 @@ class PluginDiscovery
     {
         $plugins = [];
 
-        if (!is_dir($this->dossierPlugins)) {
+        if (! is_dir($this->dossierPlugins)) {
             Log::warning("Le dossier /plugins n'existe pas.");
 
             return $plugins;
         }
 
-        $dossiers = glob($this->dossierPlugins . "/*", GLOB_ONLYDIR);
+        $dossiers = glob($this->dossierPlugins.'/*', GLOB_ONLYDIR);
 
         foreach ($dossiers as $dossier) {
             $plugin = $this->chargerPlugin($dossier);
@@ -59,8 +59,8 @@ class PluginDiscovery
             return null;
         }
 
-        $classePlugin = $manifest["classe"] ?? null;
-        if (!$classePlugin) {
+        $classePlugin = $manifest['classe'] ?? null;
+        if (! $classePlugin) {
             Log::error(
                 "Plugin dans [{$dossier}] : clé 'classe' manquante dans manifest.json",
             );
@@ -69,18 +69,18 @@ class PluginDiscovery
         }
 
         $fichierClasse =
-            $dossier . "/src/" . class_basename($classePlugin) . ".php";
+            $dossier.'/src/'.class_basename($classePlugin).'.php';
         if (file_exists($fichierClasse)) {
             require_once $fichierClasse;
         }
 
-        if (!class_exists($classePlugin)) {
+        if (! class_exists($classePlugin)) {
             Log::error("Plugin : la classe [{$classePlugin}] est introuvable.");
 
             return null;
         }
 
-        if (!is_subclass_of($classePlugin, PluginInterface::class)) {
+        if (! is_subclass_of($classePlugin, PluginInterface::class)) {
             Log::error(
                 "Plugin [{$classePlugin}] n'implémente pas PluginInterface.",
             );
@@ -98,9 +98,9 @@ class PluginDiscovery
      */
     private function lireManifest(string $dossier): ?array
     {
-        $cheminManifest = $dossier . "/manifest.json";
+        $cheminManifest = $dossier.'/manifest.json';
 
-        if (!file_exists($cheminManifest)) {
+        if (! file_exists($cheminManifest)) {
             return null;
         }
 
@@ -109,7 +109,7 @@ class PluginDiscovery
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             Log::error(
-                "manifest.json invalide dans [{$dossier}] : " .
+                "manifest.json invalide dans [{$dossier}] : ".
                     json_last_error_msg(),
             );
 

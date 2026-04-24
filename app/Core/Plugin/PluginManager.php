@@ -33,9 +33,7 @@ class PluginManager
      */
     private array $hooks = [];
 
-    public function __construct(private PluginDiscovery $discovery)
-    {
-    }
+    public function __construct(private PluginDiscovery $discovery) {}
 
     /**
      * Point d'entrée principal : découvre et charge les plugins actifs.
@@ -57,7 +55,7 @@ class PluginManager
             }
         }
 
-        Log::info('PluginManager initialisé. Plugins actifs : ' . implode(', ', array_keys($this->pluginsActifs)));
+        Log::info('PluginManager initialisé. Plugins actifs : '.implode(', ', array_keys($this->pluginsActifs)));
     }
 
     /**
@@ -74,7 +72,7 @@ class PluginManager
 
             $this->pluginsActifs[$plugin->getIdentifiant()] = $plugin;
         } catch (\Throwable $e) {
-            Log::error("Impossible de charger le plugin [{$plugin->getIdentifiant()}] : " . $e->getMessage());
+            Log::error("Impossible de charger le plugin [{$plugin->getIdentifiant()}] : ".$e->getMessage());
         }
     }
 
@@ -84,7 +82,7 @@ class PluginManager
     private function enregistrerHooks(PluginInterface $plugin): void
     {
         foreach ($plugin->getHooks() as $hook) {
-            if (!isset($this->hooks[$hook])) {
+            if (! isset($this->hooks[$hook])) {
                 $this->hooks[$hook] = [];
             }
             $this->hooks[$hook][] = $plugin;
@@ -98,8 +96,9 @@ class PluginManager
     {
         $plugin = $this->pluginsDecouverts[$identifiant] ?? null;
 
-        if (!$plugin) {
+        if (! $plugin) {
             Log::error("Impossible d'activer : plugin [{$identifiant}] non trouvé.");
+
             return false;
         }
 
@@ -109,11 +108,11 @@ class PluginManager
             PluginModele::updateOrCreate(
                 ['identifiant' => $identifiant],
                 [
-                    'nom'         => $plugin->getNom(),
-                    'version'     => $plugin->getVersion(),
-                    'actif'       => true,
-                    'installe'    => true,
-                    'active_le'   => now(),
+                    'nom' => $plugin->getNom(),
+                    'version' => $plugin->getVersion(),
+                    'actif' => true,
+                    'installe' => true,
+                    'active_le' => now(),
                     'installe_le' => now(),
                     'metadonnees' => $plugin->getManifest(),
                 ]
@@ -124,7 +123,8 @@ class PluginManager
 
             return true;
         } catch (\Throwable $e) {
-            Log::error("Erreur activation plugin [{$identifiant}] : " . $e->getMessage());
+            Log::error("Erreur activation plugin [{$identifiant}] : ".$e->getMessage());
+
             return false;
         }
     }
@@ -136,7 +136,7 @@ class PluginManager
     {
         $plugin = $this->pluginsActifs[$identifiant] ?? null;
 
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
@@ -151,7 +151,8 @@ class PluginManager
 
             return true;
         } catch (\Throwable $e) {
-            Log::error("Erreur désactivation plugin [{$identifiant}] : " . $e->getMessage());
+            Log::error("Erreur désactivation plugin [{$identifiant}] : ".$e->getMessage());
+
             return false;
         }
     }
@@ -166,7 +167,7 @@ class PluginManager
     {
         $resultats = [];
 
-        if (!isset($this->hooks[$hook])) {
+        if (! isset($this->hooks[$hook])) {
             return $resultats;
         }
 
@@ -182,7 +183,7 @@ class PluginManager
     // Accesseurs
 
     /**
-     * @return array<string, \App\Core\Plugin\PuginInterface>
+     * @return array<string, PuginInterface>
      */
     public function getPluginsDecouverts(): array
     {
@@ -190,7 +191,7 @@ class PluginManager
     }
 
     /**
-     * @return array<string, \App\Core\Plugin\PuginInterface>
+     * @return array<string, PuginInterface>
      */
     public function getPluginsActifs(): array
     {
