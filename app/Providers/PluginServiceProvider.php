@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Core\Plugin\PluginDiscovery;
 use App\Core\Plugin\PluginManager;
+use App\Core\Plugin\PluginAutoloader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -11,6 +12,13 @@ class PluginServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(PluginAutoloader::class, function () {
+            $autoloader = new PluginAutoloader();
+            $autoloader->register();
+
+            return $autoloader;
+        });
+
         $this->app->singleton(PluginDiscovery::class);
 
         $this->app->singleton(PluginManager::class, function ($app) {
