@@ -16,6 +16,7 @@
 
     // ─── Respect Do Not Track ─────────────────────────────────────
     if (navigator.doNotTrack === "1" || window.doNotTrack === "1") {
+        console.warn("[LaraMetrics] stop tracking due to navigator.doNotTrack");
         return;
     }
 
@@ -72,17 +73,27 @@
         // Utilise sendBeacon si disponible (plus fiable au unload)
         const payload = JSON.stringify(donnees);
 
-        if (navigator.sendBeacon) {
-            const blob = new Blob([payload], { type: "application/json" });
-            navigator.sendBeacon(endpoint, blob);
-        } else {
-            // Fallback fetch synchrone
-            fetch(endpoint, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: payload,
-                keepalive: true,
-            });
+        console.info("[LaraMetrics]: envoyons les données");
+        console.log(payload);
+
+        try {
+            if (navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: "application/json" });
+                navigator.sendBeacon(endpoint, blob);
+            } else {
+                // Fallback fetch synchrone
+                fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: payload,
+                    keepalive: true,
+                });
+            }
+        } catch (err) {
+            console.error(
+                `[LaraMetrics] there was an unexpected error sending ${payload}`,
+                err,
+            );
         }
     }
 
@@ -123,24 +134,12 @@
         });
     }
 
-    // ─── Tracking SPA (Single Page Applications) ──────────────────
-    // Intercepte les changements d'URL sans rechargement
-    let cheminActuel = window.location.pathname;
-
-    function verifierNavigation() {
-        if (window.location.pathname !== cheminActuel) {
-            cheminActuel = window.location.pathname;
-            tempsDebut = Date.now();
-            tracker(true);
-        }
-    }
-
     // ─── Initialisation ───────────────────────────────────────────
 
-    // 1. Tracker la page actuelle
+    // Tracker la page actuelle
     tracker(false);
 
-    // 2. Envoyer la durée quand l'utilisateur quitte
+    // Envoyer la durée quand l'utilisateur quitte
     window.addEventListener("visibilitychange", function () {
         if (document.visibilityState === "hidden") {
             envoyerDuree();
@@ -149,10 +148,7 @@
 
     window.addEventListener("beforeunload", envoyerDuree);
 
-    // 3. Détecter les navigations SPA
-    setInterval(verifierNavigation, 500);
-
-    // 4. API publique pour tracker des événements personnalisés
+    // API publique pour tracker des événements personnalisés
     // Utilisation : LaraMetrics.event('clic_bouton', { bouton: 'inscription' })
     window.LaraMetrics = {
         event: function (nom, donnees) {
