@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="/tracker.js" data-token="5cd9330d28a2238e2d6007ff6ab15d076fa2953c38d760a323084b00fc74b078" defer></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">

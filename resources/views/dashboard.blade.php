@@ -11,20 +11,32 @@
             {{-- Cartes de statistiques --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <x-stats-card
-                    titre="Visiteurs aujourd'hui"
-                    valeur="0"
+                    titre="Visiteurs cette semaine"
+                    :valeur="$resume['visiteurs_uniques']"
                     icone="users"
                     couleur="indigo"
                 />
                 <x-stats-card
                     titre="Pages vues"
-                    valeur="0"
+                    :valeur="$resume['pages_vues']"
                     icone="eye"
                     couleur="blue"
                 />
                 <x-stats-card
                     titre="Taux de rebond"
-                    valeur="0%"
+                    :valeur="$resume['taux_rebond'] . '%'"
+                    icone="arrow-trending-down"
+                    couleur="green"
+                />
+                <x-stats-card
+                    titre="Nouvelles session"
+                    :valeur="$resume['nouvelles_sessions']"
+                    icone="arrow-trending-down"
+                    couleur="green"
+                />
+                <x-stats-card
+                    titre="Durées Moyenne"
+                    :valeur="$resume['duree_moyenne']"
                     icone="arrow-trending-down"
                     couleur="green"
                 />
