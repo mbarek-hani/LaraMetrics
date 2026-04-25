@@ -12,7 +12,8 @@
         "php": "^8.3",
         "laravel/breeze": "^2.4",
         "laravel/framework": "^13.0",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "stevebauman/location": "^7.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
