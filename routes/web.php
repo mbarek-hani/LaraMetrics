@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TrackingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,9 +23,5 @@ Route::middleware('auth')->group(function () {
         'profile.destroy',
     );
 });
-
-Route::post('/api/track', [TrackingController::class, 'track'])->name(
-    'tracking.track',
-);
 
 require __DIR__.'/auth.php';

@@ -7,19 +7,15 @@ use App\Services\TrackingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class TrackingController extends Controller
 {
     public function __construct(private TrackingService $trackingService) {}
 
-    /**
-     * Point d'entrée principal du tracking.
-     * Reçoit les données du tracker.js
-     */
     public function track(Request $request): Response|JsonResponse
     {
-        // Valider les données minimales
-        $donnees = $request->validate([
+        $validator = Validator::make($request->all(), [
             'token' => ['required', 'string', 'size:64'],
             'type' => ['nullable', 'string', 'in:pageview,duree,evenement'],
             'url' => ['nullable', 'string', 'max:2048'],
@@ -42,15 +38,18 @@ class TrackingController extends Controller
             'est_navigation' => ['nullable', 'boolean'],
         ]);
 
-        // Trouver le site via le token
+        if ($validator->fails()) {
+            return $this->reponseVide();
+        }
+
+        $donnees = $validator->validated();
+
         $site = Site::where('token_tracking', $donnees['token'])
             ->where('actif', true)
             ->first();
 
         if (! $site) {
-            // On retourne 200 même si token invalide
-            // pour ne pas révéler d'infos au tracker
-            return response()->noContent();
+            return $this->reponseVide();
         }
 
         $type = $donnees['type'] ?? 'pageview';
@@ -73,15 +72,18 @@ class TrackingController extends Controller
             ),
         };
 
-        // Toujours 200, jamais d'erreur visible côté tracker
-        return $this->ajouterHeadersCors(response()->noContent());
+        return $this->reponseVide();
     }
 
-    private function ajouterHeadersCors($response): mixed
+    private function reponseVide(): Response
     {
-        return $response
+        return response()
+            ->noContent(204)
             ->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type');
+            ->header(
+                'Access-Control-Allow-Headers',
+                'Content-Type, Accept, X-Requested-With',
+            );
     }
 }
