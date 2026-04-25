@@ -38,9 +38,9 @@ abstract class AbstractPlugin implements PluginInterface
      */
     protected function chargerManifest(): void
     {
-        $cheminManifest = $this->cheminRacine.'/manifest.json';
+        $cheminManifest = $this->cheminRacine . "/manifest.json";
 
-        if (! file_exists($cheminManifest)) {
+        if (!file_exists($cheminManifest)) {
             Log::warning(
                 "Plugin [{$this->getIdentifiant()}] : manifest.json introuvable.",
             );
@@ -66,12 +66,12 @@ abstract class AbstractPlugin implements PluginInterface
      */
     protected function enregistrerRoutes(): void
     {
-        $fichierRoutes = $this->cheminRacine.'/routes/web.php';
+        $fichierRoutes = $this->cheminRacine . "/routes/web.php";
 
         if (file_exists($fichierRoutes)) {
-            Route::middleware(['web', 'auth'])
-                ->prefix('plugins/'.$this->getIdentifiant())
-                ->name('plugin.'.$this->getIdentifiant().'.')
+            Route::middleware(["web", "auth"])
+                ->prefix("plugins/" . $this->getIdentifiant())
+                ->name("plugin." . $this->getIdentifiant() . ".")
                 ->group($fichierRoutes);
         }
     }
@@ -82,10 +82,10 @@ abstract class AbstractPlugin implements PluginInterface
      */
     protected function enregistrerVues(): void
     {
-        $dossierVues = $this->cheminRacine.'/resources/views';
+        $dossierVues = $this->cheminRacine . "/resources/views";
 
         if (is_dir($dossierVues)) {
-            app('view')->addNamespace($this->getIdentifiant(), $dossierVues);
+            app("view")->addNamespace($this->getIdentifiant(), $dossierVues);
         }
     }
 
@@ -94,12 +94,12 @@ abstract class AbstractPlugin implements PluginInterface
      */
     public function activer(): void
     {
-        $dossierMigrations = $this->cheminRacine.'/database/migrations';
+        $dossierMigrations = $this->cheminRacine . "/database/migrations";
 
         if (is_dir($dossierMigrations)) {
-            Artisan::call('migrate', [
-                '--path' => $this->getCheminRelatif($dossierMigrations),
-                '--force' => true,
+            Artisan::call("migrate", [
+                "--path" => $this->getCheminRelatif($dossierMigrations),
+                "--force" => true,
             ]);
 
             Log::info(
@@ -141,7 +141,7 @@ abstract class AbstractPlugin implements PluginInterface
      */
     protected function getCheminRelatif(string $cheminAbsolu): string
     {
-        return str_replace(base_path().'/', '', $cheminAbsolu);
+        return str_replace(base_path() . "/", "", $cheminAbsolu);
     }
 
     /**
@@ -152,5 +152,17 @@ abstract class AbstractPlugin implements PluginInterface
     public function getManifest(): array
     {
         return $this->manifest;
+    }
+
+    /** @return array<int, array{id: string, label: string, icone: string}> */
+    public function getOnglets(): array
+    {
+        return [];
+    }
+
+    /** @return array<int, array{cle: string, label: string, type: string}> */
+    public function getReglages(): array
+    {
+        return [];
     }
 }

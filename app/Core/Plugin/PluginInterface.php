@@ -56,4 +56,20 @@ interface PluginInterface
      * @return string[]
      */
     public function getHooks(): array;
+
+    /**
+     * Retourne la liste des onglets que ce plugin ajoute au dashboard.
+     * Format : [['id' => 'ai', 'label' => 'Analyse IA', 'icone' => '🤖']]
+     *
+     * @return array<int, array{id: string, label: string, icone: string}>
+     */
+    public function getOnglets(): array;
+
+    /**
+     * Retourne les champs de configuration du plugin.
+     * Format : [['cle' => 'api_key', 'label' => 'Clé API', 'type' => 'password', ...]]
+     *
+     * @return array<int, array{cle: string, label: string, type: string}>
+     */
+    public function getReglages(): array;
 }

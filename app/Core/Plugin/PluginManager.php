@@ -5,174 +5,137 @@ namespace App\Core\Plugin;
 use App\Models\Plugin as PluginModele;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
-/**
- * Gestionnaire central de tous les plugins.
- * Enregistré comme Singleton dans le conteneur Laravel.
- */
 class PluginManager
 {
-    /**
-     * Plugins découverts sur le disque.
-     *
-     * @var array<string, PluginInterface>
-     */
+    /** @var array<string, PluginInterface> */
     private array $pluginsDecouverts = [];
 
-    /**
-     * Plugins actuellement actifs (chargés en mémoire).
-     *
-     * @var array<string, PluginInterface>
-     */
+    /** @var array<string, PluginInterface> */
     private array $pluginsActifs = [];
 
-    /**
-     * Registry des hooks et leurs callbacks associés.
-     *
-     * @var array<string, callable[]>
-     */
+    /** @var array<string, PluginInterface[]> */
     private array $hooks = [];
 
     public function __construct(private PluginDiscovery $discovery) {}
 
-    /**
-     * Point d'entrée principal : découvre et charge les plugins actifs.
-     * Appelé au démarrage de l'application.
-     */
     public function initialiser(): void
     {
+        if (!$this->tableExiste()) {
+            return;
+        }
+
         $this->pluginsDecouverts = $this->discovery->decouvrir();
+        $actifs = $this->getActifsEnBdd();
 
-        // Récupérer les plugins actifs en BDD (avec cache 5 min)
-        $pluginsActifsEnBdd = Cache::remember('plugins_actifs', 300, function () {
-            return PluginModele::where('actif', true)->pluck('identifiant')->toArray();
-        });
-
-        // Enregistrer et activer uniquement les plugins actifs
-        foreach ($this->pluginsDecouverts as $identifiant => $plugin) {
-            if (in_array($identifiant, $pluginsActifsEnBdd)) {
+        foreach ($this->pluginsDecouverts as $id => $plugin) {
+            if (in_array($id, $actifs)) {
                 $this->chargerPlugin($plugin);
             }
         }
-
-        Log::info('PluginManager initialisé. Plugins actifs : '.implode(', ', array_keys($this->pluginsActifs)));
     }
 
-    /**
-     * Enregistre un plugin dans Laravel et le marque comme actif.
-     */
+    private function tableExiste(): bool
+    {
+        try {
+            return Schema::hasTable("plugins");
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /** @return string[] */
+    private function getActifsEnBdd(): array
+    {
+        try {
+            return Cache::remember(
+                "plugins_actifs",
+                300,
+                fn() => PluginModele::where("actif", true)
+                    ->pluck("identifiant")
+                    ->toArray(),
+            );
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
     private function chargerPlugin(PluginInterface $plugin): void
     {
         try {
-            // Enregistre routes, vues, services...
             $plugin->enregistrer();
 
-            // Enregistre les hooks déclarés par le plugin
-            $this->enregistrerHooks($plugin);
+            foreach ($plugin->getHooks() as $hook) {
+                $this->hooks[$hook][] = $plugin;
+            }
 
             $this->pluginsActifs[$plugin->getIdentifiant()] = $plugin;
         } catch (\Throwable $e) {
-            Log::error("Impossible de charger le plugin [{$plugin->getIdentifiant()}] : ".$e->getMessage());
+            Log::error(
+                "Plugin [{$plugin->getIdentifiant()}] : " . $e->getMessage(),
+            );
         }
     }
 
-    /**
-     * Enregistre les hooks d'un plugin.
-     */
-    private function enregistrerHooks(PluginInterface $plugin): void
+    public function activer(string $id): bool
     {
-        foreach ($plugin->getHooks() as $hook) {
-            if (! isset($this->hooks[$hook])) {
-                $this->hooks[$hook] = [];
-            }
-            $this->hooks[$hook][] = $plugin;
-        }
-    }
-
-    /**
-     * ACTIVE un plugin : mise à jour BDD + appel activer().
-     */
-    public function activer(string $identifiant): bool
-    {
-        $plugin = $this->pluginsDecouverts[$identifiant] ?? null;
-
-        if (! $plugin) {
-            Log::error("Impossible d'activer : plugin [{$identifiant}] non trouvé.");
-
+        $plugin = $this->pluginsDecouverts[$id] ?? null;
+        if (!$plugin) {
             return false;
         }
 
         try {
-            $plugin->activer(); // Lance les migrations, etc.
+            $plugin->activer();
 
             PluginModele::updateOrCreate(
-                ['identifiant' => $identifiant],
+                ["identifiant" => $id],
                 [
-                    'nom' => $plugin->getNom(),
-                    'version' => $plugin->getVersion(),
-                    'actif' => true,
-                    'installe' => true,
-                    'active_le' => now(),
-                    'installe_le' => now(),
-                    'metadonnees' => $plugin->getManifest(),
-                ]
+                    "nom" => $plugin->getNom(),
+                    "version" => $plugin->getVersion(),
+                    "actif" => true,
+                    "installe" => true,
+                    "active_le" => now(),
+                    "installe_le" => now(),
+                    "metadonnees" => $plugin->getManifest(),
+                ],
             );
 
-            Cache::forget('plugins_actifs');
+            Cache::forget("plugins_actifs");
             $this->chargerPlugin($plugin);
-
             return true;
         } catch (\Throwable $e) {
-            Log::error("Erreur activation plugin [{$identifiant}] : ".$e->getMessage());
-
+            Log::error("Activation plugin [{$id}] : " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * DÉSACTIVE un plugin : mise à jour BDD + appel desactiver().
-     */
-    public function desactiver(string $identifiant): bool
+    public function desactiver(string $id): bool
     {
-        $plugin = $this->pluginsActifs[$identifiant] ?? null;
-
-        if (! $plugin) {
+        $plugin = $this->pluginsActifs[$id] ?? null;
+        if (!$plugin) {
             return false;
         }
 
         try {
             $plugin->desactiver();
-
-            PluginModele::where('identifiant', $identifiant)
-                ->update(['actif' => false]);
-
-            unset($this->pluginsActifs[$identifiant]);
-            Cache::forget('plugins_actifs');
-
+            PluginModele::where("identifiant", $id)->update(["actif" => false]);
+            unset($this->pluginsActifs[$id]);
+            Cache::forget("plugins_actifs");
             return true;
         } catch (\Throwable $e) {
-            Log::error("Erreur désactivation plugin [{$identifiant}] : ".$e->getMessage());
-
+            Log::error("Désactivation plugin [{$id}] : " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Exécute tous les plugins enregistrés sur un hook donné.
-     * Retourne un tableau de vues/HTML générés.
-     *
-     * @return string[]
-     */
+    /** @return string[] */
     public function executerHook(string $hook, array $donnees = []): array
     {
         $resultats = [];
 
-        if (! isset($this->hooks[$hook])) {
-            return $resultats;
-        }
-
-        foreach ($this->hooks[$hook] as $plugin) {
-            if (method_exists($plugin, 'rendrePourHook')) {
+        foreach ($this->hooks[$hook] ?? [] as $plugin) {
+            if (method_exists($plugin, "rendrePourHook")) {
                 $resultats[] = $plugin->rendrePourHook($hook, $donnees);
             }
         }
@@ -180,26 +143,61 @@ class PluginManager
         return $resultats;
     }
 
-    // Accesseurs
+    /**
+     * Retourne tous les onglets déclarés par les plugins actifs.
+     *
+     * @return array<int, array{id: string, label: string, icone: string, plugin: string}>
+     */
+    public function getOnglets(): array
+    {
+        $onglets = [];
+
+        foreach ($this->pluginsActifs as $plugin) {
+            foreach ($plugin->getOnglets() as $onglet) {
+                $onglet["plugin"] = $plugin->getIdentifiant();
+                $onglets[] = $onglet;
+            }
+        }
+
+        return $onglets;
+    }
 
     /**
-     * @return array<string, PuginInterface>
+     * Retourne les réglages de tous les plugins actifs.
+     *
+     * @return array<string, array>
      */
+    public function getTousLesReglages(): array
+    {
+        $reglages = [];
+
+        foreach ($this->pluginsActifs as $plugin) {
+            $champs = $plugin->getReglages();
+            if (!empty($champs)) {
+                $reglages[$plugin->getIdentifiant()] = [
+                    "nom" => $plugin->getNom(),
+                    "champs" => $champs,
+                ];
+            }
+        }
+
+        return $reglages;
+    }
+
+    /** @return array<string, PluginInterface> */
     public function getPluginsDecouverts(): array
     {
         return $this->pluginsDecouverts;
     }
 
-    /**
-     * @return array<string, PuginInterface>
-     */
+    /** @return array<string, PluginInterface> */
     public function getPluginsActifs(): array
     {
         return $this->pluginsActifs;
     }
 
-    public function estActif(string $identifiant): bool
+    public function estActif(string $id): bool
     {
-        return isset($this->pluginsActifs[$identifiant]);
+        return isset($this->pluginsActifs[$id]);
     }
 }
