@@ -1,25 +1,37 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+    <h2 class="text-lg font-semibold text-gray-900 mb-2">Mot de passe oublié</h2>
+    <p class="text-sm text-gray-500 mb-4">
+        Entrez votre adresse e-mail et nous vous enverrons un lien de réinitialisation.
+    </p>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    @if(session('status'))
+        <div class="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-3">
+            {{ session('status') }}
+        </div>
+    @endif
 
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <x-input
+            name="email"
+            label="Adresse e-mail"
+            type="email"
+            :required="true"
+            :value="old('email')"
+            autocomplete="username"
+        />
+
+        <div class="mt-6">
+            <x-button variant="primary" type="submit" class="w-full justify-center">
+                Envoyer le lien
+            </x-button>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <p class="mt-4 text-center">
+            <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-gray-700 transition">
+                Retour à la connexion
+            </a>
+        </p>
     </form>
 </x-guest-layout>

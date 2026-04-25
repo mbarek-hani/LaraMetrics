@@ -5,6 +5,7 @@
     'required'    => false,
     'placeholder' => '',
     'aide'        => null,
+    'value'       => null,
 ])
 
 <div>
@@ -22,6 +23,7 @@
         name="{{ $name }}"
         id="{{ $name }}"
         placeholder="{{ $placeholder }}"
+        value="{{ $value }}"
         {{ $required ? 'required' : '' }}
         {{ $attributes->merge(['class' => 'block w-full rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500']) }}
     >
