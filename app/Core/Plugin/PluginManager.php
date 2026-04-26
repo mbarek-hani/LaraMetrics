@@ -2,7 +2,9 @@
 
 namespace App\Core\Plugin;
 
+use App\Models\Evenement;
 use App\Models\Plugin as PluginModele;
+use App\Models\Visite;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
@@ -150,7 +152,7 @@ class PluginManager
      * Passe les données de tracking à travers tous les plugins actifs.
      * Chaque plugin peut enrichir les données.
      */
-    public function enrichirTracking(array $donnees, $request): array
+    public function enrichirTracking(array $donnees, Request $request): array
     {
         foreach ($this->pluginsActifs as $plugin) {
             $resultat = $plugin->enrichirTracking($donnees, $request);
@@ -165,7 +167,7 @@ class PluginManager
     /**
      * Notifie tous les plugins après l'enregistrement d'une visite.
      */
-    public function apresVisite($visite, array $donnees, $request): void
+    public function apresVisite(Visite $visite, array $donnees, $request): void
     {
         foreach ($this->pluginsActifs as $plugin) {
             try {
@@ -182,8 +184,11 @@ class PluginManager
     /**
      * Notifie tous les plugins après l'enregistrement d'un événement.
      */
-    public function apresEvenement($evenement, array $donnees, $request): void
-    {
+    public function apresEvenement(
+        Evenement $evenement,
+        array $donnees,
+        $request,
+    ): void {
         foreach ($this->pluginsActifs as $plugin) {
             try {
                 $plugin->apresEvenement($evenement, $donnees, $request);
