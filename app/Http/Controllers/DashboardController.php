@@ -14,25 +14,25 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $sites       = Site::actifs()->orderBy('nom')->get();
+        $sites = Site::actifs()->orderBy('nom')->get();
         $siteCourant = Site::latest()->first();
-        $manager     = app(PluginManager::class);
+        $manager = app(PluginManager::class);
 
-        if (!$siteCourant) {
+        if (! $siteCourant) {
             return view('dashboard', [
-                'sites'     => $sites,
+                'sites' => $sites,
                 'aucunSite' => true,
-                'onglets'   => [],
-                'reglages'  => [],
+                'onglets' => [],
+                'reglages' => [],
             ]);
         }
 
         return view('dashboard', [
-            'sites'       => $sites,
+            'sites' => $sites,
             'siteCourant' => $siteCourant,
-            'aucunSite'   => false,
-            'onglets'     => $manager->getOnglets(),
-            'reglages'    => $manager->getTousLesReglages(),
+            'aucunSite' => false,
+            'onglets' => $manager->getOnglets(),
+            'reglages' => $manager->getTousLesReglages(),
         ]);
     }
 
@@ -40,7 +40,10 @@ class DashboardController extends Controller
     {
         $request->validate([
             'site_id' => ['required', 'exists:sites,id'],
-            'periode' => ['required', 'in:aujourdhui,7j,30j,ce_mois,cette_annee'],
+            'periode' => [
+                'required',
+                'in:aujourdhui,7j,30j,ce_mois,cette_annee',
+            ],
         ]);
 
         $site = Site::findOrFail($request->site_id);
@@ -49,15 +52,15 @@ class DashboardController extends Controller
         $service = new StatistiqueService($site);
 
         return response()->json([
-            'resume'        => $service->resume($debut, $fin),
-            'evolution'     => $service->evolutionParJour($debut, $fin),
-            'top_pages'     => $service->topPages($debut, $fin),
+            'resume' => $service->resume($debut, $fin),
+            'evolution' => $service->evolutionParJour($debut, $fin),
+            'top_pages' => $service->topPages($debut, $fin),
             'top_referents' => $service->topReferents($debut, $fin),
-            'top_pays'      => $service->topPays($debut, $fin),
-            'appareils'     => $service->parAppareil($debut, $fin),
-            'periode'       => [
+            'top_pays' => $service->topPays($debut, $fin),
+            'appareils' => $service->parAppareil($debut, $fin),
+            'periode' => [
                 'debut' => $debut->format('d/m/Y'),
-                'fin'   => $fin->format('d/m/Y'),
+                'fin' => $fin->format('d/m/Y'),
             ],
         ]);
     }
@@ -68,13 +71,13 @@ class DashboardController extends Controller
     public function sauvegarderReglages(Request $request): JsonResponse
     {
         $request->validate([
-            'plugin'   => ['required', 'string'],
+            'plugin' => ['required', 'string'],
             'reglages' => ['required', 'array'],
         ]);
 
         $plugin = PluginModele::where('identifiant', $request->plugin)->first();
 
-        if (!$plugin) {
+        if (! $plugin) {
             return response()->json(['erreur' => 'Plugin introuvable'], 404);
         }
 
@@ -82,18 +85,24 @@ class DashboardController extends Controller
         $config = array_merge($config, $request->reglages);
         $plugin->update(['configuration' => $config]);
 
-        return response()->json(['succes' => true, 'message' => 'Réglages sauvegardés.']);
+        return response()->json([
+            'succes' => true,
+            'message' => 'Réglages sauvegardés.',
+        ]);
     }
 
     private function calculerPeriode(string $periode): array
     {
         return match ($periode) {
-            'aujourdhui'  => [Carbon::today(), Carbon::tomorrow()],
-            '7j'          => [Carbon::now()->subDays(7), Carbon::now()],
-            '30j'         => [Carbon::now()->subDays(30), Carbon::now()],
-            'ce_mois'     => [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()],
+            'aujourdhui' => [Carbon::today(), Carbon::tomorrow()],
+            '7j' => [Carbon::now()->subDays(7), Carbon::now()],
+            '30j' => [Carbon::now()->subDays(30), Carbon::now()],
+            'ce_mois' => [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth(),
+            ],
             'cette_annee' => [Carbon::now()->startOfYear(), Carbon::now()],
-            default       => [Carbon::now()->subDays(7), Carbon::now()],
+            default => [Carbon::now()->subDays(7), Carbon::now()],
         };
     }
 }

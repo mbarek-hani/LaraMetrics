@@ -9,7 +9,7 @@
     "licence": "MIT",
     "classe": "Plugins\\AiAnalytics\\AiAnalyticsPlugin",
     "version_app_min": "1.0.0",
-    "hooks": ["dashboard.widgets", "rapport.section"],
+    "hooks": [],
     "dependances": [],
     "configuration": {
         "fournisseur": {

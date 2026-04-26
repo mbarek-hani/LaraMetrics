@@ -22,7 +22,7 @@ class PluginManager
 
     public function initialiser(): void
     {
-        if (!$this->tableExiste()) {
+        if (! $this->tableExiste()) {
             return;
         }
 
@@ -39,7 +39,7 @@ class PluginManager
     private function tableExiste(): bool
     {
         try {
-            return Schema::hasTable("plugins");
+            return Schema::hasTable('plugins');
         } catch (\Throwable) {
             return false;
         }
@@ -50,10 +50,10 @@ class PluginManager
     {
         try {
             return Cache::remember(
-                "plugins_actifs",
+                'plugins_actifs',
                 300,
-                fn() => PluginModele::where("actif", true)
-                    ->pluck("identifiant")
+                fn () => PluginModele::where('actif', true)
+                    ->pluck('identifiant')
                     ->toArray(),
             );
         } catch (\Throwable) {
@@ -73,7 +73,7 @@ class PluginManager
             $this->pluginsActifs[$plugin->getIdentifiant()] = $plugin;
         } catch (\Throwable $e) {
             Log::error(
-                "Plugin [{$plugin->getIdentifiant()}] : " . $e->getMessage(),
+                "Plugin [{$plugin->getIdentifiant()}] : ".$e->getMessage(),
             );
         }
     }
@@ -81,7 +81,7 @@ class PluginManager
     public function activer(string $id): bool
     {
         $plugin = $this->pluginsDecouverts[$id] ?? null;
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
@@ -89,23 +89,25 @@ class PluginManager
             $plugin->activer();
 
             PluginModele::updateOrCreate(
-                ["identifiant" => $id],
+                ['identifiant' => $id],
                 [
-                    "nom" => $plugin->getNom(),
-                    "version" => $plugin->getVersion(),
-                    "actif" => true,
-                    "installe" => true,
-                    "active_le" => now(),
-                    "installe_le" => now(),
-                    "metadonnees" => $plugin->getManifest(),
+                    'nom' => $plugin->getNom(),
+                    'version' => $plugin->getVersion(),
+                    'actif' => true,
+                    'installe' => true,
+                    'active_le' => now(),
+                    'installe_le' => now(),
+                    'metadonnees' => $plugin->getManifest(),
                 ],
             );
 
-            Cache::forget("plugins_actifs");
+            Cache::forget('plugins_actifs');
             $this->chargerPlugin($plugin);
+
             return true;
         } catch (\Throwable $e) {
-            Log::error("Activation plugin [{$id}] : " . $e->getMessage());
+            Log::error("Activation plugin [{$id}] : ".$e->getMessage());
+
             return false;
         }
     }
@@ -113,18 +115,20 @@ class PluginManager
     public function desactiver(string $id): bool
     {
         $plugin = $this->pluginsActifs[$id] ?? null;
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
         try {
             $plugin->desactiver();
-            PluginModele::where("identifiant", $id)->update(["actif" => false]);
+            PluginModele::where('identifiant', $id)->update(['actif' => false]);
             unset($this->pluginsActifs[$id]);
-            Cache::forget("plugins_actifs");
+            Cache::forget('plugins_actifs');
+
             return true;
         } catch (\Throwable $e) {
-            Log::error("Désactivation plugin [{$id}] : " . $e->getMessage());
+            Log::error("Désactivation plugin [{$id}] : ".$e->getMessage());
+
             return false;
         }
     }
@@ -135,7 +139,7 @@ class PluginManager
         $resultats = [];
 
         foreach ($this->hooks[$hook] ?? [] as $plugin) {
-            if (method_exists($plugin, "rendrePourHook")) {
+            if (method_exists($plugin, 'rendrePourHook')) {
                 $resultats[] = $plugin->rendrePourHook($hook, $donnees);
             }
         }
@@ -154,7 +158,7 @@ class PluginManager
 
         foreach ($this->pluginsActifs as $plugin) {
             foreach ($plugin->getOnglets() as $onglet) {
-                $onglet["plugin"] = $plugin->getIdentifiant();
+                $onglet['plugin'] = $plugin->getIdentifiant();
                 $onglets[] = $onglet;
             }
         }
@@ -173,10 +177,10 @@ class PluginManager
 
         foreach ($this->pluginsActifs as $plugin) {
             $champs = $plugin->getReglages();
-            if (!empty($champs)) {
+            if (! empty($champs)) {
                 $reglages[$plugin->getIdentifiant()] = [
-                    "nom" => $plugin->getNom(),
-                    "champs" => $champs,
+                    'nom' => $plugin->getNom(),
+                    'champs' => $champs,
                 ];
             }
         }
