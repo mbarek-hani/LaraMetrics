@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold text-gray-900">Sites</h2>
             <x-button variant="primary" href="{{ route('sites.create') }}">
-                <x-icon name="plus" class="w-4 h-4" />
+                <x-custom-icon name="plus" class="w-4 h-4" />
                 Ajouter un site
             </x-button>
         </div>
@@ -21,11 +21,11 @@
             @if($sites->isEmpty())
                 <x-card>
                     <div class="text-center py-8">
-                        <x-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
+                        <x-custom-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
                         <p class="mt-2 text-sm text-gray-500">Aucun site pour le moment.</p>
                         <div class="mt-3">
                             <x-button variant="primary" href="{{ route('sites.create') }}">
-                                <x-icon name="plus" class="w-4 h-4" />
+                                <x-custom-icon name="plus" class="w-4 h-4" />
                                 Ajouter un site
                             </x-button>
                         </div>
@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="flex items-center gap-2 ml-4 sm:ml-0">
                                     <x-button size="sm" href="{{ route('sites.show', $site) }}">
-                                        <x-icon name="code" class="w-3.5 h-3.5" />
+                                        <x-custom-icon name="code" class="w-3.5 h-3.5" />
                                         Code
                                     </x-button>
                                     <form method="POST" action="{{ route('sites.destroy', $site) }}"
@@ -56,7 +56,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <x-button variant="danger" size="sm" type="submit">
-                                            <x-icon name="trash" class="w-3.5 h-3.5" />
+                                            <x-custom-icon name="trash" class="w-3.5 h-3.5" />
                                             Supprimer
                                         </x-button>
                                     </form>

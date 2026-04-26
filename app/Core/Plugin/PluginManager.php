@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Core\Plugin;
 
 use App\Models\Plugin as PluginModele;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
@@ -22,7 +20,7 @@ class PluginManager
 
     public function initialiser(): void
     {
-        if (! $this->tableExiste()) {
+        if (!$this->tableExiste()) {
             return;
         }
 
@@ -39,7 +37,7 @@ class PluginManager
     private function tableExiste(): bool
     {
         try {
-            return Schema::hasTable('plugins');
+            return Schema::hasTable("plugins");
         } catch (\Throwable) {
             return false;
         }
@@ -49,13 +47,9 @@ class PluginManager
     private function getActifsEnBdd(): array
     {
         try {
-            return Cache::remember(
-                'plugins_actifs',
-                300,
-                fn () => PluginModele::where('actif', true)
-                    ->pluck('identifiant')
-                    ->toArray(),
-            );
+            return PluginModele::where("actif", true)
+                ->pluck("identifiant")
+                ->toArray();
         } catch (\Throwable) {
             return [];
         }
@@ -73,15 +67,17 @@ class PluginManager
             $this->pluginsActifs[$plugin->getIdentifiant()] = $plugin;
         } catch (\Throwable $e) {
             Log::error(
-                "Plugin [{$plugin->getIdentifiant()}] : ".$e->getMessage(),
+                "Plugin [{$plugin->getIdentifiant()}] : " . $e->getMessage(),
             );
         }
     }
 
+    //Activation / Désactivation
+
     public function activer(string $id): bool
     {
         $plugin = $this->pluginsDecouverts[$id] ?? null;
-        if (! $plugin) {
+        if (!$plugin) {
             return false;
         }
 
@@ -89,25 +85,22 @@ class PluginManager
             $plugin->activer();
 
             PluginModele::updateOrCreate(
-                ['identifiant' => $id],
+                ["identifiant" => $id],
                 [
-                    'nom' => $plugin->getNom(),
-                    'version' => $plugin->getVersion(),
-                    'actif' => true,
-                    'installe' => true,
-                    'active_le' => now(),
-                    'installe_le' => now(),
-                    'metadonnees' => $plugin->getManifest(),
+                    "nom" => $plugin->getNom(),
+                    "version" => $plugin->getVersion(),
+                    "actif" => true,
+                    "installe" => true,
+                    "active_le" => now(),
+                    "installe_le" => now(),
+                    "metadonnees" => $plugin->getManifest(),
                 ],
             );
 
-            Cache::forget('plugins_actifs');
             $this->chargerPlugin($plugin);
-
             return true;
         } catch (\Throwable $e) {
-            Log::error("Activation plugin [{$id}] : ".$e->getMessage());
-
+            Log::error("Activation [{$id}] : " . $e->getMessage());
             return false;
         }
     }
@@ -115,23 +108,22 @@ class PluginManager
     public function desactiver(string $id): bool
     {
         $plugin = $this->pluginsActifs[$id] ?? null;
-        if (! $plugin) {
+        if (!$plugin) {
             return false;
         }
 
         try {
             $plugin->desactiver();
-            PluginModele::where('identifiant', $id)->update(['actif' => false]);
+            PluginModele::where("identifiant", $id)->update(["actif" => false]);
             unset($this->pluginsActifs[$id]);
-            Cache::forget('plugins_actifs');
-
             return true;
         } catch (\Throwable $e) {
-            Log::error("Désactivation plugin [{$id}] : ".$e->getMessage());
-
+            Log::error("Désactivation [{$id}] : " . $e->getMessage());
             return false;
         }
     }
+
+    //Hooks
 
     /** @return string[] */
     public function executerHook(string $hook, array $donnees = []): array
@@ -139,7 +131,7 @@ class PluginManager
         $resultats = [];
 
         foreach ($this->hooks[$hook] ?? [] as $plugin) {
-            if (method_exists($plugin, 'rendrePourHook')) {
+            if (method_exists($plugin, "rendrePourHook")) {
                 $resultats[] = $plugin->rendrePourHook($hook, $donnees);
             }
         }
@@ -147,18 +139,68 @@ class PluginManager
         return $resultats;
     }
 
+    //Tracking Pipeline
+
     /**
-     * Retourne tous les onglets déclarés par les plugins actifs.
-     *
-     * @return array<int, array{id: string, label: string, icone: string, plugin: string}>
+     * Passe les données de tracking à travers tous les plugins actifs.
+     * Chaque plugin peut enrichir les données.
      */
+    public function enrichirTracking(array $donnees, $request): array
+    {
+        foreach ($this->pluginsActifs as $plugin) {
+            $resultat = $plugin->enrichirTracking($donnees, $request);
+            if ($resultat !== null) {
+                $donnees = $resultat;
+            }
+        }
+
+        return $donnees;
+    }
+
+    /**
+     * Notifie tous les plugins après l'enregistrement d'une visite.
+     */
+    public function apresVisite($visite, array $donnees, $request): void
+    {
+        foreach ($this->pluginsActifs as $plugin) {
+            try {
+                $plugin->apresVisite($visite, $donnees, $request);
+            } catch (\Throwable $e) {
+                Log::error(
+                    "Plugin [{$plugin->getIdentifiant()}] apresVisite : " .
+                        $e->getMessage(),
+                );
+            }
+        }
+    }
+
+    /**
+     * Notifie tous les plugins après l'enregistrement d'un événement.
+     */
+    public function apresEvenement($evenement, array $donnees, $request): void
+    {
+        foreach ($this->pluginsActifs as $plugin) {
+            try {
+                $plugin->apresEvenement($evenement, $donnees, $request);
+            } catch (\Throwable $e) {
+                Log::error(
+                    "Plugin [{$plugin->getIdentifiant()}] apresEvenement : " .
+                        $e->getMessage(),
+                );
+            }
+        }
+    }
+
+    //UI Data
+
+    /** @return array<int, array{id: string, label: string, icone: string, plugin: string}> */
     public function getOnglets(): array
     {
         $onglets = [];
 
         foreach ($this->pluginsActifs as $plugin) {
             foreach ($plugin->getOnglets() as $onglet) {
-                $onglet['plugin'] = $plugin->getIdentifiant();
+                $onglet["plugin"] = $plugin->getIdentifiant();
                 $onglets[] = $onglet;
             }
         }
@@ -166,27 +208,80 @@ class PluginManager
         return $onglets;
     }
 
-    /**
-     * Retourne les réglages de tous les plugins actifs.
-     *
-     * @return array<string, array>
-     */
+    /** @return array<string, array> */
     public function getTousLesReglages(): array
     {
         $reglages = [];
 
         foreach ($this->pluginsActifs as $plugin) {
             $champs = $plugin->getReglages();
-            if (! empty($champs)) {
+            if (!empty($champs)) {
                 $reglages[$plugin->getIdentifiant()] = [
-                    'nom' => $plugin->getNom(),
-                    'champs' => $champs,
+                    "nom" => $plugin->getNom(),
+                    "champs" => $champs,
                 ];
             }
         }
 
         return $reglages;
     }
+
+    /**
+     * Retourne tous les liens de navigation des plugins actifs.
+     *
+     * @return array<int, array{label: string, route: string, icone: string, plugin: string}>
+     */
+    public function getNavigationItems(): array
+    {
+        $items = [];
+
+        foreach ($this->pluginsActifs as $plugin) {
+            foreach ($plugin->getNavigationItems() as $item) {
+                $item["plugin"] = $plugin->getIdentifiant();
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Retourne les chemins CSS de tous les plugins actifs.
+     *
+     * @return string[]
+     */
+    public function getCssPaths(): array
+    {
+        $chemins = [];
+
+        foreach ($this->pluginsActifs as $plugin) {
+            $css = $plugin->getCssPath();
+            if ($css) {
+                $chemins[] = $css;
+            }
+        }
+
+        return $chemins;
+    }
+
+    /**
+     * Retourne le JavaScript de tracking de tous les plugins actifs.
+     */
+    public function getTrackerJavaScript(): string
+    {
+        $js = "";
+
+        foreach ($this->pluginsActifs as $plugin) {
+            $code = $plugin->getTrackerJavaScript();
+            if ($code) {
+                $js .= "\n// Plugin: {$plugin->getIdentifiant()}\n" . $code;
+            }
+        }
+
+        return $js;
+    }
+
+    //Accesseurs
 
     /** @return array<string, PluginInterface> */
     public function getPluginsDecouverts(): array

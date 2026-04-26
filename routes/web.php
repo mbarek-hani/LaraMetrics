@@ -4,9 +4,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\PluginController;
+use App\Http\Controllers\TrackerJsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", fn() => redirect()->route("dashboard"));
+Route::get("/tracker.js", \App\Http\Controllers\TrackerJsController::class);
 
 Route::middleware(["auth"])->group(function () {
     Route::get("/dashboard", [DashboardController::class, "index"])->name(

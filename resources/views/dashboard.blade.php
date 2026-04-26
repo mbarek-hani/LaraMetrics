@@ -9,12 +9,12 @@
             @if($aucunSite)
                 <x-card>
                     <div class="text-center py-8">
-                        <x-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
+                        <x-custom-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
                         <h3 class="mt-2 text-sm font-semibold text-gray-900">Aucun site configuré</h3>
                         <p class="mt-1 text-sm text-gray-500">Ajoutez votre premier site pour commencer.</p>
                         <div class="mt-3">
                             <x-button variant="primary" href="{{ route('sites.create') }}">
-                                <x-icon name="plus" class="w-4 h-4" />
+                                <x-custom-icon name="plus" class="w-4 h-4" />
                                 Ajouter un site
                             </x-button>
                         </div>
@@ -70,7 +70,7 @@
                             :class="ongletActif === 'apercu' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                             class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                         >
-                            <x-icon name="chart-bar" class="w-4 h-4" />
+                            <x-custom-icon name="chart-bar" class="w-4 h-4" />
                             Vue d'ensemble
                         </button>
 
@@ -79,7 +79,7 @@
                             :class="ongletActif === 'evenements' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                             class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                         >
-                            <x-icon name="cursor-click" class="w-4 h-4" />
+                            <x-custom-icon name="cursor-click" class="w-4 h-4" />
                             Événements
                         </button>
 
@@ -89,7 +89,7 @@
                                 :class="ongletActif === '{{ $onglet['id'] }}' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                                 class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                             >
-                                <x-icon :name="$onglet['icone']" class="w-4 h-4" />
+                                <x-custom-icon :name="$onglet['icone']" class="w-4 h-4" />
                                 {{ $onglet['label'] }}
                             </button>
                         @endforeach
@@ -100,7 +100,7 @@
                                 :class="ongletActif === 'reglages' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                                 class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                             >
-                                <x-icon name="cog" class="w-4 h-4" />
+                                <x-custom-icon name="cog" class="w-4 h-4" />
                                 Réglages
                             </button>
                         @endif
@@ -109,7 +109,7 @@
 
                 {{-- Chargement --}}
                 <div x-show="chargement" class="flex items-center justify-center py-16">
-                    <x-icon name="arrow-path" class="w-5 h-5 text-gray-400 animate-spin" />
+                    <x-custom-icon name="arrow-path" class="w-5 h-5 text-gray-400 animate-spin" />
                     <span class="ml-2 text-sm text-gray-500">Chargement...</span>
                 </div>
 
@@ -279,7 +279,7 @@
                                             <tr class="border-b border-gray-100">
                                                 <td class="px-4 py-2">
                                                     <div class="flex items-center gap-2">
-                                                        <x-icon name="bolt" class="w-3.5 h-3.5 text-gray-400" />
+                                                        <x-custom-icon name="bolt" class="w-3.5 h-3.5 text-gray-400" />
                                                         <span class="text-gray-900" x-text="evt.nom"></span>
                                                     </div>
                                                 </td>
@@ -323,7 +323,7 @@
                         {{-- Aide tracking événements --}}
                         <x-card class="mt-4">
                             <div class="flex items-start gap-3">
-                                <x-icon name="information-circle" class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
+                                <x-custom-icon name="information-circle" class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
                                 <div>
                                     <h4 class="text-sm font-medium text-gray-900">Comment tracker des événements ?</h4>
                                     <p class="text-sm text-gray-500 mt-1">
@@ -352,7 +352,7 @@
                             @foreach($reglages as $pluginId => $plugin)
                                 <x-card x-data="reglagesPlugin('{{ $pluginId }}')">
                                     <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-                                        <x-icon name="cog" class="w-4 h-4 text-gray-500" />
+                                        <x-custom-icon name="cog" class="w-4 h-4 text-gray-500" />
                                         <h4 class="text-sm font-semibold text-gray-900">{{ $plugin['nom'] }}</h4>
                                     </div>
 

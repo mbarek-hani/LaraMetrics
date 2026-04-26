@@ -11,6 +11,10 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        {{-- CSS des plugins actifs --}}
+        @foreach(app(\App\Core\Plugin\PluginManager::class)->getCssPaths() as $cssPath)
+            <link rel="stylesheet" href="{{ asset($cssPath) }}">
+        @endforeach
         <script defer src="http://localhost:8000/tracker.js" data-token="5cd9330d28a2238e2d6007ff6ab15d076fa2953c38d760a323084b00fc74b078"></script>
     </head>
     <body class="font-sans antialiased">

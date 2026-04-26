@@ -161,4 +161,7 @@
             });
         },
     };
+
+    // ─── Plugin injection point ───────────────────────────────
+    /* PLUGIN_INJECTION */
 })();

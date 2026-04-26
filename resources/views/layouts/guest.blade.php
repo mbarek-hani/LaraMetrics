@@ -16,7 +16,7 @@
         <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
 
             <a href="/" class="mb-6 flex items-center gap-2 text-gray-900">
-                <x-icon name="chart-bar" class="w-8 h-8" />
+                <x-custom-icon name="chart-bar" class="w-8 h-8" />
                 <span class="text-xl font-bold">{{ config('app.name', 'LaraMetrics') }}</span>
             </a>
 

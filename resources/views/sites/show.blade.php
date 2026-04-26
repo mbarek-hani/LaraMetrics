@@ -55,8 +55,8 @@
                         "
                         class="absolute top-2 right-2 p-1.5 rounded border border-gray-300 bg-white hover:bg-gray-50 transition"
                     >
-                        <x-icon x-show="!copie" name="clipboard" class="w-4 h-4 text-gray-500" />
-                        <x-icon x-show="copie" name="check" class="w-4 h-4 text-green-600" />
+                        <x-custom-icon x-show="!copie" name="clipboard" class="w-4 h-4 text-gray-500" />
+                        <x-custom-icon x-show="copie" name="check" class="w-4 h-4 text-green-600" />
                     </button>
 
                     <span x-ref="code" class="hidden">{{ $site->getScriptTracking() }}</span>

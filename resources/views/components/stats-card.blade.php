@@ -8,7 +8,7 @@
     <div class="flex items-center gap-3">
         @if($icon)
             <div class="shrink-0">
-                <x-icon :name="$icon" class="w-5 h-5 text-gray-500" />
+                <x-custom-icon :name="$icon" class="w-5 h-5 text-gray-500" />
             </div>
         @endif
         <div class="min-w-0">

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Evenement;
 use App\Models\Site;
 use App\Models\Visite;
+use App\Core\Plugin\PluginManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stevebauman\Location\Facades\Location;
@@ -27,6 +28,10 @@ class TrackingService
                 return null;
             }
 
+            // Pipeline plugins : enrichir les données AVANT stockage
+            $manager = app(PluginManager::class);
+            $donnees = $manager->enrichirTracking($donnees, $request);
+
             $sessionId = $this->genererSessionId($request, $site->id);
 
             $infoNavigateur = $this->parserUserAgent($request->userAgent());
@@ -35,30 +40,36 @@ class TrackingService
 
             $infoPays = $this->detecterPays($request);
 
-            return Visite::create([
-                'site_id' => $site->id,
-                'session_id' => $sessionId,
-                'url' => $this->nettoyerUrl($donnees['url'] ?? ''),
-                'chemin' => $this->nettoyerChemin($donnees['chemin'] ?? '/'),
-                'titre' => $donnees['titre'] ?? null,
-                'referent' => $donnees['referent'] ?? null,
-                'referent_domaine' => $donnees['referent_domaine'] ?? null,
-                'utm_source' => $donnees['utm_source'] ?? null,
-                'utm_medium' => $donnees['utm_medium'] ?? null,
-                'utm_campagne' => $donnees['utm_campagne'] ?? null,
-                'navigateur' => $infoNavigateur['navigateur'],
-                'version_navigateur' => $infoNavigateur['version'],
-                'systeme_exploitation' => $infoNavigateur['systeme'],
-                'appareil' => $donnees['appareil'] ?? $infoNavigateur['appareil'],
-                'pays_code' => $infoPays['code'],
-                'pays_nom' => $infoPays['nom'],
-                'est_rebond' => true, // Mis à jour par mettreAJourDuree()
-                'est_nouvelle_session' => $estNouvelleSession,
-                'cree_le' => now(),
+            $visite = Visite::create([
+                "site_id" => $site->id,
+                "session_id" => $sessionId,
+                "url" => $this->nettoyerUrl($donnees["url"] ?? ""),
+                "chemin" => $this->nettoyerChemin($donnees["chemin"] ?? "/"),
+                "titre" => $donnees["titre"] ?? null,
+                "referent" => $donnees["referent"] ?? null,
+                "referent_domaine" => $donnees["referent_domaine"] ?? null,
+                "utm_source" => $donnees["utm_source"] ?? null,
+                "utm_medium" => $donnees["utm_medium"] ?? null,
+                "utm_campagne" => $donnees["utm_campagne"] ?? null,
+                "navigateur" => $infoNavigateur["navigateur"],
+                "version_navigateur" => $infoNavigateur["version"],
+                "systeme_exploitation" => $infoNavigateur["systeme"],
+                "appareil" =>
+                    $donnees["appareil"] ?? $infoNavigateur["appareil"],
+                "pays_code" => $infoPays["code"],
+                "pays_nom" => $infoPays["nom"],
+                "est_rebond" => true, // Mis à jour par mettreAJourDuree()
+                "est_nouvelle_session" => $estNouvelleSession,
+                "cree_le" => now(),
             ]);
+
+            //Pipeline plugins : traitement APRÈS stockage
+            $manager->apresVisite($visite, $donnees, $request);
+
+            return $visite;
         } catch (\Throwable $e) {
             Log::error(
-                'TrackingService::enregistrerVisite : '.$e->getMessage(),
+                "TrackingService::enregistrerVisite : " . $e->getMessage(),
             );
 
             return null;
@@ -75,23 +86,23 @@ class TrackingService
     ): void {
         try {
             $sessionId = $this->genererSessionId($request, $site->id);
-            $duree = (int) ($donnees['duree'] ?? 0);
+            $duree = (int) ($donnees["duree"] ?? 0);
 
-            $visite = Visite::where('site_id', $site->id)
-                ->where('session_id', $sessionId)
-                ->where('chemin', $donnees['chemin'] ?? '/')
-                ->latest('cree_le')
+            $visite = Visite::where("site_id", $site->id)
+                ->where("session_id", $sessionId)
+                ->where("chemin", $donnees["chemin"] ?? "/")
+                ->latest("cree_le")
                 ->first();
 
             if ($visite) {
                 $visite->update([
-                    'duree_session' => $duree,
-                    'est_rebond' => $duree < 10, // < 10 secondes = rebond
+                    "duree_session" => $duree,
+                    "est_rebond" => $duree < 10, // < 10 secondes = rebond
                 ]);
             }
         } catch (\Throwable $e) {
             Log::error(
-                'TrackingService::mettreAJourDuree : '.$e->getMessage(),
+                "TrackingService::mettreAJourDuree : " . $e->getMessage(),
             );
         }
     }
@@ -107,24 +118,33 @@ class TrackingService
         try {
             $sessionId = $this->genererSessionId($request, $site->id);
 
-            $visite = Visite::where('site_id', $site->id)
-                ->where('session_id', $sessionId)
-                ->latest('cree_le')
+            //Pipeline plugins
+            $manager = app(PluginManager::class);
+            $donnees = $manager->enrichirTracking($donnees, $request);
+
+            $visite = Visite::where("site_id", $site->id)
+                ->where("session_id", $sessionId)
+                ->latest("cree_le")
                 ->first();
 
-            return Evenement::create([
-                'site_id' => $site->id,
-                'visite_id' => $visite?->id,
-                'session_id' => $sessionId,
-                'type' => 'personnalise',
-                'nom' => $donnees['nom'] ?? 'Événement',
-                'donnees' => $donnees['donnees'] ?? null,
-                'chemin' => $donnees['chemin'] ?? null,
-                'cree_le' => now(),
+            $evenement = Evenement::create([
+                "site_id" => $site->id,
+                "visite_id" => $visite?->id,
+                "session_id" => $sessionId,
+                "type" => "personnalise",
+                "nom" => $donnees["nom"] ?? "Événement",
+                "donnees" => $donnees["donnees"] ?? null,
+                "chemin" => $donnees["chemin"] ?? null,
+                "cree_le" => now(),
             ]);
+
+            //Pipeline plugins
+            $manager->apresEvenement($evenement, $donnees, $request);
+
+            return $evenement;
         } catch (\Throwable $e) {
             Log::error(
-                'TrackingService::enregistrerEvenement : '.$e->getMessage(),
+                "TrackingService::enregistrerEvenement : " . $e->getMessage(),
             );
 
             return null;
@@ -138,15 +158,15 @@ class TrackingService
 
             if ($position && $position->countryCode) {
                 return [
-                    'code' => strtoupper($position->countryCode),
-                    'nom' => $position->countryName ?? $position->countryCode,
+                    "code" => strtoupper($position->countryCode),
+                    "nom" => $position->countryName ?? $position->countryCode,
                 ];
             }
         } catch (\Throwable $e) {
-            Log::warning('Géolocalisation échouée : '.$e->getMessage());
+            Log::warning("Géolocalisation échouée : " . $e->getMessage());
         }
 
-        return ['code' => null, 'nom' => null];
+        return ["code" => null, "nom" => null];
     }
 
     /**
@@ -158,12 +178,12 @@ class TrackingService
      */
     private function genererSessionId(Request $request, int $siteId): string
     {
-        $ip = $request->ip() ?? '';
-        $userAgent = $request->userAgent() ?? '';
-        $date = now()->format('Y-m-d'); // Change chaque jour
-        $sel = config('app.key'); // Sel secret de l'app
+        $ip = $request->ip() ?? "";
+        $userAgent = $request->userAgent() ?? "";
+        $date = now()->format("Y-m-d"); // Change chaque jour
+        $sel = config("app.key"); // Sel secret de l'app
 
-        return hash('sha256', $ip.$userAgent.$date.$siteId.$sel);
+        return hash("sha256", $ip . $userAgent . $date . $siteId . $sel);
     }
 
     /**
@@ -172,8 +192,8 @@ class TrackingService
      */
     private function verifierNouvelleSession(string $sessionId): bool
     {
-        return ! Visite::where('session_id', $sessionId)
-            ->where('cree_le', '>=', now()->subSeconds(self::DUREE_SESSION))
+        return !Visite::where("session_id", $sessionId)
+            ->where("cree_le", ">=", now()->subSeconds(self::DUREE_SESSION))
             ->exists();
     }
 
@@ -185,26 +205,26 @@ class TrackingService
      */
     private function parserUserAgent(?string $userAgent): array
     {
-        if (! $userAgent) {
+        if (!$userAgent) {
             return [
-                'navigateur' => null,
-                'version' => null,
-                'systeme' => null,
-                'appareil' => 'inconnu',
+                "navigateur" => null,
+                "version" => null,
+                "systeme" => null,
+                "appareil" => "inconnu",
             ];
         }
 
-        $navigateur = 'Autre';
+        $navigateur = "Autre";
         $version = null;
 
         $navigateurs = [
-            'Edg' => 'Edge',
-            'OPR' => 'Opera',
-            'Chrome' => 'Chrome',
-            'Firefox' => 'Firefox',
-            'Safari' => 'Safari',
-            'MSIE' => 'Internet Explorer',
-            'Trident' => 'Internet Explorer',
+            "Edg" => "Edge",
+            "OPR" => "Opera",
+            "Chrome" => "Chrome",
+            "Firefox" => "Firefox",
+            "Safari" => "Safari",
+            "MSIE" => "Internet Explorer",
+            "Trident" => "Internet Explorer",
         ];
 
         foreach ($navigateurs as $cle => $nom) {
@@ -216,16 +236,16 @@ class TrackingService
             }
         }
 
-        $systeme = 'Autre';
+        $systeme = "Autre";
 
         $systemes = [
-            'Windows NT 10' => 'Windows 10/11',
-            'Windows NT 6' => 'Windows',
-            'Mac OS X' => 'macOS',
-            'Linux' => 'Linux',
-            'Android' => 'Android',
-            'iPhone' => 'iOS',
-            'iPad' => 'iPadOS',
+            "Windows NT 10" => "Windows 10/11",
+            "Windows NT 6" => "Windows",
+            "Mac OS X" => "macOS",
+            "Linux" => "Linux",
+            "Android" => "Android",
+            "iPhone" => "iOS",
+            "iPad" => "iPadOS",
         ];
 
         foreach ($systemes as $cle => $nom) {
@@ -235,21 +255,21 @@ class TrackingService
             }
         }
 
-        $appareil = 'ordinateur';
+        $appareil = "ordinateur";
 
-        if (preg_match('/tablet|ipad|playbook|silk/i', $userAgent)) {
-            $appareil = 'tablette';
+        if (preg_match("/tablet|ipad|playbook|silk/i", $userAgent)) {
+            $appareil = "tablette";
         } elseif (
-            preg_match('/mobile|iphone|ipod|android|blackberry/i', $userAgent)
+            preg_match("/mobile|iphone|ipod|android|blackberry/i", $userAgent)
         ) {
-            $appareil = 'mobile';
+            $appareil = "mobile";
         }
 
         return [
-            'navigateur' => $navigateur,
-            'version' => $version,
-            'systeme' => $systeme,
-            'appareil' => $appareil,
+            "navigateur" => $navigateur,
+            "version" => $version,
+            "systeme" => $systeme,
+            "appareil" => $appareil,
         ];
     }
 
@@ -258,14 +278,14 @@ class TrackingService
      */
     private function estUnBot(?string $userAgent): bool
     {
-        if (! $userAgent) {
+        if (!$userAgent) {
             return true;
         }
 
         $pattern =
-            '/bot|crawl|spider|slurp|teoma|archive|track|'.
-            'facebookexternalhit|Twitterbot|LinkedInBot|'.
-            'WhatsApp|Googlebot|bingbot|yandex/i';
+            "/bot|crawl|spider|slurp|teoma|archive|track|" .
+            "facebookexternalhit|Twitterbot|LinkedInBot|" .
+            "WhatsApp|Googlebot|bingbot|yandex/i";
 
         return (bool) preg_match($pattern, $userAgent);
     }
@@ -276,29 +296,29 @@ class TrackingService
     private function nettoyerUrl(string $url): string
     {
         if (empty($url)) {
-            return '';
+            return "";
         }
 
         try {
             $parsed = parse_url($url);
             $base =
-                ($parsed['scheme'] ?? 'https').
-                '://'.
-                ($parsed['host'] ?? '').
-                ($parsed['path'] ?? '/');
+                ($parsed["scheme"] ?? "https") .
+                "://" .
+                ($parsed["host"] ?? "") .
+                ($parsed["path"] ?? "/");
 
-            if (isset($parsed['query'])) {
-                parse_str($parsed['query'], $params);
+            if (isset($parsed["query"])) {
+                parse_str($parsed["query"], $params);
                 $utms = array_filter(
                     $params,
                     function ($cle) {
-                        return str_starts_with($cle, 'utm_');
+                        return str_starts_with($cle, "utm_");
                     },
                     ARRAY_FILTER_USE_KEY,
                 );
 
-                if (! empty($utms)) {
-                    $base .= '?'.http_build_query($utms);
+                if (!empty($utms)) {
+                    $base .= "?" . http_build_query($utms);
                 }
             }
 
@@ -314,7 +334,7 @@ class TrackingService
     private function nettoyerChemin(string $chemin): string
     {
         // Supprimer le trailing slash sauf pour "/"
-        $chemin = rtrim($chemin, '/') ?: '/';
+        $chemin = rtrim($chemin, "/") ?: "/";
 
         return substr($chemin, 0, 1024);
     }

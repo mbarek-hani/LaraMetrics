@@ -6,7 +6,7 @@
 
     <div x-data="{ confirmSuppression: false }">
         <x-button variant="danger" size="sm" @click="confirmSuppression = true">
-            <x-icon name="trash" class="w-3.5 h-3.5" />
+            <x-custom-icon name="trash" class="w-3.5 h-3.5" />
             Supprimer mon compte
         </x-button>
 

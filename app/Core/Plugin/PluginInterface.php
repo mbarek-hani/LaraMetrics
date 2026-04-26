@@ -2,74 +2,99 @@
 
 namespace App\Core\Plugin;
 
-/**
- * Contrat que TOUS les plugins doivent respecter.
- */
 interface PluginInterface
 {
-    /**
-     * Retourne l'identifiant unique du plugin (slug).
-     * Exemple : "ai-analytics"
-     */
+    //Identité
     public function getIdentifiant(): string;
-
-    /**
-     * Retourne le nom lisible du plugin.
-     * Exemple : "Analyse par Intelligence Artificielle"
-     */
     public function getNom(): string;
-
-    /**
-     * Retourne la version du plugin.
-     * Exemple : "1.2.0"
-     */
     public function getVersion(): string;
 
-    /**
-     * Méthode appelée lors de l'ACTIVATION du plugin.
-     * C'est ici qu'on lance les migrations, seeds, etc.
-     */
+    //Cycle de vie
     public function activer(): void;
-
-    /**
-     * Méthode appelée lors de la DÉSACTIVATION du plugin.
-     * Nettoyage des listeners, caches, etc.
-     */
     public function desactiver(): void;
-
-    /**
-     * Méthode appelée lors de la DÉSINSTALLATION.
-     * Suppression des tables, fichiers, etc.
-     */
     public function desinstaller(): void;
-
-    /**
-     * Enregistre les services, routes, vues du plugin
-     * dans le conteneur Laravel.
-     */
     public function enregistrer(): void;
 
-    /**
-     * Retourne la liste des hooks que ce plugin utilise.
-     * Exemple : ['dashboard.widgets', 'nav.menu']
-     *
-     * @return string[]
-     */
-    public function getHooks(): array;
+    //UI : Onglets dashboard
 
     /**
-     * Retourne la liste des onglets que ce plugin ajoute au dashboard.
-     * Format : [['id' => 'ai', 'label' => 'Analyse IA', 'icone' => '🤖']]
-     *
+     * Onglets ajoutés au dashboard.
      * @return array<int, array{id: string, label: string, icone: string}>
      */
     public function getOnglets(): array;
 
+    //UI : Réglages
+
     /**
-     * Retourne les champs de configuration du plugin.
-     * Format : [['cle' => 'api_key', 'label' => 'Clé API', 'type' => 'password', ...]]
-     *
+     * Champs de configuration du plugin.
      * @return array<int, array{cle: string, label: string, type: string}>
      */
     public function getReglages(): array;
+
+    //UI : Pages et navigation
+
+    /**
+     * Liens ajoutés à la navigation principale.
+     * @return array<int, array{label: string, route: string, icone: string}>
+     */
+    public function getNavigationItems(): array;
+
+    //Hooks système
+
+    /** @return string[] */
+    public function getHooks(): array;
+
+    //Tracking : enrichissement des données
+
+    /**
+     * Traite les données de tracking AVANT enregistrement.
+     * Permet au plugin d'ajouter/modifier des données.
+     * Retourne null pour ne rien modifier.
+     *
+     * @param array $donnees   Données brutes du tracker
+     * @param \Illuminate\Http\Request $request
+     * @return array|null      Données enrichies ou null
+     */
+    public function enrichirTracking(array $donnees, $request): ?array;
+
+    /**
+     * Appelé APRÈS l'enregistrement d'une visite.
+     * Permet au plugin de stocker ses propres métadonnées.
+     *
+     * @param \App\Models\Visite $visite
+     * @param array $donnees
+     * @param \Illuminate\Http\Request $request
+     */
+    public function apresVisite($visite, array $donnees, $request): void;
+
+    /**
+     * Appelé APRÈS l'enregistrement d'un événement.
+     *
+     * @param \App\Models\Evenement $evenement
+     * @param array $donnees
+     * @param \Illuminate\Http\Request $request
+     */
+    public function apresEvenement($evenement, array $donnees, $request): void;
+
+    //Tracking : données JS supplémentaires
+
+    /**
+     * Retourne du JavaScript à injecter dans tracker.js.
+     * Permet au plugin de collecter des données côté client.
+     * Retourne une chaîne JS ou null.
+     */
+    public function getTrackerJavaScript(): ?string;
+
+    //Assets
+
+    /**
+     * Retourne le chemin vers un fichier CSS précompilé.
+     * Sera inclus automatiquement dans le layout.
+     */
+    public function getCssPath(): ?string;
+
+    //Manifest
+
+    /** @return array<string, mixed> */
+    public function getManifest(): array;
 }

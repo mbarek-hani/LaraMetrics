@@ -6,8 +6,8 @@
                 <p class="text-xs text-gray-500 mt-0.5">Analyse automatique de votre trafic.</p>
             </div>
             <x-button variant="primary" size="sm" @click="generer()" x-bind:disabled="chargement">
-                <x-icon x-show="!chargement" name="arrow-path" class="w-3.5 h-3.5" />
-                <x-icon x-show="chargement" name="arrow-path" class="w-3.5 h-3.5 animate-spin" />
+                <x-custom-icon x-show="!chargement" name="arrow-path" class="w-3.5 h-3.5" />
+                <x-custom-icon x-show="chargement" name="arrow-path" class="w-3.5 h-3.5 animate-spin" />
                 <span x-text="chargement ? 'Analyse...' : 'Générer'"></span>
             </x-button>
         </div>
@@ -19,7 +19,7 @@
 
         {{-- État initial --}}
         <div x-show="!rapport && !chargement && !erreur" class="text-center py-10">
-            <x-icon name="cpu" class="w-10 h-10 text-gray-300 mx-auto" />
+            <x-custom-icon name="cpu" class="w-10 h-10 text-gray-300 mx-auto" />
             <p class="mt-2 text-sm text-gray-500">Cliquez sur "Générer" pour lancer l'analyse.</p>
         </div>
 
@@ -39,7 +39,7 @@
                     <ul class="space-y-1.5">
                         <template x-for="point in rapport?.points_cles ?? []" :key="point">
                             <li class="flex items-start gap-2 text-sm text-gray-700">
-                                <x-icon name="check" class="w-3.5 h-3.5 text-green-600 mt-0.5 shrink-0" />
+                                <x-custom-icon name="check" class="w-3.5 h-3.5 text-green-600 mt-0.5 shrink-0" />
                                 <span x-text="point"></span>
                             </li>
                         </template>
