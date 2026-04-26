@@ -9,10 +9,10 @@
             @if($aucunSite)
                 <x-card>
                     <div class="text-center py-8">
-                        <x-icon name="globe" class="w-12 h-12 text-gray-300 mx-auto" />
-                        <h3 class="mt-3 text-sm font-semibold text-gray-900">Aucun site configuré</h3>
+                        <x-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
+                        <h3 class="mt-2 text-sm font-semibold text-gray-900">Aucun site configuré</h3>
                         <p class="mt-1 text-sm text-gray-500">Ajoutez votre premier site pour commencer.</p>
-                        <div class="mt-4">
+                        <div class="mt-3">
                             <x-button variant="primary" href="{{ route('sites.create') }}">
                                 <x-icon name="plus" class="w-4 h-4" />
                                 Ajouter un site
@@ -26,7 +26,6 @@
 
                 {{-- Contrôles --}}
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-
                     <select
                         x-model="siteId"
                         @change="chargerStats()"
@@ -39,21 +38,19 @@
                         @endforeach
                     </select>
 
-                    {{-- Période - Desktop --}}
+                    {{-- Période Desktop --}}
                     <div class="hidden sm:flex items-center border border-gray-300 rounded divide-x divide-gray-300">
                         <template x-for="p in periodes" :key="p.valeur">
                             <button
                                 @click="periode = p.valeur; chargerStats()"
-                                :class="periode === p.valeur
-                                    ? 'bg-gray-100 text-gray-900 font-semibold'
-                                    : 'bg-white text-gray-600 hover:bg-gray-50'"
+                                :class="periode === p.valeur ? 'bg-gray-100 text-gray-900 font-semibold' : 'bg-white text-gray-600 hover:bg-gray-50'"
                                 class="px-3 py-1.5 text-xs transition first:rounded-l last:rounded-r"
                                 x-text="p.label"
                             ></button>
                         </template>
                     </div>
 
-                    {{-- Période - Mobile --}}
+                    {{-- Période Mobile --}}
                     <select
                         x-model="periode"
                         @change="chargerStats()"
@@ -70,21 +67,26 @@
                     <nav class="flex gap-0 min-w-max">
                         <button
                             @click="ongletActif = 'apercu'"
-                            :class="ongletActif === 'apercu'
-                                ? 'border-b-2 border-gray-900 text-gray-900'
-                                : 'text-gray-500 hover:text-gray-700'"
+                            :class="ongletActif === 'apercu' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                             class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                         >
                             <x-icon name="chart-bar" class="w-4 h-4" />
                             Vue d'ensemble
                         </button>
 
+                        <button
+                            @click="ongletActif = 'evenements'"
+                            :class="ongletActif === 'evenements' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+                            class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
+                        >
+                            <x-icon name="cursor-click" class="w-4 h-4" />
+                            Événements
+                        </button>
+
                         @foreach($onglets as $onglet)
                             <button
                                 @click="ongletActif = '{{ $onglet['id'] }}'"
-                                :class="ongletActif === '{{ $onglet['id'] }}'
-                                    ? 'border-b-2 border-gray-900 text-gray-900'
-                                    : 'text-gray-500 hover:text-gray-700'"
+                                :class="ongletActif === '{{ $onglet['id'] }}' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                                 class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                             >
                                 <x-icon :name="$onglet['icone']" class="w-4 h-4" />
@@ -95,9 +97,7 @@
                         @if(!empty($reglages))
                             <button
                                 @click="ongletActif = 'reglages'"
-                                :class="ongletActif === 'reglages'
-                                    ? 'border-b-2 border-gray-900 text-gray-900'
-                                    : 'text-gray-500 hover:text-gray-700'"
+                                :class="ongletActif === 'reglages' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
                                 class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                             >
                                 <x-icon name="cog" class="w-4 h-4" />
@@ -123,41 +123,28 @@
                     {{-- ══════ VUE D'ENSEMBLE ══════ --}}
                     <div x-show="ongletActif === 'apercu'">
 
-                        {{-- Stats Cards --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                             <x-stats-card titre="Visiteurs uniques" icon="users">
-                                <x-slot:valeur>
-                                    <span x-text="stats?.resume?.visiteurs_uniques ?? 0"></span>
-                                </x-slot:valeur>
+                                <x-slot:valeur><span x-text="stats?.resume?.visiteurs_uniques ?? 0"></span></x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Pages vues" icon="eye">
-                                <x-slot:valeur>
-                                    <span x-text="stats?.resume?.pages_vues ?? 0"></span>
-                                </x-slot:valeur>
+                                <x-slot:valeur><span x-text="stats?.resume?.pages_vues ?? 0"></span></x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Taux de rebond" icon="arrow-trending-down">
-                                <x-slot:valeur>
-                                    <span x-text="(stats?.resume?.taux_rebond ?? 0) + '%'"></span>
-                                </x-slot:valeur>
+                                <x-slot:valeur><span x-text="(stats?.resume?.taux_rebond ?? 0) + '%'"></span></x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Durée moyenne" icon="clock">
-                                <x-slot:valeur>
-                                    <span x-text="formaterDuree(stats?.resume?.duree_moyenne ?? 0)"></span>
-                                </x-slot:valeur>
+                                <x-slot:valeur><span x-text="formaterDuree(stats?.resume?.duree_moyenne ?? 0)"></span></x-slot:valeur>
                             </x-stats-card>
                         </div>
 
-                        {{-- Graphique --}}
                         <x-card titre="Évolution du trafic" class="mb-4">
                             <div class="h-56">
                                 <canvas x-ref="graphique"></canvas>
                             </div>
                         </x-card>
 
-                        {{-- Grille --}}
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                            {{-- Pages --}}
                             <x-card titre="Pages populaires" :padding="false">
                                 <table class="w-full text-sm">
                                     <thead>
@@ -182,7 +169,6 @@
                                 </table>
                             </x-card>
 
-                            {{-- Référents --}}
                             <x-card titre="Sources de trafic" :padding="false">
                                 <table class="w-full text-sm">
                                     <thead>
@@ -210,7 +196,6 @@
                                 </table>
                             </x-card>
 
-                            {{-- Pays --}}
                             <x-card titre="Pays">
                                 <div class="space-y-2">
                                     <template x-for="pays in (stats?.top_pays ?? []).slice(0, 8)" :key="pays.pays_code">
@@ -228,7 +213,6 @@
                                 </div>
                             </x-card>
 
-                            {{-- Appareils --}}
                             <x-card titre="Appareils">
                                 <div class="flex items-center gap-6">
                                     <div class="w-28 h-28 shrink-0">
@@ -237,11 +221,7 @@
                                     <div class="space-y-2 flex-1">
                                         <template x-for="app in stats?.appareils ?? []" :key="app.appareil">
                                             <div class="flex items-center justify-between text-sm">
-                                                <div class="flex items-center gap-2">
-                                                    <x-icon name="computer" class="w-4 h-4 text-gray-400"
-                                                        x-bind:class="app.appareil === 'mobile' ? 'hidden' : (app.appareil === 'tablette' ? 'hidden' : '')" />
-                                                    <span class="text-gray-900 capitalize" x-text="app.appareil"></span>
-                                                </div>
+                                                <span class="text-gray-900 capitalize" x-text="app.appareil"></span>
                                                 <span class="text-gray-600" x-text="app.visiteurs"></span>
                                             </div>
                                         </template>
@@ -251,6 +231,111 @@
                         </div>
 
                         @hook('dashboard.widgets')
+                    </div>
+
+                    {{-- ══════ ÉVÉNEMENTS ══════ --}}
+                    <div x-show="ongletActif === 'evenements'">
+
+                        {{-- Résumé événements --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                            <x-stats-card titre="Total événements" icon="cursor-click">
+                                <x-slot:valeur>
+                                    <span x-text="totalEvenements()"></span>
+                                </x-slot:valeur>
+                            </x-stats-card>
+                            <x-stats-card titre="Types différents" icon="tag">
+                                <x-slot:valeur>
+                                    <span x-text="stats?.evenements_par_nom?.length ?? 0"></span>
+                                </x-slot:valeur>
+                            </x-stats-card>
+                            <x-stats-card titre="Sessions avec événements" icon="users">
+                                <x-slot:valeur>
+                                    <span x-text="totalSessionsEvenements()"></span>
+                                </x-slot:valeur>
+                            </x-stats-card>
+                        </div>
+
+                        {{-- Graphique événements par jour --}}
+                        <x-card titre="Événements par jour" class="mb-4">
+                            <div class="h-48">
+                                <canvas x-ref="graphiqueEvenements"></canvas>
+                            </div>
+                        </x-card>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                            {{-- Événements par nom --}}
+                            <x-card titre="Événements par nom" :padding="false">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-gray-200 text-left">
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Nom</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Total</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Sessions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="evt in stats?.evenements_par_nom ?? []" :key="evt.nom">
+                                            <tr class="border-b border-gray-100">
+                                                <td class="px-4 py-2">
+                                                    <div class="flex items-center gap-2">
+                                                        <x-icon name="bolt" class="w-3.5 h-3.5 text-gray-400" />
+                                                        <span class="text-gray-900" x-text="evt.nom"></span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-2 text-gray-600 text-right" x-text="evt.total"></td>
+                                                <td class="px-4 py-2 text-gray-600 text-right" x-text="evt.sessions"></td>
+                                            </tr>
+                                        </template>
+                                        <template x-if="!stats?.evenements_par_nom?.length">
+                                            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </x-card>
+
+                            {{-- Derniers événements --}}
+                            <x-card titre="Derniers événements" :padding="false">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-gray-200 text-left">
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Événement</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Page</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="evt in (stats?.derniers_evenements ?? []).slice(0, 10)" :key="evt.id">
+                                            <tr class="border-b border-gray-100">
+                                                <td class="px-4 py-2 text-gray-900" x-text="evt.nom"></td>
+                                                <td class="px-4 py-2 text-gray-500 truncate max-w-[150px]" x-text="evt.chemin || '—'"></td>
+                                                <td class="px-4 py-2 text-gray-400 text-right text-xs whitespace-nowrap" x-text="formaterDate(evt.cree_le)"></td>
+                                            </tr>
+                                        </template>
+                                        <template x-if="!stats?.derniers_evenements?.length">
+                                            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </x-card>
+                        </div>
+
+                        {{-- Aide tracking événements --}}
+                        <x-card class="mt-4">
+                            <div class="flex items-start gap-3">
+                                <x-icon name="information-circle" class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-900">Comment tracker des événements ?</h4>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        Utilisez l'API JavaScript depuis votre site :
+                                    </p>
+                                    <pre class="mt-2 bg-gray-100 border border-gray-200 rounded p-3 text-xs font-mono text-gray-800 overflow-x-auto"><code>LaraMetrics.event('clic_bouton', {
+    bouton: 'inscription',
+    page: '/accueil'
+});</code></pre>
+                                </div>
+                            </div>
+                        </x-card>
                     </div>
 
                     {{-- ══════ ONGLETS PLUGINS ══════ --}}
@@ -308,11 +393,10 @@
 
                                     <div class="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
                                         <x-button variant="primary" size="sm" @click="sauvegarder()" x-bind:disabled="sauvegarde">
-                                            <span x-show="!sauvegarde">Sauvegarder</span>
-                                            <span x-show="sauvegarde">Sauvegarde...</span>
+                                            <span x-text="sauvegarde ? 'Sauvegarde...' : 'Sauvegarder'"></span>
                                         </x-button>
                                         <span x-show="succes" x-transition class="text-sm text-green-600">
-                                            <x-icon name="check" class="w-4 h-4 inline" /> Sauvegardé
+                                            Sauvegardé
                                         </span>
                                     </div>
                                 </x-card>
@@ -339,6 +423,7 @@
             stats: null,
             _chart: null,
             _chartApp: null,
+            _chartEvt: null,
 
             periodes: [
                 { valeur: 'aujourdhui',  label: "Aujourd'hui" },
@@ -358,7 +443,11 @@
                     });
                     if (!r.ok) throw new Error('Erreur ' + r.status);
                     this.stats = await r.json();
-                    this.$nextTick(() => { this.dessinerGraphique(); this.dessinerAppareils(); });
+                    this.$nextTick(() => {
+                        this.dessinerGraphique();
+                        this.dessinerAppareils();
+                        this.dessinerEvenements();
+                    });
                 } catch (e) {
                     this.erreur = e.message;
                 } finally {
@@ -405,10 +494,48 @@
                 });
             },
 
+            dessinerEvenements() {
+                const c = this.$refs.graphiqueEvenements;
+                if (!c) return;
+                if (this._chartEvt) this._chartEvt.destroy();
+                const d = this.stats?.evenements_par_jour ?? [];
+                if (!d.length) return;
+                this._chartEvt = new Chart(c, {
+                    type: 'bar',
+                    data: {
+                        labels: d.map(e => new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
+                        datasets: [{
+                            label: 'Événements',
+                            data: d.map(e => e.total),
+                            backgroundColor: '#374151',
+                            borderRadius: 3,
+                        }],
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                        plugins: { legend: { display: false } },
+                    },
+                });
+            },
+
+            totalEvenements() {
+                return (this.stats?.evenements_par_nom ?? []).reduce((s, e) => s + e.total, 0);
+            },
+
+            totalSessionsEvenements() {
+                return (this.stats?.evenements_par_nom ?? []).reduce((s, e) => s + e.sessions, 0);
+            },
+
             formaterDuree(s) {
                 if (!s || s < 1) return '0s';
                 const m = Math.floor(s / 60), sec = Math.floor(s % 60);
                 return m > 0 ? m + 'm ' + sec + 's' : sec + 's';
+            },
+
+            formaterDate(d) {
+                if (!d) return '';
+                return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
             },
 
             drapeau(code) {
