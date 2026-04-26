@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Core\Plugin\PluginManager;
+use App\Models\Plugin as PluginModele;
+use Illuminate\Http\Request;
+
+class PluginController extends Controller
+{
+    public function index()
+    {
+        $manager = app(PluginManager::class);
+        $decouverts = $manager->getPluginsDecouverts();
+
+        // Construire la liste des plugins avec leur état
+        $plugins = [];
+
+        foreach ($decouverts as $id => $plugin) {
+            $enBdd = PluginModele::where("identifiant", $id)->first();
+
+            $plugins[] = [
+                "identifiant" => $id,
+                "nom" => $plugin->getNom(),
+                "version" => $plugin->getVersion(),
+                "description" => $plugin->getManifest()["description"] ?? "",
+                "auteur" => $plugin->getManifest()["auteur"] ?? "Inconnu",
+                "actif" => $enBdd?->actif ?? false,
+                "installe" => $enBdd?->installe ?? false,
+                "onglets" => $plugin->getOnglets(),
+                "hooks" => $plugin->getHooks(),
+            ];
+        }
+
+        return view("plugins.index", compact("plugins"));
+    }
+
+    public function activer(Request $request, string $identifiant)
+    {
+        $manager = app(PluginManager::class);
+        $succes = $manager->activer($identifiant);
+
+        return redirect()
+            ->route("plugins.index")
+            ->with(
+                $succes ? "succes" : "erreur",
+                $succes
+                    ? "Plugin « {$identifiant} » activé."
+                    : "Impossible d'activer le plugin.",
+            );
+    }
+
+    public function desactiver(Request $request, string $identifiant)
+    {
+        $manager = app(PluginManager::class);
+        $succes = $manager->desactiver($identifiant);
+
+        return redirect()
+            ->route("plugins.index")
+            ->with(
+                $succes ? "succes" : "erreur",
+                $succes
+                    ? "Plugin « {$identifiant} » désactivé."
+                    : "Impossible de désactiver le plugin.",
+            );
+    }
+}
