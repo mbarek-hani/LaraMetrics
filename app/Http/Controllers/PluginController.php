@@ -17,22 +17,22 @@ class PluginController extends Controller
         $plugins = [];
 
         foreach ($decouverts as $id => $plugin) {
-            $enBdd = PluginModele::where("identifiant", $id)->first();
+            $enBdd = PluginModele::where('identifiant', $id)->first();
 
             $plugins[] = [
-                "identifiant" => $id,
-                "nom" => $plugin->getNom(),
-                "version" => $plugin->getVersion(),
-                "description" => $plugin->getManifest()["description"] ?? "",
-                "auteur" => $plugin->getManifest()["auteur"] ?? "Inconnu",
-                "actif" => $enBdd?->actif ?? false,
-                "installe" => $enBdd?->installe ?? false,
-                "onglets" => $plugin->getOnglets(),
-                "hooks" => $plugin->getHooks(),
+                'identifiant' => $id,
+                'nom' => $plugin->getNom(),
+                'version' => $plugin->getVersion(),
+                'description' => $plugin->getManifest()['description'] ?? '',
+                'auteur' => $plugin->getManifest()['auteur'] ?? 'Inconnu',
+                'actif' => $enBdd?->actif ?? false,
+                'installe' => $enBdd?->installe ?? false,
+                'onglets' => $plugin->getOnglets(),
+                'hooks' => $plugin->getHooks(),
             ];
         }
 
-        return view("plugins.index", compact("plugins"));
+        return view('plugins.index', compact('plugins'));
     }
 
     public function activer(Request $request, string $identifiant)
@@ -41,9 +41,9 @@ class PluginController extends Controller
         $succes = $manager->activer($identifiant);
 
         return redirect()
-            ->route("plugins.index")
+            ->route('plugins.index')
             ->with(
-                $succes ? "succes" : "erreur",
+                $succes ? 'succes' : 'erreur',
                 $succes
                     ? "Plugin « {$identifiant} » activé."
                     : "Impossible d'activer le plugin.",
@@ -56,12 +56,12 @@ class PluginController extends Controller
         $succes = $manager->desactiver($identifiant);
 
         return redirect()
-            ->route("plugins.index")
+            ->route('plugins.index')
             ->with(
-                $succes ? "succes" : "erreur",
+                $succes ? 'succes' : 'erreur',
                 $succes
                     ? "Plugin « {$identifiant} » désactivé."
-                    : "Impossible de désactiver le plugin.",
+                    : 'Impossible de désactiver le plugin.',
             );
     }
 }

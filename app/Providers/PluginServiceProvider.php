@@ -28,16 +28,11 @@ class PluginServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if ($this->doitIgnorer()) {
-            $this->enregistrerDirectivesBlade();
-
-            return;
-        }
-
-        $manager = $this->app->make(PluginManager::class);
-        $manager->initialiser();
-
         $this->enregistrerDirectivesBlade();
+        if (! $this->doitIgnorer()) {
+            $manager = $this->app->make(PluginManager::class);
+            $manager->initialiser();
+        }
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Core\Plugin;
 
 use App\Models\Plugin as PluginModele;
@@ -20,7 +21,7 @@ class PluginManager
 
     public function initialiser(): void
     {
-        if (!$this->tableExiste()) {
+        if (! $this->tableExiste()) {
             return;
         }
 
@@ -37,7 +38,7 @@ class PluginManager
     private function tableExiste(): bool
     {
         try {
-            return Schema::hasTable("plugins");
+            return Schema::hasTable('plugins');
         } catch (\Throwable) {
             return false;
         }
@@ -47,8 +48,8 @@ class PluginManager
     private function getActifsEnBdd(): array
     {
         try {
-            return PluginModele::where("actif", true)
-                ->pluck("identifiant")
+            return PluginModele::where('actif', true)
+                ->pluck('identifiant')
                 ->toArray();
         } catch (\Throwable) {
             return [];
@@ -67,17 +68,17 @@ class PluginManager
             $this->pluginsActifs[$plugin->getIdentifiant()] = $plugin;
         } catch (\Throwable $e) {
             Log::error(
-                "Plugin [{$plugin->getIdentifiant()}] : " . $e->getMessage(),
+                "Plugin [{$plugin->getIdentifiant()}] : ".$e->getMessage(),
             );
         }
     }
 
-    //Activation / Désactivation
+    // Activation / Désactivation
 
     public function activer(string $id): bool
     {
         $plugin = $this->pluginsDecouverts[$id] ?? null;
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
@@ -85,22 +86,24 @@ class PluginManager
             $plugin->activer();
 
             PluginModele::updateOrCreate(
-                ["identifiant" => $id],
+                ['identifiant' => $id],
                 [
-                    "nom" => $plugin->getNom(),
-                    "version" => $plugin->getVersion(),
-                    "actif" => true,
-                    "installe" => true,
-                    "active_le" => now(),
-                    "installe_le" => now(),
-                    "metadonnees" => $plugin->getManifest(),
+                    'nom' => $plugin->getNom(),
+                    'version' => $plugin->getVersion(),
+                    'actif' => true,
+                    'installe' => true,
+                    'active_le' => now(),
+                    'installe_le' => now(),
+                    'metadonnees' => $plugin->getManifest(),
                 ],
             );
 
             $this->chargerPlugin($plugin);
+
             return true;
         } catch (\Throwable $e) {
-            Log::error("Activation [{$id}] : " . $e->getMessage());
+            Log::error("Activation [{$id}] : ".$e->getMessage());
+
             return false;
         }
     }
@@ -108,22 +111,24 @@ class PluginManager
     public function desactiver(string $id): bool
     {
         $plugin = $this->pluginsActifs[$id] ?? null;
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
         try {
             $plugin->desactiver();
-            PluginModele::where("identifiant", $id)->update(["actif" => false]);
+            PluginModele::where('identifiant', $id)->update(['actif' => false]);
             unset($this->pluginsActifs[$id]);
+
             return true;
         } catch (\Throwable $e) {
-            Log::error("Désactivation [{$id}] : " . $e->getMessage());
+            Log::error("Désactivation [{$id}] : ".$e->getMessage());
+
             return false;
         }
     }
 
-    //Hooks
+    // Hooks
 
     /** @return string[] */
     public function executerHook(string $hook, array $donnees = []): array
@@ -131,7 +136,7 @@ class PluginManager
         $resultats = [];
 
         foreach ($this->hooks[$hook] ?? [] as $plugin) {
-            if (method_exists($plugin, "rendrePourHook")) {
+            if (method_exists($plugin, 'rendrePourHook')) {
                 $resultats[] = $plugin->rendrePourHook($hook, $donnees);
             }
         }
@@ -139,7 +144,7 @@ class PluginManager
         return $resultats;
     }
 
-    //Tracking Pipeline
+    // Tracking Pipeline
 
     /**
      * Passe les données de tracking à travers tous les plugins actifs.
@@ -167,7 +172,7 @@ class PluginManager
                 $plugin->apresVisite($visite, $donnees, $request);
             } catch (\Throwable $e) {
                 Log::error(
-                    "Plugin [{$plugin->getIdentifiant()}] apresVisite : " .
+                    "Plugin [{$plugin->getIdentifiant()}] apresVisite : ".
                         $e->getMessage(),
                 );
             }
@@ -184,14 +189,14 @@ class PluginManager
                 $plugin->apresEvenement($evenement, $donnees, $request);
             } catch (\Throwable $e) {
                 Log::error(
-                    "Plugin [{$plugin->getIdentifiant()}] apresEvenement : " .
+                    "Plugin [{$plugin->getIdentifiant()}] apresEvenement : ".
                         $e->getMessage(),
                 );
             }
         }
     }
 
-    //UI Data
+    // UI Data
 
     /** @return array<int, array{id: string, label: string, icone: string, plugin: string}> */
     public function getOnglets(): array
@@ -200,7 +205,7 @@ class PluginManager
 
         foreach ($this->pluginsActifs as $plugin) {
             foreach ($plugin->getOnglets() as $onglet) {
-                $onglet["plugin"] = $plugin->getIdentifiant();
+                $onglet['plugin'] = $plugin->getIdentifiant();
                 $onglets[] = $onglet;
             }
         }
@@ -215,10 +220,10 @@ class PluginManager
 
         foreach ($this->pluginsActifs as $plugin) {
             $champs = $plugin->getReglages();
-            if (!empty($champs)) {
+            if (! empty($champs)) {
                 $reglages[$plugin->getIdentifiant()] = [
-                    "nom" => $plugin->getNom(),
-                    "champs" => $champs,
+                    'nom' => $plugin->getNom(),
+                    'champs' => $champs,
                 ];
             }
         }
@@ -237,7 +242,7 @@ class PluginManager
 
         foreach ($this->pluginsActifs as $plugin) {
             foreach ($plugin->getNavigationItems() as $item) {
-                $item["plugin"] = $plugin->getIdentifiant();
+                $item['plugin'] = $plugin->getIdentifiant();
                 $items[] = $item;
             }
         }
@@ -269,19 +274,19 @@ class PluginManager
      */
     public function getTrackerJavaScript(): string
     {
-        $js = "";
+        $js = '';
 
         foreach ($this->pluginsActifs as $plugin) {
             $code = $plugin->getTrackerJavaScript();
             if ($code) {
-                $js .= "\n// Plugin: {$plugin->getIdentifiant()}\n" . $code;
+                $js .= "\n// Plugin: {$plugin->getIdentifiant()}\n".$code;
             }
         }
 
         return $js;
     }
 
-    //Accesseurs
+    // Accesseurs
 
     /** @return array<string, PluginInterface> */
     public function getPluginsDecouverts(): array

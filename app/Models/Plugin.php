@@ -7,35 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 class Plugin extends Model
 {
     protected $fillable = [
-        "identifiant",
-        "nom",
-        "version",
-        "description",
-        "auteur",
-        "actif",
-        "installe",
-        "configuration",
-        "metadonnees",
-        "installe_le",
-        "active_le",
+        'identifiant',
+        'nom',
+        'version',
+        'description',
+        'auteur',
+        'actif',
+        'installe',
+        'configuration',
+        'metadonnees',
+        'installe_le',
+        'active_le',
     ];
 
     protected $casts = [
-        "actif" => "boolean",
-        "installe" => "boolean",
-        "configuration" => "array",
-        "metadonnees" => "array",
-        "installe_le" => "datetime",
-        "active_le" => "datetime",
+        'actif' => 'boolean',
+        'installe' => 'boolean',
+        'configuration' => 'array',
+        'metadonnees' => 'array',
+        'installe_le' => 'datetime',
+        'active_le' => 'datetime',
     ];
 
     public function scopeActifs($query)
     {
-        return $query->where("actif", true);
+        return $query->where('actif', true);
     }
 
     public function scopeInstalles($query)
     {
-        return $query->where("installe", true);
+        return $query->where('installe', true);
     }
 }
