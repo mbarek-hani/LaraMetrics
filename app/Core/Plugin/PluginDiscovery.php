@@ -33,6 +33,13 @@ class PluginDiscovery
         }
 
         $dossiers = glob($this->dossierPlugins.'/*', GLOB_ONLYDIR);
+        if (! $dossiers) {
+            Log::warning(
+                "There was an error trying to match directories inside {$this->dossierPlugins}",
+            );
+
+            return $plugins;
+        }
 
         foreach ($dossiers as $dossier) {
             $plugin = $this->chargerPlugin($dossier);
