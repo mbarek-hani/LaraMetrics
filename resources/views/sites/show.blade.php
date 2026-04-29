@@ -47,7 +47,7 @@
                 >
                     <pre class="bg-gray-100 border border-gray-200 rounded p-3 text-xs font-mono text-gray-800 overflow-x-auto"><code>{{ $site->getScriptTracking() }}</code></pre>
 
-                    <button
+                   <button
                         @click="
                             navigator.clipboard.writeText($refs.code.textContent);
                             copie = true;
@@ -55,8 +55,13 @@
                         "
                         class="absolute top-2 right-2 p-1.5 rounded border border-gray-300 bg-white hover:bg-gray-50 transition"
                     >
-                        <x-custom-icon x-show="!copie" name="clipboard" class="w-4 h-4 text-gray-500" />
-                        <x-custom-icon x-show="copie" name="check" class="w-4 h-4 text-green-600" />
+                        <span x-show="!copie">
+                            <x-custom-icon name="clipboard" class="w-4 h-4 text-gray-500" />
+                        </span>
+                        
+                        <span x-show="copie" x-cloak>
+                            <x-custom-icon name="check" class="w-4 h-4 text-green-600" />
+                        </span>
                     </button>
 
                     <span x-ref="code" class="hidden">{{ $site->getScriptTracking() }}</span>
