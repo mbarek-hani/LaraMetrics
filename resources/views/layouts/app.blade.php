@@ -21,18 +21,12 @@
     </head>
     <body class="font-sans antialiased bg-gray-100">
         <div
-            x-data="sidebar()"
+            x-data="{ouvert: false}"
             class="min-h-screen flex"
         >
             {{-- ══════ OVERLAY MOBILE ══════ --}}
             <div
                 x-show="ouvert"
-                x-transition:enter="transition-opacity ease-out duration-200"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
-                x-transition:leave="transition-opacity ease-in duration-150"
-                x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0"
                 @click="ouvert = false"
                 class="fixed inset-0 bg-gray-900/50 z-20 lg:hidden"
                 x-cloak
@@ -43,7 +37,7 @@
                 x-show="ouvert"
                 x-cloak
                 class="fixed top-0 left-0 h-full w-64 bg-gray-50 border-r border-gray-200
-                    flex flex-col z-30 transition-transform duration-200 ease-in-out"
+                    flex flex-col z-30"
             >
                 {{-- Logo + Toggle --}}
                 <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200 shrink-0">
@@ -152,8 +146,8 @@
                             </p>
                         </div>
                         <div class="flex flex-col">
-                            <x-custom-icon name="chevron-up" class="w-4 h-4 text-gray-900 shrink-0 transition-transform duration-200" />
-                            <x-custom-icon name="chevron-down" class="w-4 h-4 text-gray-900 shrink-0 transition-transform duration-200" />
+                            <x-custom-icon name="chevron-up" class="w-4 h-4 text-gray-900 shrink-0" />
+                            <x-custom-icon name="chevron-down" class="w-4 h-4 text-gray-900 shrink-0" />
                         </div>
                     </button>
 
@@ -161,12 +155,6 @@
                     <div
                         x-show="userMenu"
                         @click.outside="userMenu = false"
-                        x-transition:enter="transition ease-out duration-150"
-                        x-transition:enter-start="opacity-0 translate-y-2"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-100"
-                        x-transition:leave-start="opacity-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 translate-y-2"
                         class="absolute bottom-full left-3 right-3 mb-1 bg-gray-50 border border-gray-200
                             rounded-lg shadow-lg py-1 z-50"
                         x-cloak
@@ -200,7 +188,7 @@
             {{-- ══════ CONTENU PRINCIPAL ══════ --}}
             <div
                 :class="ouvert ? 'lg:ml-64' : 'lg:ml-0'"
-                class="flex-1 flex flex-col min-w-0 transition-[margin] duration-200 ease-in-out"
+                class="flex-1 flex flex-col min-w-0"
             >
 
                 {{-- Topbar (juste le toggle) --}}
@@ -219,13 +207,13 @@
                 {{-- Toggle desktop (collapsible) --}}
                 <div
                     :class="ouvert ? 'left-[252px]' : 'left-0'"
-                    class="hidden lg:flex fixed top-5 z-40 transition-[left] duration-200 ease-in-out"
+                    class="hidden lg:flex fixed top-5 z-40"
                 >
                     <button
                         @click="ouvert = !ouvert"
                         class="w-8 h-8 flex items-center justify-center
                             bg-gray-50 border border-gray-200 rounded shadow-sm
-                            text-gray-900 hover:bg-gray-200 transition"
+                            text-gray-900 hover:bg-gray-200"
                         :title="ouvert ? 'Réduire le menu' : 'Ouvrir le menu'"
                     >
                         <span x-show="ouvert" x-cloak>
@@ -243,12 +231,5 @@
         </div>
 
         @stack('scripts')
-        <script>
-            function sidebar() {
-                return {
-                    ouvert: window.innerWidth >= 1024,
-                }
-            }
-        </script>
     </body>
 </html>
