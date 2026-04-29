@@ -33,6 +33,12 @@
                 </x-card>
             @else
                 <div class="space-y-3">
+                    <div class="flex justify-end">
+                        <x-button variant="primary" href="{{ route('sites.create') }}">
+                            <x-custom-icon name="plus" class="w-4 h-4" />
+                            Ajouter un site
+                        </x-button>
+                    </div>
                     @foreach($sites as $site)
                         <x-card>
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
