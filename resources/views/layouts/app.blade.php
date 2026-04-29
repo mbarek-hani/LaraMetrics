@@ -42,8 +42,7 @@
             <aside
                 :class="ouvert ? 'translate-x-0' : '-translate-x-full'"
                 class="fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200
-                    flex flex-col z-30 transition-transform duration-200 ease-in-out
-                    -translate-x-full lg:translate-x-0"
+                    flex flex-col z-30 transition-transform duration-200 ease-in-out"
             >
                 {{-- Logo + Toggle --}}
                 <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200 shrink-0">
