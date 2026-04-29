@@ -112,20 +112,20 @@
                 </div>
 
                 {{-- Chargement --}}
-                <div x-show="chargement" class="flex items-center justify-center py-16">
+                <div x-show="chargement" x-cloak class="flex items-center justify-center py-16">
                     <x-custom-icon name="arrow-path" class="w-5 h-5 text-gray-400 animate-spin" />
                     <span class="ml-2 text-sm text-gray-500">Chargement...</span>
                 </div>
 
                 {{-- Erreur --}}
-                <div x-show="erreur" class="bg-red-50 border border-red-200 rounded p-3 mb-4">
+                <div x-show="erreur" x-cloak class="bg-red-50 border border-red-200 rounded p-3 mb-4">
                     <p class="text-sm text-red-700" x-text="erreur"></p>
                 </div>
 
                 <div x-show="!chargement && !erreur" x-cloak>
 
                     {{-- ══════ VUE D'ENSEMBLE ══════ --}}
-                    <div x-show="ongletActif === 'apercu'">
+                    <div x-show="ongletActif === 'apercu'" x-cloak>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                             <x-stats-card titre="Visiteurs uniques" icon="users">
                                 <x-slot:valeur>
@@ -244,7 +244,7 @@
                     </div>
 
                     {{-- ══════ ÉVÉNEMENTS ══════ --}}
-                    <div x-show="ongletActif === 'evenements'">
+                    <div x-show="ongletActif === 'evenements'" x-cloak>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                             <x-stats-card titre="Total événements" icon="cursor-click">
                                 <x-slot:valeur>
@@ -318,7 +318,7 @@
 
                     {{-- ══════ ONGLETS PLUGINS ══════ --}}
                     @foreach($onglets as $onglet)
-                        <div x-show="ongletActif === '{{ $onglet['id'] }}'">
+                        <div x-show="ongletActif === '{{ $onglet['id'] }}'" x-cloak>
                             @hook('tab.' . $onglet['id'])
                         </div>
                     @endforeach
