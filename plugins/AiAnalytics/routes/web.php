@@ -14,3 +14,5 @@ Route::get('/dernier', [AiReportController::class, 'dernier'])
 // GET /plugins/ai-analytics/historique?site_id=1
 Route::get('/historique', [AiReportController::class, 'historique'])
     ->name('historique');
+
+Route::get('/rapport/{id}', [AiReportController::class, 'show'])->name('show');

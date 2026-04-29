@@ -291,4 +291,53 @@ class AiService
             'modele'          => $this->modele,
         ];
     }
+
+    /**
+    * Génère un rapport pour une période personnalisée.
+    */
+    public function genererRapportPeriode(Site $site, Carbon $debut, Carbon $fin): array
+    {
+        $this->validerConfiguration();
+
+        // Calcul du nombre de jours pour info
+        $jours = $debut->diffInDays($fin) + 1;
+
+        $service = new \App\Services\StatistiqueService($site);
+
+        $donnees = [
+            'periode'   => [
+                'debut' => $debut->format('d/m/Y'),
+                'fin'   => $fin->format('d/m/Y'),
+                'jours' => $jours,
+            ],
+            'resume'    => $service->resume($debut, $fin),
+            'top_pages' => $service->topPages($debut, $fin, 10)->map(fn($p) => [
+                'chemin'    => $p->chemin,
+                'vues'      => $p->vues,
+                'visiteurs' => $p->visiteurs,
+            ])->toArray(),
+            'appareils' => $service->parAppareil($debut, $fin)->map(fn($a) => [
+                'appareil'  => $a->appareil,
+                'visiteurs' => $a->visiteurs,
+            ])->toArray(),
+            'referents' => $service->topReferents($debut, $fin, 5)->map(fn($r) => [
+                'domaine'   => $r->referent_domaine,
+                'visiteurs' => $r->visiteurs,
+            ])->toArray(),
+            'pays'      => $service->topPays($debut, $fin, 5)->map(fn($p) => [
+                'pays'      => $p->pays_nom ?? $p->pays_code,
+                'visiteurs' => $p->visiteurs,
+            ])->toArray(),
+            'evolution' => $service->evolutionParJour($debut, $fin)->map(fn($e) => [
+                'date'       => $e->date,
+                'visiteurs'  => $e->visiteurs,
+                'pages_vues' => $e->pages_vues,
+            ])->toArray(),
+        ];
+
+        $prompt  = $this->construirePrompt($site, $donnees);
+        $reponse = $this->appellerApi($prompt);
+
+        return $this->parserReponse($reponse);
+    }
 }

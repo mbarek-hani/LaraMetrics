@@ -44,11 +44,15 @@ interface PluginInterface
 
     // UI : Pages et navigation
 
+
     /**
-     * Liens ajoutés à la navigation principale.
-     *
-     * @return array<int, array{label: string, route: string, icone: string}>
-     */
+    * @return array<int, array{
+    *     label: string,
+    *     route: string,
+    *     icone: string,
+    *     sous_menus?: array<int, array{label: string, route: string}>
+    * }>
+    */
     public function getNavigationItems(): array;
 
     // Hooks système

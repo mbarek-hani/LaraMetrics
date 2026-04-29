@@ -1,53 +1,76 @@
-<div x-data="aiAnalytics()" x-init="chargerDernier()">
-
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+<div
+    x-data="aiAnalytics()"
+    x-init="init()"
+>
+    {{-- En-tête --}}
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div>
             <h3 class="text-sm font-semibold text-gray-900">Rapport d'analyse IA</h3>
             <p class="text-xs text-gray-500 mt-0.5">
-                Analyse automatique de votre trafic par intelligence artificielle.
+                Analyse intelligente de votre trafic par intelligence artificielle.
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-
-            <select
-                x-model="siteId"
-                @change="chargerDernier()"
-                class="rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-                @foreach(\App\Models\Site::actifs()->orderBy('nom')->get() as $site)
-                    <option value="{{ $site->id }}">{{ $site->nom }}</option>
-                @endforeach
-            </select>
-
-            <x-button
-                variant="primary"
-                size="sm"
-                @click="generer()"
-                x-bind:disabled="generation"
-            >
-                <x-custom-icon
-                    name="arrow-path"
-                    class="w-3.5 h-3.5"
-                    x-bind:class="generation ? 'animate-spin' : ''"
-                />
-                <span x-text="generation ? 'Analyse...' : 'Générer'"></span>
-            </x-button>
-        </div>
+        <x-button
+            variant="primary"
+            size="sm"
+            @click="generer()"
+            x-bind:disabled="generation"
+        >
+            <x-custom-icon
+                name="arrow-path"
+                class="w-3.5 h-3.5"
+                x-bind:class="generation ? 'animate-spin' : ''"
+            />
+            <span x-text="generation ? 'Analyse...' : 'Générer un rapport'"></span>
+        </x-button>
     </div>
 
-    {{-- Erreur de configuration --}}
-    <div
-        x-show="erreurConfig"
-        class="bg-amber-50 border border-amber-200 rounded p-4 mb-4"
-    >
+    {{-- Sélecteur de dates --}}
+    <x-card class="mb-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
+            <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Du</label>
+                <input
+                    type="date"
+                    x-model="dateDebut"
+                    :max="dateMax()"
+                    @change="validerDates()"
+                    class="block w-full rounded border-gray-300 text-sm
+                           focus:border-blue-500 focus:ring-blue-500"
+                >
+            </div>
+            <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Au</label>
+                <input
+                    type="date"
+                    x-model="dateFin"
+                    :max="dateMax()"
+                    :min="dateDebut"
+                    @change="validerDates()"
+                    class="block w-full rounded border-gray-300 text-sm
+                           focus:border-blue-500 focus:ring-blue-500"
+                >
+            </div>
+            <div class="shrink-0">
+                <p class="text-xs text-gray-400" x-show="!erreurDates">
+                    <span x-text="nbJours()"></span> jours analysés
+                </p>
+                <p class="text-xs text-red-500" x-show="erreurDates" x-text="erreurDates"></p>
+            </div>
+        </div>
+    </x-card>
+
+    {{-- Erreur configuration --}}
+    <div x-show="erreurConfig" class="bg-amber-50 border border-amber-200 rounded p-4 mb-4">
         <div class="flex items-start gap-2">
             <x-custom-icon name="exclamation" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
             <div>
                 <p class="text-sm font-medium text-amber-800">Configuration requise</p>
                 <p class="text-xs text-amber-700 mt-1">
-                    Configurez votre clé API dans l'onglet
-                    <strong>Réglages</strong> pour utiliser l'analyse IA.
+                    Configurez votre clé API dans
+                    <a href="{{ route('settings.index') }}" class="underline font-medium">Réglages</a>
+                    pour utiliser l'analyse IA.
                 </p>
             </div>
         </div>
@@ -62,12 +85,6 @@
             <x-custom-icon name="x-mark" class="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
             <p class="text-sm text-red-700" x-text="erreur"></p>
         </div>
-    </div>
-
-    {{-- Chargement --}}
-    <div x-show="chargement && !generation" class="flex items-center justify-center py-12">
-        <x-custom-icon name="arrow-path" class="w-5 h-5 text-gray-400 animate-spin" />
-        <span class="ml-2 text-sm text-gray-500">Chargement...</span>
     </div>
 
     {{-- Génération en cours --}}
@@ -85,7 +102,13 @@
         </x-card>
     </div>
 
-    {{-- État initial : aucun rapport --}}
+    {{-- Chargement initial --}}
+    <div x-show="chargement && !generation" class="flex items-center justify-center py-12">
+        <x-custom-icon name="arrow-path" class="w-5 h-5 text-gray-400 animate-spin" />
+        <span class="ml-2 text-sm text-gray-500">Chargement...</span>
+    </div>
+
+    {{-- État vide --}}
     <div
         x-show="!rapport && !chargement && !generation && !erreur && !erreurConfig"
         x-cloak
@@ -94,8 +117,8 @@
             <div class="text-center py-10">
                 <x-custom-icon name="cpu" class="w-10 h-10 text-gray-300 mx-auto" />
                 <h4 class="mt-3 text-sm font-semibold text-gray-900">Aucun rapport généré</h4>
-                <p class="mt-1 text-sm text-gray-500 max-w-sm mx-auto">
-                    Cliquez sur "Générer" pour lancer votre première analyse IA.
+                <p class="mt-1 text-sm text-gray-500">
+                    Sélectionnez une période et cliquez sur "Générer un rapport".
                 </p>
             </div>
         </x-card>
@@ -104,7 +127,7 @@
     {{-- Rapport --}}
     <div x-show="rapport && !chargement && !generation" x-cloak class="space-y-4">
 
-        {{-- Score + résumé --}}
+        {{-- Score --}}
         <x-card>
             <div class="flex items-start gap-4">
                 <div class="shrink-0 flex flex-col items-center justify-center
@@ -120,12 +143,9 @@
                     ></span>
                     <span class="text-xs text-gray-400">/10</span>
                 </div>
-
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-1">
-                        <h4 class="text-sm font-semibold text-gray-900">
-                            Score de performance
-                        </h4>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <h4 class="text-sm font-semibold text-gray-900">Score de performance</h4>
                         <span
                             class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border"
                             :class="{
@@ -139,8 +159,8 @@
                     <p class="text-sm text-gray-600" x-text="rapport?.resume"></p>
                 </div>
             </div>
-
-            <div class="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-400">
+            <div class="mt-3 pt-3 border-t border-gray-200 flex flex-wrap items-center
+                        justify-between gap-2 text-xs text-gray-400">
                 <span x-text="'Généré le ' + rapport?.genere_le"></span>
                 <span x-text="rapport?.fournisseur + ' · ' + rapport?.modele"></span>
             </div>
@@ -148,8 +168,6 @@
 
         {{-- Points clés + Recommandations --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            {{-- Points clés --}}
             <x-card titre="Points clés">
                 <ul class="space-y-2">
                     <template x-for="(point, i) in rapport?.points_cles ?? []" :key="i">
@@ -159,17 +177,16 @@
                         </li>
                     </template>
                     <template x-if="!rapport?.points_cles?.length">
-                        <li class="text-sm text-gray-400">Aucun point clé identifié.</li>
+                        <li class="text-sm text-gray-400">Aucun point clé.</li>
                     </template>
                 </ul>
             </x-card>
 
-            {{-- Recommandations --}}
             <x-card titre="Recommandations">
                 <ul class="space-y-2">
                     <template x-for="(reco, i) in rapport?.recommandations ?? []" :key="i">
                         <li class="flex items-start gap-2 text-sm text-gray-700">
-                            <span class="text-gray-400 mt-0.5 shrink-0 font-mono text-xs"
+                            <span class="text-gray-400 shrink-0 font-mono text-xs mt-0.5"
                                   x-text="(i + 1) + '.'"></span>
                             <span x-text="reco"></span>
                         </li>
@@ -196,45 +213,45 @@
             </ul>
         </x-card>
 
-        {{-- Historique --}}
-        <x-card titre="Historique des rapports" :padding="false">
-            <div x-show="historique.length === 0" class="px-4 py-6 text-center text-sm text-gray-400">
+        {{-- Historique — responsive corrigé --}}
+        <x-card titre="Historique des rapports">
+            <div x-show="historique.length === 0"
+                 class="text-center text-sm text-gray-400 py-4">
                 Aucun rapport précédent.
             </div>
-            <table class="w-full text-sm" x-show="historique.length > 0">
-                <thead>
-                    <tr class="border-b border-gray-200 text-left">
-                        <th class="px-4 py-2 text-xs font-medium text-gray-500">Date</th>
-                        <th class="px-4 py-2 text-xs font-medium text-gray-500 text-center">Score</th>
-                        <th class="px-4 py-2 text-xs font-medium text-gray-500">Résumé</th>
-                        <th class="px-4 py-2 text-xs font-medium text-gray-500">Modèle</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template x-for="h in historique" :key="h.id">
-                        <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                            @click="rapport = h">
-                            <td class="px-4 py-2 text-gray-500 text-xs whitespace-nowrap"
-                                x-text="h.genere_le"></td>
-                            <td class="px-4 py-2 text-center">
-                                <span
-                                    class="inline-block w-8 text-center text-xs font-bold px-1.5 py-0.5 rounded"
-                                    :class="{
-                                        'bg-green-100 text-green-700' : h.score >= 7,
-                                        'bg-amber-100 text-amber-700' : h.score >= 4 && h.score < 7,
-                                        'bg-red-100 text-red-700'     : h.score < 4,
-                                    }"
-                                    x-text="h.score + '/10'"
-                                ></span>
-                            </td>
-                            <td class="px-4 py-2 text-gray-700 truncate max-w-[250px]"
-                                x-text="h.resume"></td>
-                            <td class="px-4 py-2 text-gray-400 text-xs"
-                                x-text="h.fournisseur + ' · ' + h.modele"></td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
+
+            <div x-show="historique.length > 0" class="space-y-2">
+                <template x-for="h in historique" :key="h.id">
+                    <div
+                        @click="afficherRapport(h)"
+                        class="flex flex-col sm:flex-row sm:items-center gap-2 p-3
+                               border border-gray-200 rounded cursor-pointer
+                               hover:bg-gray-50 transition"
+                        :class="rapport?.id === h.id ? 'bg-gray-50 border-gray-400' : ''"
+                    >
+                        {{-- Score --}}
+                        <span
+                            class="shrink-0 inline-flex items-center justify-center
+                                   w-12 text-center text-xs font-bold px-1.5 py-0.5 rounded"
+                            :class="{
+                                'bg-green-100 text-green-700' : h.score >= 7,
+                                'bg-amber-100 text-amber-700' : h.score >= 4 && h.score < 7,
+                                'bg-red-100 text-red-700'     : h.score < 4,
+                            }"
+                            x-text="h.score + '/10'"
+                        ></span>
+
+                        {{-- Résumé --}}
+                        <p class="flex-1 text-sm text-gray-700 truncate" x-text="h.resume"></p>
+
+                        {{-- Meta --}}
+                        <div class="flex items-center gap-2 shrink-0 text-xs text-gray-400">
+                            <span x-text="h.fournisseur + ' · ' + h.modele"></span>
+                            <span x-text="h.genere_le"></span>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </x-card>
     </div>
 </div>
@@ -242,21 +259,95 @@
 <script>
 function aiAnalytics() {
     return {
-        siteId      : {{ \App\Models\Site::latest()->value('id') ?? 0 }},
+        // ─── Récupère le siteId du dashboard parent ───────────────
+        get siteId() {
+            const root = document.getElementById('dashboard-root');
+            if (root && root._x_dataStack) {
+                return root._x_dataStack[0]?.siteId ?? 0;
+            }
+            return {{ \App\Models\Site::latest()->value('id') ?? 0 }};
+        },
+
+        // ─── État ────────────────────────────────────────────────
         chargement  : false,
         generation  : false,
         rapport     : null,
         historique  : [],
         erreur      : null,
         erreurConfig: false,
+        erreurDates : null,
 
+        // ─── Dates ───────────────────────────────────────────────
+        dateDebut: '',
+        dateFin  : '',
+
+        // ─── Init ────────────────────────────────────────────────
+        init() {
+            // Initialiser les dates par défaut (30 derniers jours)
+            const aujourd = new Date();
+            const il_y_a  = new Date();
+            il_y_a.setDate(aujourd.getDate() - 30);
+
+            this.dateFin   = aujourd.toISOString().split('T')[0];
+            this.dateDebut = il_y_a.toISOString().split('T')[0];
+
+            this.chargerDernier();
+        },
+
+        // ─── Helpers dates ───────────────────────────────────────
+        dateMax() {
+            return new Date().toISOString().split('T')[0];
+        },
+
+        nbJours() {
+            if (!this.dateDebut || !this.dateFin) return 0;
+            const diff = new Date(this.dateFin) - new Date(this.dateDebut);
+            return Math.max(0, Math.round(diff / 86400000) + 1);
+        },
+
+        validerDates() {
+            this.erreurDates = null;
+
+            const debut     = new Date(this.dateDebut);
+            const fin       = new Date(this.dateFin);
+            const aujourd   = new Date();
+            aujourd.setHours(23, 59, 59, 999);
+
+            if (!this.dateDebut || !this.dateFin) {
+                this.erreurDates = 'Veuillez sélectionner les deux dates.';
+                return false;
+            }
+
+            if (debut > aujourd) {
+                this.erreurDates = 'La date de début ne peut pas être dans le futur.';
+                return false;
+            }
+
+            if (fin > aujourd) {
+                this.erreurDates = 'La date de fin ne peut pas être dans le futur.';
+                return false;
+            }
+
+            if (debut > fin) {
+                this.erreurDates = 'La date de début doit être avant la date de fin.';
+                return false;
+            }
+
+            if (this.nbJours() > 365) {
+                this.erreurDates = 'La période ne peut pas dépasser 365 jours.';
+                return false;
+            }
+
+            return true;
+        },
+
+        // ─── Charger le dernier rapport ──────────────────────────
         async chargerDernier() {
             if (!this.siteId) return;
 
             this.chargement  = true;
             this.erreur      = null;
             this.erreurConfig = false;
-            this.rapport     = null;
 
             try {
                 const r = await fetch(
@@ -266,10 +357,9 @@ function aiAnalytics() {
 
                 if (!r.ok) throw new Error('Erreur ' + r.status);
 
-                const data    = await r.json();
-                this.rapport  = data.rapport;
+                const data   = await r.json();
+                this.rapport = data.rapport ? { ...data.rapport, id: data.rapport.id ?? 'dernier' } : null;
 
-                // Charger l'historique en parallèle
                 this.chargerHistorique();
 
             } catch (e) {
@@ -279,8 +369,10 @@ function aiAnalytics() {
             }
         },
 
+        // ─── Générer un nouveau rapport ──────────────────────────
         async generer() {
-            if (!this.siteId || this.generation) return;
+            if (this.generation) return;
+            if (!this.validerDates()) return;
 
             this.generation  = true;
             this.erreur      = null;
@@ -293,13 +385,18 @@ function aiAnalytics() {
                         ...this.headers(),
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ site_id: this.siteId }),
+                    body: JSON.stringify({
+                        site_id    : this.siteId,
+                        date_debut : this.dateDebut,
+                        date_fin   : this.dateFin,
+                    }),
                 });
 
                 const data = await r.json();
 
                 if (!r.ok) {
-                    if (data.erreur?.includes('Clé API')) {
+                    if (data.erreur?.includes('Clé API') ||
+                        data.erreur?.includes('non configurée')) {
                         this.erreurConfig = true;
                     } else {
                         this.erreur = data.erreur ?? 'Erreur inconnue.';
@@ -307,7 +404,7 @@ function aiAnalytics() {
                     return;
                 }
 
-                this.rapport = data.rapport;
+                this.rapport = { ...data.rapport, id: 'nouveau' };
                 this.chargerHistorique();
 
             } catch (e) {
@@ -317,23 +414,40 @@ function aiAnalytics() {
             }
         },
 
+        // ─── Charger historique ──────────────────────────────────
         async chargerHistorique() {
             try {
                 const r = await fetch(
                     `/plugins/ai-analytics/historique?site_id=${this.siteId}`,
                     { headers: this.headers() }
                 );
-
                 if (r.ok) {
                     const data     = await r.json();
                     this.historique = data.rapports ?? [];
                 }
             } catch {
-                // Silencieux — l'historique est optionnel
+                // Silencieux
             }
         },
 
+        afficherRapport(h) {
+            // Charger le rapport complet depuis le serveur
+            fetch(`/plugins/ai-analytics/rapport/${h.id}`, {
+                headers: this.headers()
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.rapport) {
+                    this.rapport = { ...data.rapport, id: h.id };
+                }
+            })
+            .catch(() => {
+                // Fallback : afficher ce qu'on a
+                this.rapport = { ...h };
+            });
+        },
 
+        // ─── Headers ────────────────────────────────────────────
         headers() {
             return {
                 'Accept'       : 'application/json',

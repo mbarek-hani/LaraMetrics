@@ -68,36 +68,13 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * Sauvegarde les réglages d'un plugin.
-     */
-    public function sauvegarderReglages(Request $request): JsonResponse
-    {
-        $request->validate([
-            'plugin' => ['required', 'string'],
-            'reglages' => ['required', 'array'],
-        ]);
-
-        $plugin = PluginModele::where('identifiant', $request->plugin)->first();
-
-        if (! $plugin) {
-            return response()->json(['erreur' => 'Plugin introuvable'], 404);
-        }
-
-        $config = $plugin->configuration ?? [];
-        $config = array_merge($config, $request->reglages);
-        $plugin->update(['configuration' => $config]);
-
-        return response()->json([
-            'succes' => true,
-            'message' => 'Réglages sauvegardés.',
-        ]);
-    }
-
     private function calculerPeriode(string $periode): array
     {
         return match ($periode) {
-            'aujourdhui' => [Carbon::today(), Carbon::tomorrow()],
+            'aujourdhui'  => [
+                Carbon::today()->startOfDay(),
+                Carbon::today()->endOfDay(),
+            ],
             '7j' => [Carbon::now()->subDays(7), Carbon::now()],
             '30j' => [Carbon::now()->subDays(30), Carbon::now()],
             'ce_mois' => [

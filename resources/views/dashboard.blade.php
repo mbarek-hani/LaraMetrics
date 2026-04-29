@@ -22,8 +22,12 @@
                 </x-card>
             @else
 
-            <div x-data="dashboard()" x-init="chargerStats()">
-
+            {{-- Alpine : état global du dashboard partagé avec les plugins --}}
+            <div
+                x-data="dashboard()"
+                x-init="chargerStats()"
+                id="dashboard-root"
+            >
                 {{-- Contrôles --}}
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                     <select
@@ -32,7 +36,8 @@
                         class="rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
                     >
                         @foreach($sites as $site)
-                            <option value="{{ $site->id }}" {{ $site->id === $siteCourant->id ? 'selected' : '' }}>
+                            <option value="{{ $site->id }}"
+                                {{ $site->id === $siteCourant->id ? 'selected' : '' }}>
                                 {{ $site->nom }} — {{ $site->domaine }}
                             </option>
                         @endforeach
@@ -43,7 +48,9 @@
                         <template x-for="p in periodes" :key="p.valeur">
                             <button
                                 @click="periode = p.valeur; chargerStats()"
-                                :class="periode === p.valeur ? 'bg-gray-100 text-gray-900 font-semibold' : 'bg-white text-gray-600 hover:bg-gray-50'"
+                                :class="periode === p.valeur
+                                    ? 'bg-gray-100 text-gray-900 font-semibold'
+                                    : 'bg-white text-gray-600 hover:bg-gray-50'"
                                 class="px-3 py-1.5 text-xs transition first:rounded-l last:rounded-r"
                                 x-text="p.label"
                             ></button>
@@ -65,9 +72,12 @@
                 {{-- Onglets --}}
                 <div class="border-b border-gray-200 mb-4 overflow-x-auto">
                     <nav class="flex gap-0 min-w-max">
+
                         <button
                             @click="ongletActif = 'apercu'"
-                            :class="ongletActif === 'apercu' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+                            :class="ongletActif === 'apercu'
+                                ? 'border-b-2 border-gray-900 text-gray-900'
+                                : 'text-gray-500 hover:text-gray-700'"
                             class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                         >
                             <x-custom-icon name="chart-bar" class="w-4 h-4" />
@@ -76,34 +86,28 @@
 
                         <button
                             @click="ongletActif = 'evenements'"
-                            :class="ongletActif === 'evenements' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+                            :class="ongletActif === 'evenements'
+                                ? 'border-b-2 border-gray-900 text-gray-900'
+                                : 'text-gray-500 hover:text-gray-700'"
                             class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                         >
                             <x-custom-icon name="cursor-click" class="w-4 h-4" />
                             Événements
                         </button>
 
+                        {{-- Onglets plugins --}}
                         @foreach($onglets as $onglet)
                             <button
                                 @click="ongletActif = '{{ $onglet['id'] }}'"
-                                :class="ongletActif === '{{ $onglet['id'] }}' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+                                :class="ongletActif === '{{ $onglet['id'] }}'
+                                    ? 'border-b-2 border-gray-900 text-gray-900'
+                                    : 'text-gray-500 hover:text-gray-700'"
                                 class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
                             >
                                 <x-custom-icon :name="$onglet['icone']" class="w-4 h-4" />
                                 {{ $onglet['label'] }}
                             </button>
                         @endforeach
-
-                        @if(!empty($reglages))
-                            <button
-                                @click="ongletActif = 'reglages'"
-                                :class="ongletActif === 'reglages' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-500 hover:text-gray-700'"
-                                class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition"
-                            >
-                                <x-custom-icon name="cog" class="w-4 h-4" />
-                                Réglages
-                            </button>
-                        @endif
                     </nav>
                 </div>
 
@@ -122,19 +126,26 @@
 
                     {{-- ══════ VUE D'ENSEMBLE ══════ --}}
                     <div x-show="ongletActif === 'apercu'">
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                             <x-stats-card titre="Visiteurs uniques" icon="users">
-                                <x-slot:valeur><span x-text="stats?.resume?.visiteurs_uniques ?? 0"></span></x-slot:valeur>
+                                <x-slot:valeur>
+                                    <span x-text="stats?.resume?.visiteurs_uniques ?? 0"></span>
+                                </x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Pages vues" icon="eye">
-                                <x-slot:valeur><span x-text="stats?.resume?.pages_vues ?? 0"></span></x-slot:valeur>
+                                <x-slot:valeur>
+                                    <span x-text="stats?.resume?.pages_vues ?? 0"></span>
+                                </x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Taux de rebond" icon="arrow-trending-down">
-                                <x-slot:valeur><span x-text="(stats?.resume?.taux_rebond ?? 0) + '%'"></span></x-slot:valeur>
+                                <x-slot:valeur>
+                                    <span x-text="(stats?.resume?.taux_rebond ?? 0) + '%'"></span>
+                                </x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Durée moyenne" icon="clock">
-                                <x-slot:valeur><span x-text="formaterDuree(stats?.resume?.duree_moyenne ?? 0)"></span></x-slot:valeur>
+                                <x-slot:valeur>
+                                    <span x-text="formaterDuree(stats?.resume?.duree_moyenne ?? 0)"></span>
+                                </x-slot:valeur>
                             </x-stats-card>
                         </div>
 
@@ -145,12 +156,12 @@
                         </x-card>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
                             <x-card titre="Pages populaires" :padding="false">
                                 <table class="w-full text-sm">
                                     <thead>
                                         <tr class="border-b border-gray-200 text-left">
                                             <th class="px-4 py-2 text-xs font-medium text-gray-500">Page</th>
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Visiteurs</th>
                                             <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Vues</th>
                                         </tr>
                                     </thead>
@@ -158,12 +169,11 @@
                                         <template x-for="page in (stats?.top_pages ?? []).slice(0, 8)" :key="page.chemin">
                                             <tr class="border-b border-gray-100">
                                                 <td class="px-4 py-2 text-gray-900 truncate max-w-[200px]" x-text="page.chemin"></td>
-                                                <td class="px-4 py-2 text-gray-600 text-right" x-text="page.visiteurs"></td>
                                                 <td class="px-4 py-2 text-gray-600 text-right" x-text="page.vues"></td>
                                             </tr>
                                         </template>
                                         <template x-if="!stats?.top_pages?.length">
-                                            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 text-sm">Aucune donnée</td></tr>
+                                            <tr><td colspan="2" class="px-4 py-6 text-center text-gray-400 text-sm">Aucune donnée</td></tr>
                                         </template>
                                     </tbody>
                                 </table>
@@ -183,7 +193,7 @@
                                                 <td class="px-4 py-2">
                                                     <div class="flex items-center gap-2">
                                                         <img :src="'https://www.google.com/s2/favicons?domain=' + ref.referent_domaine + '&sz=16'" class="w-4 h-4">
-                                                        <span class="text-gray-900" x-text="ref.referent_domaine"></span>
+                                                        <span class="text-gray-900 truncate" x-text="ref.referent_domaine"></span>
                                                     </div>
                                                 </td>
                                                 <td class="px-4 py-2 text-gray-600 text-right" x-text="ref.visiteurs"></td>
@@ -201,7 +211,7 @@
                                     <template x-for="pays in (stats?.top_pays ?? []).slice(0, 8)" :key="pays.pays_code">
                                         <div class="flex items-center justify-between text-sm">
                                             <div class="flex items-center gap-2">
-                                                <span class="text-base" x-text="drapeau(pays.pays_code)"></span>
+                                                <span x-text="drapeau(pays.pays_code)"></span>
                                                 <span class="text-gray-900" x-text="pays.pays_nom || pays.pays_code"></span>
                                             </div>
                                             <span class="text-gray-600" x-text="pays.visiteurs"></span>
@@ -235,8 +245,6 @@
 
                     {{-- ══════ ÉVÉNEMENTS ══════ --}}
                     <div x-show="ongletActif === 'evenements'">
-
-                        {{-- Résumé événements --}}
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                             <x-stats-card titre="Total événements" icon="cursor-click">
                                 <x-slot:valeur>
@@ -248,14 +256,13 @@
                                     <span x-text="stats?.evenements_par_nom?.length ?? 0"></span>
                                 </x-slot:valeur>
                             </x-stats-card>
-                            <x-stats-card titre="Sessions avec événements" icon="users">
+                            <x-stats-card titre="Sessions impliquées" icon="users">
                                 <x-slot:valeur>
                                     <span x-text="totalSessionsEvenements()"></span>
                                 </x-slot:valeur>
                             </x-stats-card>
                         </div>
 
-                        {{-- Graphique événements par jour --}}
                         <x-card titre="Événements par jour" class="mb-4">
                             <div class="h-48">
                                 <canvas x-ref="graphiqueEvenements"></canvas>
@@ -263,44 +270,33 @@
                         </x-card>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                            {{-- Événements par nom --}}
-                            <x-card titre="Événements par nom" :padding="false">
+                            <x-card titre="Par nom" :padding="false">
                                 <table class="w-full text-sm">
                                     <thead>
                                         <tr class="border-b border-gray-200 text-left">
                                             <th class="px-4 py-2 text-xs font-medium text-gray-500">Nom</th>
                                             <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Total</th>
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Sessions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <template x-for="evt in stats?.evenements_par_nom ?? []" :key="evt.nom">
                                             <tr class="border-b border-gray-100">
-                                                <td class="px-4 py-2">
-                                                    <div class="flex items-center gap-2">
-                                                        <x-custom-icon name="bolt" class="w-3.5 h-3.5 text-gray-400" />
-                                                        <span class="text-gray-900" x-text="evt.nom"></span>
-                                                    </div>
-                                                </td>
+                                                <td class="px-4 py-2 text-gray-900" x-text="evt.nom"></td>
                                                 <td class="px-4 py-2 text-gray-600 text-right" x-text="evt.total"></td>
-                                                <td class="px-4 py-2 text-gray-600 text-right" x-text="evt.sessions"></td>
                                             </tr>
                                         </template>
                                         <template x-if="!stats?.evenements_par_nom?.length">
-                                            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
+                                            <tr><td colspan="2" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
                                         </template>
                                     </tbody>
                                 </table>
                             </x-card>
 
-                            {{-- Derniers événements --}}
                             <x-card titre="Derniers événements" :padding="false">
                                 <table class="w-full text-sm">
                                     <thead>
                                         <tr class="border-b border-gray-200 text-left">
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Événement</th>
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Page</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Nom</th>
                                             <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Date</th>
                                         </tr>
                                     </thead>
@@ -308,34 +304,16 @@
                                         <template x-for="evt in (stats?.derniers_evenements ?? []).slice(0, 10)" :key="evt.id">
                                             <tr class="border-b border-gray-100">
                                                 <td class="px-4 py-2 text-gray-900" x-text="evt.nom"></td>
-                                                <td class="px-4 py-2 text-gray-500 truncate max-w-[150px]" x-text="evt.chemin || '—'"></td>
-                                                <td class="px-4 py-2 text-gray-400 text-right text-xs whitespace-nowrap" x-text="formaterDate(evt.cree_le)"></td>
+                                                <td class="px-4 py-2 text-gray-400 text-right text-xs" x-text="formaterDate(evt.cree_le)"></td>
                                             </tr>
                                         </template>
                                         <template x-if="!stats?.derniers_evenements?.length">
-                                            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
+                                            <tr><td colspan="2" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
                                         </template>
                                     </tbody>
                                 </table>
                             </x-card>
                         </div>
-
-                        {{-- Aide tracking événements --}}
-                        <x-card class="mt-4">
-                            <div class="flex items-start gap-3">
-                                <x-custom-icon name="information-circle" class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-900">Comment tracker des événements ?</h4>
-                                    <p class="text-sm text-gray-500 mt-1">
-                                        Utilisez l'API JavaScript depuis votre site :
-                                    </p>
-                                    <pre class="mt-2 bg-gray-100 border border-gray-200 rounded p-3 text-xs font-mono text-gray-800 overflow-x-auto"><code>LaraMetrics.event('clic_bouton', {
-    bouton: 'inscription',
-    page: '/accueil'
-});</code></pre>
-                                </div>
-                            </div>
-                        </x-card>
                     </div>
 
                     {{-- ══════ ONGLETS PLUGINS ══════ --}}
@@ -344,66 +322,6 @@
                             @hook('tab.' . $onglet['id'])
                         </div>
                     @endforeach
-
-                    {{-- ══════ RÉGLAGES ══════ --}}
-                    @if(!empty($reglages))
-                    <div x-show="ongletActif === 'reglages'">
-                        <div class="space-y-4">
-                            @foreach($reglages as $pluginId => $plugin)
-                                <x-card x-data="reglagesPlugin('{{ $pluginId }}')">
-                                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-                                        <x-custom-icon name="cog" class="w-4 h-4 text-gray-500" />
-                                        <h4 class="text-sm font-semibold text-gray-900">{{ $plugin['nom'] }}</h4>
-                                    </div>
-
-                                    <div class="space-y-4 max-w-lg">
-                                        @foreach($plugin['champs'] as $champ)
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                                    {{ $champ['label'] }}
-                                                    @if($champ['obligatoire'] ?? false)
-                                                        <span class="text-red-500">*</span>
-                                                    @endif
-                                                </label>
-
-                                                @if(($champ['type'] ?? 'text') === 'select')
-                                                    <select
-                                                        x-model="valeurs['{{ $champ['cle'] }}']"
-                                                        class="block w-full rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
-                                                    >
-                                                        @foreach($champ['options'] ?? [] as $option)
-                                                            <option value="{{ $option }}">{{ ucfirst($option) }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                @else
-                                                    <input
-                                                        type="{{ $champ['type'] ?? 'text' }}"
-                                                        x-model="valeurs['{{ $champ['cle'] }}']"
-                                                        placeholder="{{ $champ['placeholder'] ?? '' }}"
-                                                        class="block w-full rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
-                                                    >
-                                                @endif
-
-                                                @if(isset($champ['aide']))
-                                                    <p class="mt-1 text-xs text-gray-400">{{ $champ['aide'] }}</p>
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                    </div>
-
-                                    <div class="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
-                                        <x-button variant="primary" size="sm" @click="sauvegarder()" x-bind:disabled="sauvegarde">
-                                            <span x-text="sauvegarde ? 'Sauvegarde...' : 'Sauvegarder'"></span>
-                                        </x-button>
-                                        <span x-show="succes" x-transition class="text-sm text-green-600">
-                                            Sauvegardé
-                                        </span>
-                                    </div>
-                                </x-card>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
 
                 </div>
             </div>
@@ -415,15 +333,15 @@
     <script>
     function dashboard() {
         return {
-            siteId: {{ $siteCourant->id ?? 0 }},
-            periode: '7j',
-            ongletActif: 'apercu',
-            chargement: true,
-            erreur: null,
-            stats: null,
-            _chart: null,
-            _chartApp: null,
-            _chartEvt: null,
+            siteId      : {{ $siteCourant->id ?? 0 }},
+            periode     : '7j',
+            ongletActif : 'apercu',
+            chargement  : true,
+            erreur      : null,
+            stats       : null,
+            _chart      : null,
+            _chartApp   : null,
+            _chartEvt   : null,
 
             periodes: [
                 { valeur: 'aujourdhui',  label: "Aujourd'hui" },
@@ -435,11 +353,14 @@
 
             async chargerStats() {
                 this.chargement = true;
-                this.erreur = null;
+                this.erreur     = null;
                 try {
                     const p = new URLSearchParams({ site_id: this.siteId, periode: this.periode });
                     const r = await fetch('/dashboard/stats?' + p, {
-                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                        headers: {
+                            'Accept'       : 'application/json',
+                            'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').content,
+                        },
                     });
                     if (!r.ok) throw new Error('Erreur ' + r.status);
                     this.stats = await r.json();
@@ -465,8 +386,20 @@
                     data: {
                         labels: d.map(e => new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
                         datasets: [
-                            { label: 'Visiteurs', data: d.map(e => e.visiteurs), borderColor: '#374151', backgroundColor: 'rgba(55,65,81,0.05)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2 },
-                            { label: 'Pages vues', data: d.map(e => e.pages_vues), borderColor: '#9ca3af', backgroundColor: 'rgba(156,163,175,0.05)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2 },
+                            {
+                                label: 'Visiteurs',
+                                data: d.map(e => e.visiteurs),
+                                borderColor: '#374151',
+                                backgroundColor: 'rgba(55,65,81,0.05)',
+                                fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2,
+                            },
+                            {
+                                label: 'Pages vues',
+                                data: d.map(e => e.pages_vues),
+                                borderColor: '#9ca3af',
+                                backgroundColor: 'rgba(156,163,175,0.05)',
+                                fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2,
+                            },
                         ],
                     },
                     options: {
@@ -504,12 +437,7 @@
                     type: 'bar',
                     data: {
                         labels: d.map(e => new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
-                        datasets: [{
-                            label: 'Événements',
-                            data: d.map(e => e.total),
-                            backgroundColor: '#374151',
-                            borderRadius: 3,
-                        }],
+                        datasets: [{ label: 'Événements', data: d.map(e => e.total), backgroundColor: '#374151', borderRadius: 3 }],
                     },
                     options: {
                         responsive: true, maintainAspectRatio: false,
@@ -535,32 +463,17 @@
 
             formaterDate(d) {
                 if (!d) return '';
-                return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                return new Date(d).toLocaleDateString('fr-FR', {
+                    day: 'numeric', month: 'short',
+                    hour: '2-digit', minute: '2-digit',
+                });
             },
 
             drapeau(code) {
                 if (!code || code.length !== 2) return '';
-                return String.fromCodePoint(...code.toUpperCase().split('').map(c => c.charCodeAt(0) + 127397));
-            },
-        }
-    }
-
-    function reglagesPlugin(pluginId) {
-        return {
-            valeurs: {},
-            sauvegarde: false,
-            succes: false,
-            async sauvegarder() {
-                this.sauvegarde = true;
-                this.succes = false;
-                try {
-                    const r = await fetch('/dashboard/reglages', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-                        body: JSON.stringify({ plugin: pluginId, reglages: this.valeurs }),
-                    });
-                    if (r.ok) { this.succes = true; setTimeout(() => this.succes = false, 3000); }
-                } finally { this.sauvegarde = false; }
+                return String.fromCodePoint(
+                    ...code.toUpperCase().split('').map(c => c.charCodeAt(0) + 127397)
+                );
             },
         }
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\PluginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TrackerJsController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('dashboard'));
@@ -35,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
         PluginController::class,
         'desactiver',
     ])->name('plugins.desactiver');
+
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/reglages', [SettingsController::class, 'sauvegarderReglages'])->name('settings.reglages');
 });
 
 Route::middleware('auth')->group(function () {
