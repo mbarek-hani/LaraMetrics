@@ -15,7 +15,6 @@
         @foreach(app(\App\Core\Plugin\PluginManager::class)->getCssPaths() as $cssPath)
             <link rel="stylesheet" href="{{ asset($cssPath) }}">
         @endforeach
-        <script defer src="http://localhost:8000/tracker.js" data-token="5cd9330d28a2238e2d6007ff6ab15d076fa2953c38d760a323084b00fc74b078"></script>
         <style>
             [x-cloak] { display: none !important; }
         </style>
