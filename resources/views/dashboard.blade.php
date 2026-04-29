@@ -389,14 +389,14 @@
                             {
                                 label: 'Visiteurs',
                                 data: d.map(e => e.visiteurs),
-                                borderColor: '#374151',
+                                borderColor: '#f71',
                                 backgroundColor: 'rgba(55,65,81,0.05)',
                                 fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2,
                             },
                             {
                                 label: 'Pages vues',
                                 data: d.map(e => e.pages_vues),
-                                borderColor: '#9ca3af',
+                                borderColor: '#93f',
                                 backgroundColor: 'rgba(156,163,175,0.05)',
                                 fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2,
                             },
@@ -421,7 +421,7 @@
                     type: 'doughnut',
                     data: {
                         labels: d.map(a => a.appareil),
-                        datasets: [{ data: d.map(a => a.visiteurs), backgroundColor: ['#374151', '#9ca3af', '#d1d5db', '#e5e7eb'], borderWidth: 0 }],
+                        datasets: [{ data: d.map(a => a.visiteurs), backgroundColor: ['#fab', '#afb', '#abf', '#666'], borderWidth: 0 }],
                     },
                     options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { legend: { display: false } } },
                 });
