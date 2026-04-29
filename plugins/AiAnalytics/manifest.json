@@ -1,34 +1,10 @@
 {
     "identifiant": "ai-analytics",
-    "nom": "Analyse par Intelligence Artificielle",
+    "nom": "Analyse IA",
     "version": "1.0.0",
-    "description": "Génère des rapports d'analyse de trafic automatiques grâce à l'IA (OpenAI / Groq). Identifie les tendances et fournit des recommandations en français.",
+    "description": "Génère des rapports d'analyse de trafic automatiques grâce à l'intelligence artificielle. Supporte OpenAI et Groq.",
     "auteur": "Mbarek Hani & Ayoub Jakouri",
-    "email": "mbarekhani30@gmail.com | ayoub@email.com",
-    "url": "https://exemple.com/plugins/ai-analytics",
     "licence": "MIT",
     "classe": "Plugins\\AiAnalytics\\AiAnalyticsPlugin",
-    "version_app_min": "1.0.0",
-    "hooks": [],
-    "dependances": [],
-    "configuration": {
-        "fournisseur": {
-            "type": "select",
-            "label": "Fournisseur IA",
-            "options": ["openai", "groq"],
-            "defaut": "groq"
-        },
-        "cle_api": {
-            "type": "password",
-            "label": "Clé API",
-            "obligatoire": true
-        },
-        "langue_rapport": {
-            "type": "text",
-            "label": "Langue des rapports",
-            "defaut": "français"
-        }
-    },
-    "icone": "cpu-chip",
-    "couleur": "#6366f1"
+    "hooks": ["tab.ai"]
 }
