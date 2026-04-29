@@ -31,6 +31,8 @@
         'cursor-click'        => 'heroicon-o-cursor-arrow-rays',
         'bars-3'              => 'heroicon-o-bars-3',
         'chevron-down'        => 'heroicon-o-chevron-down',
+        'chevron-left'        => 'heroicon-o-chevron-left',
+        'chevron-right'       => 'heroicon-o-chevron-right',
         'information-circle'  => 'heroicon-o-information-circle',
         'exclamation'         => 'heroicon-o-exclamation-triangle',
         'funnel'              => 'heroicon-o-funnel',
