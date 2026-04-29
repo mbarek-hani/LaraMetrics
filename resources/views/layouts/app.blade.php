@@ -226,7 +226,7 @@
                             text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition"
                         :title="ouvert ? 'Réduire le menu' : 'Ouvrir le menu'"
                     >
-                        <span x-show="ouvert">
+                        <span x-show="ouvert" x-cloak>
                             <x-custom-icon name="chevron-left" class="w-3.5 h-3.5" />
                         </span>
                         <span x-show="!ouvert" x-cloak>
