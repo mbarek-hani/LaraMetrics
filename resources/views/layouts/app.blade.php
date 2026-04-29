@@ -40,7 +40,7 @@
 
             {{-- ══════ SIDEBAR ══════ --}}
             <aside
-                :class="ouvert ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+                :class="ouvert ? 'translate-x-0' : '-translate-x-full'"
                 class="fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200
                     flex flex-col z-30 transition-transform duration-200 ease-in-out"
             >
@@ -180,7 +180,10 @@
             </aside>
 
             {{-- ══════ CONTENU PRINCIPAL ══════ --}}
-            <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
+            <div
+                :class="ouvert ? 'lg:ml-64' : 'lg:ml-0'"
+                class="flex-1 flex flex-col min-w-0 transition-[margin] duration-200 ease-in-out"
+            >
 
                 {{-- Topbar (juste le toggle) --}}
                 <div class="sticky top-0 z-10 bg-white border-b border-gray-200 h-14 flex items-center px-4 gap-3 lg:hidden">
@@ -196,15 +199,23 @@
                 </div>
 
                 {{-- Toggle desktop (collapsible) --}}
-                <div class="hidden lg:block fixed top-4 left-[256px] z-40">
+                <div
+                    :class="ouvert ? 'left-[252px]' : 'left-0'"
+                    class="hidden lg:flex fixed top-5 z-40 transition-[left] duration-200 ease-in-out"
+                >
                     <button
-                        @click="toggleDesktop()"
-                        class="p-1 bg-white border border-gray-200 rounded shadow-sm
-                            text-gray-400 hover:text-gray-700 transition"
-                        title="Réduire le menu"
+                        @click="ouvert = !ouvert"
+                        class="w-6 h-6 flex items-center justify-center
+                            bg-white border border-gray-200 rounded shadow-sm
+                            text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition"
+                        :title="ouvert ? 'Réduire le menu' : 'Ouvrir le menu'"
                     >
-                        <x-custom-icon name="chevron-left" class="w-3.5 h-3.5 transition-transform"
-                                x-bind:class="ouvert ? '' : 'rotate-180'" />
+                        <span x-show="ouvert">
+                            <x-custom-icon name="chevron-left" class="w-3.5 h-3.5" />
+                        </span>
+                        <span x-show="!ouvert" x-cloak>
+                            <x-custom-icon name="chevron-right" class="w-3.5 h-3.5" />
+                        </span>
                     </button>
                 </div>
                 <main class="flex-1">
@@ -218,30 +229,6 @@
             function sidebar() {
                 return {
                     ouvert: window.innerWidth >= 1024,
-
-                    toggleDesktop() {
-                        const sidebar = document.querySelector('aside');
-                        const content = document.querySelector('.lg\\:ml-64');
-                        const toggle  = document.querySelector('.lg\\:block.fixed');
-
-                        if (this.ouvert) {
-                            sidebar.classList.add('-translate-x-full');
-                            sidebar.classList.remove('translate-x-0');
-                            content?.classList.remove('lg:ml-64');
-                            content?.classList.add('lg:ml-0');
-                            toggle?.classList.remove('left-[256px]');
-                            toggle?.classList.add('left-4');
-                            this.ouvert = false;
-                        } else {
-                            sidebar.classList.remove('-translate-x-full');
-                            sidebar.classList.add('translate-x-0');
-                            content?.classList.add('lg:ml-64');
-                            content?.classList.remove('lg:ml-0');
-                            toggle?.classList.add('left-[256px]');
-                            toggle?.classList.remove('left-4');
-                            this.ouvert = true;
-                        }
-                    },
                 }
             }
         </script>
