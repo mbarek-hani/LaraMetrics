@@ -11,7 +11,7 @@ class SettingsController extends Controller
 {
     public function index()
     {
-        $manager  = app(PluginManager::class);
+        $manager = app(PluginManager::class);
         $reglages = $manager->getTousLesReglages();
 
         // Charger les valeurs actuelles pour chaque plugin
@@ -28,13 +28,13 @@ class SettingsController extends Controller
     public function sauvegarderReglages(Request $request): JsonResponse
     {
         $request->validate([
-            'plugin'   => ['required', 'string'],
+            'plugin' => ['required', 'string'],
             'reglages' => ['required', 'array'],
         ]);
 
         $plugin = PluginModele::where('identifiant', $request->plugin)->first();
 
-        if (!$plugin) {
+        if (! $plugin) {
             return response()->json(['erreur' => 'Plugin introuvable'], 404);
         }
 
@@ -45,4 +45,3 @@ class SettingsController extends Controller
         return response()->json(['succes' => true, 'message' => 'Réglages sauvegardés.']);
     }
 }
-

@@ -3,8 +3,8 @@
 namespace Plugins\AiAnalytics\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Site;
 use App\Models\Plugin;
+use App\Models\Site;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,9 +19,9 @@ class AiReportController extends Controller
     public function generer(Request $request): JsonResponse
     {
         $request->validate([
-            'site_id'    => ['required', 'exists:sites,id'],
+            'site_id' => ['required', 'exists:sites,id'],
             'date_debut' => ['required', 'date', 'before_or_equal:today', 'before_or_equal:date_fin'],
-            'date_fin'   => ['required', 'date', 'before_or_equal:today'],
+            'date_fin' => ['required', 'date', 'before_or_equal:today'],
         ]);
 
         $config = Plugin::where('identifiant', 'ai-analytics')->value('configuration') ?? [];
@@ -32,30 +32,30 @@ class AiReportController extends Controller
             ], 422);
         }
 
-        $site  = Site::findOrFail($request->site_id);
+        $site = Site::findOrFail($request->site_id);
         $debut = Carbon::parse($request->date_debut)->startOfDay();
-        $fin   = Carbon::parse($request->date_fin)->endOfDay();
+        $fin = Carbon::parse($request->date_fin)->endOfDay();
 
         try {
-            $service = new AiService();
+            $service = new AiService;
             $rapport = $service->genererRapportPeriode($site, $debut, $fin);
 
             $id = DB::table('ai_analytics_reports')->insertGetId([
-                'site_id'         => $site->id,
-                'score'           => $rapport['score'],
-                'resume'          => $rapport['resume'],
-                'points_cles'     => json_encode($rapport['points_cles']),
+                'site_id' => $site->id,
+                'score' => $rapport['score'],
+                'resume' => $rapport['resume'],
+                'points_cles' => json_encode($rapport['points_cles']),
                 'recommandations' => json_encode($rapport['recommandations']),
-                'tendances'       => json_encode($rapport['tendances']),
-                'fournisseur'     => $rapport['fournisseur'],
-                'modele'          => $rapport['modele'],
-                'date_debut'      => $debut->toDateString(),
-                'date_fin'        => $fin->toDateString(),
-                'cree_le'         => now(),
+                'tendances' => json_encode($rapport['tendances']),
+                'fournisseur' => $rapport['fournisseur'],
+                'modele' => $rapport['modele'],
+                'date_debut' => $debut->toDateString(),
+                'date_fin' => $fin->toDateString(),
+                'cree_le' => now(),
             ]);
 
             return response()->json([
-                'succes'  => true,
+                'succes' => true,
                 'rapport' => array_merge($rapport, ['id' => $id]),
             ]);
 
@@ -90,7 +90,7 @@ class AiReportController extends Controller
     {
         $rapport = DB::table('ai_analytics_reports')->find($id);
 
-        if (!$rapport) {
+        if (! $rapport) {
             return response()->json(['rapport' => null], 404);
         }
 
@@ -113,13 +113,13 @@ class AiReportController extends Controller
             ->orderByDesc('cree_le')
             ->limit(10)
             ->get()
-            ->map(fn($r) => [
-                'id'          => $r->id,
-                'score'       => $r->score,
-                'resume'      => $r->resume,
+            ->map(fn ($r) => [
+                'id' => $r->id,
+                'score' => $r->score,
+                'resume' => $r->resume,
                 'fournisseur' => $r->fournisseur,
-                'modele'      => $r->modele,
-                'genere_le'   => Carbon::parse($r->cree_le)->format('d/m/Y à H:i'),
+                'modele' => $r->modele,
+                'genere_le' => Carbon::parse($r->cree_le)->format('d/m/Y à H:i'),
             ]);
 
         return response()->json(['rapports' => $rapports]);
@@ -131,15 +131,15 @@ class AiReportController extends Controller
     private function formaterRapport(object $rapport): array
     {
         return [
-            'id'              => $rapport->id,
-            'score'           => $rapport->score,
-            'resume'          => $rapport->resume,
-            'points_cles'     => json_decode($rapport->points_cles, true) ?? [],
+            'id' => $rapport->id,
+            'score' => $rapport->score,
+            'resume' => $rapport->resume,
+            'points_cles' => json_decode($rapport->points_cles, true) ?? [],
             'recommandations' => json_decode($rapport->recommandations, true) ?? [],
-            'tendances'       => json_decode($rapport->tendances, true) ?? [],
-            'fournisseur'     => $rapport->fournisseur,
-            'modele'          => $rapport->modele,
-            'genere_le'       => Carbon::parse($rapport->cree_le)->format('d/m/Y à H:i'),
+            'tendances' => json_decode($rapport->tendances, true) ?? [],
+            'fournisseur' => $rapport->fournisseur,
+            'modele' => $rapport->modele,
+            'genere_le' => Carbon::parse($rapport->cree_le)->format('d/m/Y à H:i'),
         ];
     }
 }

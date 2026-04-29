@@ -1,7 +1,7 @@
 <?php
 
-use Plugins\AiAnalytics\Http\Controllers\AiReportController;
 use Illuminate\Support\Facades\Route;
+use Plugins\AiAnalytics\Http\Controllers\AiReportController;
 
 // POST /plugins/ai-analytics/generer
 Route::post('/generer', [AiReportController::class, 'generer'])

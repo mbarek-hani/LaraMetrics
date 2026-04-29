@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('site_id')
-                  ->constrained('sites')
-                  ->cascadeOnDelete();
+                ->constrained('sites')
+                ->cascadeOnDelete();
 
             $table->unsignedTinyInteger('score');
             $table->text('resume');

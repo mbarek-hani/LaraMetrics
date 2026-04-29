@@ -6,27 +6,31 @@ use App\Models\Plugin;
 use App\Models\Site;
 use App\Services\StatistiqueService;
 use Carbon\Carbon;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class AiService
 {
     private string $fournisseur;
-    private string $cleApi;
-    private string $modele;
-    private int    $periodeJours;
 
-    //Modèles par défaut
+    private string $cleApi;
+
+    private string $modele;
+
+    private int $periodeJours;
+
+    // Modèles par défaut
 
     private const MODELES_DEFAUT = [
-        'groq'   => 'llama-3.3-70b-versatile',
+        'groq' => 'llama-3.3-70b-versatile',
         'openai' => 'gpt-4o-mini',
     ];
 
     // Endpoints API
 
     private const ENDPOINTS = [
-        'groq'   => 'https://api.groq.com/openai/v1/chat/completions',
+        'groq' => 'https://api.groq.com/openai/v1/chat/completions',
         'openai' => 'https://api.openai.com/v1/chat/completions',
     ];
 
@@ -35,9 +39,9 @@ class AiService
         $config = Plugin::where('identifiant', 'ai-analytics')
             ->value('configuration') ?? [];
 
-        $this->fournisseur  = $config['fournisseur']     ?? 'groq';
-        $this->cleApi       = $config['cle_api']         ?? '';
-        $this->modele       = $config['modele']          ?? self::MODELES_DEFAUT[$this->fournisseur] ?? 'llama-3.3-70b-versatile';
+        $this->fournisseur = $config['fournisseur'] ?? 'groq';
+        $this->cleApi = $config['cle_api'] ?? '';
+        $this->modele = $config['modele'] ?? self::MODELES_DEFAUT[$this->fournisseur] ?? 'llama-3.3-70b-versatile';
         $this->periodeJours = (int) ($config['periode_analyse'] ?? 7);
 
         if (empty($this->modele)) {
@@ -89,7 +93,7 @@ class AiService
             );
         }
 
-        if (!in_array($this->fournisseur, ['groq', 'openai'])) {
+        if (! in_array($this->fournisseur, ['groq', 'openai'])) {
             throw new \Exception(
                 "Fournisseur « {$this->fournisseur} » non supporté."
             );
@@ -105,44 +109,44 @@ class AiService
      */
     private function extraireDonnees(Site $site): array
     {
-        $debut   = Carbon::now()->subDays($this->periodeJours);
-        $fin     = Carbon::now();
+        $debut = Carbon::now()->subDays($this->periodeJours);
+        $fin = Carbon::now();
         $service = new StatistiqueService($site);
 
-        $resume     = $service->resume($debut, $fin);
-        $topPages   = $service->topPages($debut, $fin, 10);
-        $appareils  = $service->parAppareil($debut, $fin);
-        $referents  = $service->topReferents($debut, $fin, 5);
-        $topPays    = $service->topPays($debut, $fin, 5);
-        $evolution  = $service->evolutionParJour($debut, $fin);
+        $resume = $service->resume($debut, $fin);
+        $topPages = $service->topPages($debut, $fin, 10);
+        $appareils = $service->parAppareil($debut, $fin);
+        $referents = $service->topReferents($debut, $fin, 5);
+        $topPays = $service->topPays($debut, $fin, 5);
+        $evolution = $service->evolutionParJour($debut, $fin);
 
         return [
-            'periode'   => [
+            'periode' => [
                 'debut' => $debut->format('d/m/Y'),
-                'fin'   => $fin->format('d/m/Y'),
+                'fin' => $fin->format('d/m/Y'),
                 'jours' => $this->periodeJours,
             ],
-            'resume'    => $resume,
-            'top_pages' => $topPages->map(fn($p) => [
-                'chemin'    => $p->chemin,
-                'vues'      => $p->vues,
+            'resume' => $resume,
+            'top_pages' => $topPages->map(fn ($p) => [
+                'chemin' => $p->chemin,
+                'vues' => $p->vues,
                 'visiteurs' => $p->visiteurs,
             ])->toArray(),
-            'appareils' => $appareils->map(fn($a) => [
-                'appareil'  => $a->appareil,
+            'appareils' => $appareils->map(fn ($a) => [
+                'appareil' => $a->appareil,
                 'visiteurs' => $a->visiteurs,
             ])->toArray(),
-            'referents' => $referents->map(fn($r) => [
-                'domaine'   => $r->referent_domaine,
+            'referents' => $referents->map(fn ($r) => [
+                'domaine' => $r->referent_domaine,
                 'visiteurs' => $r->visiteurs,
             ])->toArray(),
-            'pays'      => $topPays->map(fn($p) => [
-                'pays'      => $p->pays_nom ?? $p->pays_code,
+            'pays' => $topPays->map(fn ($p) => [
+                'pays' => $p->pays_nom ?? $p->pays_code,
                 'visiteurs' => $p->visiteurs,
             ])->toArray(),
-            'evolution' => $evolution->map(fn($e) => [
-                'date'       => $e->date,
-                'visiteurs'  => $e->visiteurs,
+            'evolution' => $evolution->map(fn ($e) => [
+                'date' => $e->date,
+                'visiteurs' => $e->visiteurs,
                 'pages_vues' => $e->pages_vues,
             ])->toArray(),
         ];
@@ -213,29 +217,29 @@ class AiService
                 ->timeout(30)
                 ->retry(2, 1000)
                 ->post($endpoint, [
-                    'model'       => $this->modele,
-                    'messages'    => [
+                    'model' => $this->modele,
+                    'messages' => [
                         [
-                            'role'    => 'system',
+                            'role' => 'system',
                             'content' => 'Tu es un expert en analyse de trafic web. '
-                                       . 'Tu réponds uniquement en JSON valide, sans markdown, '
-                                       . 'sans blocs de code, uniquement le JSON brut.',
+                                       .'Tu réponds uniquement en JSON valide, sans markdown, '
+                                       .'sans blocs de code, uniquement le JSON brut.',
                         ],
                         [
-                            'role'    => 'user',
+                            'role' => 'user',
                             'content' => $prompt,
                         ],
                     ],
                     'temperature' => 0.3,
-                    'max_tokens'  => 1000,
+                    'max_tokens' => 1000,
                 ]);
 
             if ($reponse->failed()) {
                 $erreur = $reponse->json('error.message') ?? $reponse->body();
-                Log::error("AiService API error [{$this->fournisseur}] : " . $erreur);
+                Log::error("AiService API error [{$this->fournisseur}] : ".$erreur);
 
                 throw new \Exception(
-                    "Erreur API {$this->fournisseur} : " . $erreur
+                    "Erreur API {$this->fournisseur} : ".$erreur
                 );
             }
 
@@ -247,7 +251,7 @@ class AiService
 
             return $contenu;
 
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+        } catch (ConnectionException $e) {
             throw new \Exception(
                 "Impossible de joindre l'API {$this->fournisseur}. Vérifiez votre connexion."
             );
@@ -260,6 +264,7 @@ class AiService
      * Parse la réponse JSON de l'API.
      *
      * @return array<string, mixed>
+     *
      * @throws \Exception
      */
     private function parserReponse(string $contenu): array
@@ -274,27 +279,27 @@ class AiService
         $donnees = json_decode($contenu, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            Log::error('AiService : JSON invalide reçu : ' . $contenu);
+            Log::error('AiService : JSON invalide reçu : '.$contenu);
             throw new \Exception(
                 'La réponse de l\'IA n\'est pas un JSON valide. Réessayez.'
             );
         }
 
         return [
-            'score'           => max(0, min(10, (int) ($donnees['score'] ?? 5))),
-            'resume'          => $donnees['resume'] ?? 'Analyse indisponible.',
-            'points_cles'     => array_slice((array) ($donnees['points_cles'] ?? []), 0, 5),
+            'score' => max(0, min(10, (int) ($donnees['score'] ?? 5))),
+            'resume' => $donnees['resume'] ?? 'Analyse indisponible.',
+            'points_cles' => array_slice((array) ($donnees['points_cles'] ?? []), 0, 5),
             'recommandations' => array_slice((array) ($donnees['recommandations'] ?? []), 0, 5),
-            'tendances'       => array_slice((array) ($donnees['tendances'] ?? []), 0, 3),
-            'genere_le'       => now()->format('d/m/Y à H:i'),
-            'fournisseur'     => $this->fournisseur,
-            'modele'          => $this->modele,
+            'tendances' => array_slice((array) ($donnees['tendances'] ?? []), 0, 3),
+            'genere_le' => now()->format('d/m/Y à H:i'),
+            'fournisseur' => $this->fournisseur,
+            'modele' => $this->modele,
         ];
     }
 
     /**
-    * Génère un rapport pour une période personnalisée.
-    */
+     * Génère un rapport pour une période personnalisée.
+     */
     public function genererRapportPeriode(Site $site, Carbon $debut, Carbon $fin): array
     {
         $this->validerConfiguration();
@@ -302,40 +307,40 @@ class AiService
         // Calcul du nombre de jours pour info
         $jours = $debut->diffInDays($fin) + 1;
 
-        $service = new \App\Services\StatistiqueService($site);
+        $service = new StatistiqueService($site);
 
         $donnees = [
-            'periode'   => [
+            'periode' => [
                 'debut' => $debut->format('d/m/Y'),
-                'fin'   => $fin->format('d/m/Y'),
+                'fin' => $fin->format('d/m/Y'),
                 'jours' => $jours,
             ],
-            'resume'    => $service->resume($debut, $fin),
-            'top_pages' => $service->topPages($debut, $fin, 10)->map(fn($p) => [
-                'chemin'    => $p->chemin,
-                'vues'      => $p->vues,
+            'resume' => $service->resume($debut, $fin),
+            'top_pages' => $service->topPages($debut, $fin, 10)->map(fn ($p) => [
+                'chemin' => $p->chemin,
+                'vues' => $p->vues,
                 'visiteurs' => $p->visiteurs,
             ])->toArray(),
-            'appareils' => $service->parAppareil($debut, $fin)->map(fn($a) => [
-                'appareil'  => $a->appareil,
+            'appareils' => $service->parAppareil($debut, $fin)->map(fn ($a) => [
+                'appareil' => $a->appareil,
                 'visiteurs' => $a->visiteurs,
             ])->toArray(),
-            'referents' => $service->topReferents($debut, $fin, 5)->map(fn($r) => [
-                'domaine'   => $r->referent_domaine,
+            'referents' => $service->topReferents($debut, $fin, 5)->map(fn ($r) => [
+                'domaine' => $r->referent_domaine,
                 'visiteurs' => $r->visiteurs,
             ])->toArray(),
-            'pays'      => $service->topPays($debut, $fin, 5)->map(fn($p) => [
-                'pays'      => $p->pays_nom ?? $p->pays_code,
+            'pays' => $service->topPays($debut, $fin, 5)->map(fn ($p) => [
+                'pays' => $p->pays_nom ?? $p->pays_code,
                 'visiteurs' => $p->visiteurs,
             ])->toArray(),
-            'evolution' => $service->evolutionParJour($debut, $fin)->map(fn($e) => [
-                'date'       => $e->date,
-                'visiteurs'  => $e->visiteurs,
+            'evolution' => $service->evolutionParJour($debut, $fin)->map(fn ($e) => [
+                'date' => $e->date,
+                'visiteurs' => $e->visiteurs,
                 'pages_vues' => $e->pages_vues,
             ])->toArray(),
         ];
 
-        $prompt  = $this->construirePrompt($site, $donnees);
+        $prompt = $this->construirePrompt($site, $donnees);
         $reponse = $this->appellerApi($prompt);
 
         return $this->parserReponse($reponse);

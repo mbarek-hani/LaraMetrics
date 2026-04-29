@@ -25,7 +25,7 @@ class AiAnalyticsPlugin extends AbstractPlugin
     {
         return [
             [
-                'id'    => 'ai',
+                'id' => 'ai',
                 'label' => 'Analyse IA',
                 'icone' => 'cpu',
             ],
@@ -41,7 +41,7 @@ class AiAnalyticsPlugin extends AbstractPlugin
     {
         return match ($hook) {
             'tab.ai' => view('ai-analytics::tab', $donnees)->render(),
-            default  => '',
+            default => '',
         };
     }
 
@@ -49,36 +49,28 @@ class AiAnalyticsPlugin extends AbstractPlugin
     {
         return [
             [
-                'cle'         => 'fournisseur',
-                'label'       => 'Fournisseur IA',
-                'type'        => 'select',
-                'options'     => ['groq', 'openai'],
+                'cle' => 'fournisseur',
+                'label' => 'Fournisseur IA',
+                'type' => 'select',
+                'options' => ['groq', 'openai'],
                 'obligatoire' => true,
-                'aide'        => 'Choisissez votre fournisseur de modèle IA.',
+                'aide' => 'Choisissez votre fournisseur de modèle IA.',
             ],
             [
-                'cle'         => 'cle_api',
-                'label'       => 'Clé API',
-                'type'        => 'password',
+                'cle' => 'cle_api',
+                'label' => 'Clé API',
+                'type' => 'password',
                 'obligatoire' => true,
                 'placeholder' => 'sk-...',
-                'aide'        => 'Votre clé API. Elle est stockée de manière sécurisée.',
+                'aide' => 'Votre clé API. Elle est stockée de manière sécurisée.',
             ],
             [
-                'cle'         => 'modele',
-                'label'       => 'Modèle',
-                'type'        => 'text',
+                'cle' => 'modele',
+                'label' => 'Modèle',
+                'type' => 'text',
                 'obligatoire' => false,
                 'placeholder' => 'llama-3.3-70b-versatile',
-                'aide'        => 'Laisser vide pour utiliser le modèle par défaut du fournisseur.',
-            ],
-            [
-                'cle'         => 'periode_analyse',
-                'label'       => 'Période d\'analyse (jours)',
-                'type'        => 'select',
-                'options'     => ['7', '14', '30'],
-                'obligatoire' => false,
-                'aide'        => 'Nombre de jours de données envoyées à l\'IA.',
+                'aide' => 'Laisser vide pour utiliser le modèle par défaut du fournisseur.',
             ],
         ];
     }

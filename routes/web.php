@@ -3,9 +3,9 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PluginController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TrackerJsController;
-use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('dashboard'));

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Core\Plugin\PluginManager;
-use App\Models\Plugin as PluginModele;
 use App\Models\Site;
 use App\Services\StatistiqueService;
 use Carbon\Carbon;
@@ -71,7 +70,7 @@ class DashboardController extends Controller
     private function calculerPeriode(string $periode): array
     {
         return match ($periode) {
-            'aujourdhui'  => [
+            'aujourdhui' => [
                 Carbon::today()->startOfDay(),
                 Carbon::today()->endOfDay(),
             ],
