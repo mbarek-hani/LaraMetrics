@@ -2,31 +2,31 @@
 
 namespace Plugins\AiAnalytics\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Site;
+use Illuminate\Database\Eloquent\Model;
 
 class AiAnalyticsReport extends Model
 {
     protected $fillable = [
-        "site_id",
-        "score",
-        "resume",
-        "points_cles",
-        "recommandations",
-        "tendances",
-        "fournisseur",
-        "modele",
-        "date_debut",
-        "date_fin",
+        'site_id',
+        'score',
+        'resume',
+        'points_cles',
+        'recommandations',
+        'tendances',
+        'fournisseur',
+        'modele',
+        'date_debut',
+        'date_fin',
     ];
 
     /**
      * Cast des colonnes JSON en array
      */
     protected $casts = [
-        "points_cles" => "array",
-        "recommandations" => "array",
-        "tendances" => "array",
+        'points_cles' => 'array',
+        'recommandations' => 'array',
+        'tendances' => 'array',
     ];
 
     /**
