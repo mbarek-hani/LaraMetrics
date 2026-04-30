@@ -8,7 +8,6 @@ use App\Models\Site;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Plugins\AiAnalytics\Services\AiService;
 use Plugins\AiAnalytics\Models\AiAnalyticsReport;
 
@@ -92,36 +91,6 @@ class AiReportController extends Controller
             "rapport" => $rapport ? $this->formaterRapport($rapport) : null,
         ]);
     }
-
-    /**
-     * Historique des rapports d'un site.
-     */
-    // public function historique(Request $request): JsonResponse
-    // {
-    //     $request->validate([
-    //         "site_id" => ["required", "exists:sites,id"],
-    //     ]);
-
-    //     $rapports = DB::table("ai_analytics_reports")
-    //         ->where("site_id", $request->site_id)
-    //         ->orderByDesc("created_at")
-    //         ->limit(10)
-    //         ->get()
-    //         ->map(
-    //             fn($r) => [
-    //                 "id" => $r->id,
-    //                 "score" => $r->score,
-    //                 "resume" => $r->resume,
-    //                 "fournisseur" => $r->fournisseur,
-    //                 "modele" => $r->modele,
-    //                 "genere_le" => Carbon::parse($r->created_at)->format(
-    //                     "d/m/Y à H:i",
-    //                 ),
-    //             ],
-    //         );
-
-    //     return response()->json(["rapports" => $rapports]);
-    // }
 
     /**
      * Formate un rapport complet.
