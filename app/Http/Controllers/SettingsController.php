@@ -17,8 +17,10 @@ class SettingsController extends Controller
         // Charger les valeurs actuelles pour chaque plugin
         $valeurs = [];
         foreach ($reglages as $pluginId => $plugin) {
-            $config = PluginModele::where('identifiant', $pluginId)
-                ->value('configuration') ?? [];
+            $config =
+                PluginModele::where('identifiant', $pluginId)->value(
+                    'configuration',
+                ) ?? [];
             $valeurs[$pluginId] = $config;
         }
 
@@ -42,6 +44,9 @@ class SettingsController extends Controller
         $config = array_merge($config, $request->reglages);
         $plugin->update(['configuration' => $config]);
 
-        return response()->json(['succes' => true, 'message' => 'Réglages sauvegardés.']);
+        return response()->json([
+            'succes' => true,
+            'message' => 'Réglages sauvegardés.',
+        ]);
     }
 }

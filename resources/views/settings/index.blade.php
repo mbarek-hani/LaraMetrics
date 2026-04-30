@@ -115,6 +115,7 @@
                 this.erreur     = null;
 
                 try {
+                    const donnees = Object.assign({}, this.valeurs);
                     const r = await fetch('/settings/reglages', {
                         method  : 'POST',
                         headers : {
@@ -124,7 +125,7 @@
                         },
                         body: JSON.stringify({
                             plugin   : pluginId,
-                            reglages : this.valeurs,
+                            reglages : donnees,
                         }),
                     });
 
