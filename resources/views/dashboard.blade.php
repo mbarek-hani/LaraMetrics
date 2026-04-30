@@ -245,10 +245,16 @@
 
                     {{-- ══════ ÉVÉNEMENTS ══════ --}}
                     <div x-show="ongletActif === 'evenements'" x-cloak>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                        {{-- Cartes de statistiques --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                             <x-stats-card titre="Total événements" icon="cursor-click">
                                 <x-slot:valeur>
                                     <span x-text="totalEvenements()"></span>
+                                </x-slot:valeur>
+                            </x-stats-card>
+                            <x-stats-card titre="Événements / Session" icon="arrows-right-left">
+                                <x-slot:valeur>
+                                    <span x-text="moyenneEvtParSession()"></span>
                                 </x-slot:valeur>
                             </x-stats-card>
                             <x-stats-card titre="Types différents" icon="tag">
@@ -256,59 +262,88 @@
                                     <span x-text="stats?.evenements_par_nom?.length ?? 0"></span>
                                 </x-slot:valeur>
                             </x-stats-card>
-                            <x-stats-card titre="Sessions impliquées" icon="users">
+                            <x-stats-card titre="Sessions actives" icon="users">
                                 <x-slot:valeur>
                                     <span x-text="totalSessionsEvenements()"></span>
                                 </x-slot:valeur>
                             </x-stats-card>
                         </div>
 
-                        <x-card titre="Événements par jour" class="mb-4">
-                            <div class="h-48">
+                        {{-- Graphique d'activité Temporelle --}}
+                        <x-card titre="Activité des événements" class="mb-4">
+                            <div class="h-64">
                                 <canvas x-ref="graphiqueEvenements"></canvas>
                             </div>
                         </x-card>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <x-card titre="Par nom" :padding="false">
+                            {{-- Répartition par nom + Graphique Doughnut --}}
+                            <x-card titre="Répartition des types">
+                                <div class="flex flex-col md:flex-row items-center gap-4">
+                                    <div class="w-40 h-40 shrink-0">
+                                        <canvas x-ref="graphiqueEvtRepart"></canvas>
+                                    </div>
+                                    <div class="flex-1 w-full">
+                                        <table class="w-full text-sm">
+                                            <tbody>
+                                                <template x-for="(evt, index) in (stats?.evenements_par_nom ?? []).slice(0, 5)" :key="evt.nom">
+                                                    <tr class="border-b border-gray-50 last:border-0">
+                                                        <td class="py-2 flex items-center gap-2">
+                                                            <div class="w-2 h-2 rounded-full" :style="'background-color: ' + couleursChart[index]"></div>
+                                                            <span class="text-gray-900 font-medium" x-text="evt.nom"></span>
+                                                        </td>
+                                                        <td class="py-2 text-right text-gray-600" x-text="evt.total"></td>
+                                                        <td class="py-2 text-right text-gray-400 text-xs" x-text="Math.round((evt.total / totalEvenements()) * 100) + '%'"></td>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </x-card>
+
+                            {{-- Top des pages où se produisent les événements --}}
+                            <x-card titre="Pages les plus interactives" :padding="false">
                                 <table class="w-full text-sm">
                                     <thead>
-                                        <tr class="border-b border-gray-200 text-left">
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Nom</th>
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Total</th>
+                                        <tr class="border-b border-gray-200 text-left bg-gray-50/50">
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">URL</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <template x-for="evt in stats?.evenements_par_nom ?? []" :key="evt.nom">
-                                            <tr class="border-b border-gray-100">
-                                                <td class="px-4 py-2 text-gray-900" x-text="evt.nom"></td>
-                                                <td class="px-4 py-2 text-gray-600 text-right" x-text="evt.total"></td>
+                                        <template x-for="page in (stats?.evenements_par_page ?? []).slice(0, 6)" :key="page.chemin">
+                                            <tr class="border-b border-gray-100 last:border-0">
+                                                <td class="px-4 py-2 text-gray-900 truncate max-w-[200px]" x-text="page.chemin"></td>
+                                                <td class="px-4 py-2 text-gray-600 text-right font-mono" x-text="page.total"></td>
                                             </tr>
                                         </template>
-                                        <template x-if="!stats?.evenements_par_nom?.length">
-                                            <tr><td colspan="2" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
+                                        <template x-if="!stats?.evenements_par_page?.length">
+                                            <tr><td colspan="2" class="px-4 py-8 text-center text-gray-400">Aucune donnée contextuelle</td></tr>
                                         </template>
                                     </tbody>
                                 </table>
                             </x-card>
 
-                            <x-card titre="Derniers événements" :padding="false">
+                            {{-- Journal des derniers événements --}}
+                            <x-card titre="Dernière activité" :padding="false" class="lg:col-span-2">
                                 <table class="w-full text-sm">
                                     <thead>
-                                        <tr class="border-b border-gray-200 text-left">
-                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Nom</th>
+                                        <tr class="border-b border-gray-200 text-left bg-gray-50/50">
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Événement</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500">Page</th>
                                             <th class="px-4 py-2 text-xs font-medium text-gray-500 text-right">Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <template x-for="evt in (stats?.derniers_evenements ?? []).slice(0, 10)" :key="evt.id">
-                                            <tr class="border-b border-gray-100">
-                                                <td class="px-4 py-2 text-gray-900" x-text="evt.nom"></td>
+                                        <template x-for="evt in (stats?.derniers_evenements ?? []).slice(0, 8)" :key="evt.id">
+                                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                                                <td class="px-4 py-2">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800" x-text="evt.nom"></span>
+                                                </td>
+                                                <td class="px-4 py-2 text-gray-500 truncate max-w-[250px]" x-text="evt.chemin"></td>
                                                 <td class="px-4 py-2 text-gray-400 text-right text-xs" x-text="formaterDate(evt.cree_le)"></td>
                                             </tr>
-                                        </template>
-                                        <template x-if="!stats?.derniers_evenements?.length">
-                                            <tr><td colspan="2" class="px-4 py-6 text-center text-gray-400 text-sm">Aucun événement</td></tr>
                                         </template>
                                     </tbody>
                                 </table>
@@ -342,6 +377,8 @@
             _chart      : null,
             _chartApp   : null,
             _chartEvt   : null,
+            _chartEvtRepart: null,
+            couleursChart: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'], // Indigo, Violet, Pink, Amber, Emerald
 
             periodes: [
                 { valeur: 'aujourdhui',  label: "Aujourd'hui" },
@@ -368,6 +405,7 @@
                         this.dessinerGraphique();
                         this.dessinerAppareils();
                         this.dessinerEvenements();
+                        this.dessinerRepartitionEvenements();
                     });
                 } catch (e) {
                     this.erreur = e.message;
@@ -427,34 +465,6 @@
                 });
             },
 
-            dessinerEvenements() {
-                const c = this.$refs.graphiqueEvenements;
-                if (!c) return;
-                if (this._chartEvt) this._chartEvt.destroy();
-                const d = this.stats?.evenements_par_jour ?? [];
-                if (!d.length) return;
-                this._chartEvt = new Chart(c, {
-                    type: 'bar',
-                    data: {
-                        labels: d.map(e => new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
-                        datasets: [{ label: 'Événements', data: d.map(e => e.total), backgroundColor: '#374151', borderRadius: 3 }],
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-                        plugins: { legend: { display: false } },
-                    },
-                });
-            },
-
-            totalEvenements() {
-                return (this.stats?.evenements_par_nom ?? []).reduce((s, e) => s + e.total, 0);
-            },
-
-            totalSessionsEvenements() {
-                return (this.stats?.evenements_par_nom ?? []).reduce((s, e) => s + e.sessions, 0);
-            },
-
             formaterDuree(s) {
                 if (!s || s < 1) return '0s';
                 const m = Math.floor(s / 60), sec = Math.floor(s % 60);
@@ -474,6 +484,82 @@
                 return String.fromCodePoint(
                     ...code.toUpperCase().split('').map(c => c.charCodeAt(0) + 127397)
                 );
+            },
+            dessinerEvenements() {
+                const c = this.$refs.graphiqueEvenements;
+                if (!c) return;
+                if (this._chartEvt) this._chartEvt.destroy();
+                const d = this.stats?.evenements_par_jour ?? [];
+
+                this._chartEvt = new Chart(c, {
+                    type: 'line', // Changé de 'bar' à 'line' pour mieux voir la tendance
+                    data: {
+                        labels: d.map(e => new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
+                        datasets: [{
+                            label: 'Événements',
+                            data: d.map(e => e.total),
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 3
+                        }],
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { display: false } },
+                            x: { grid: { display: false } }
+                        }
+                    },
+                });
+            },
+
+            // Nouveau graphique de répartition
+            dessinerRepartitionEvenements() {
+                const c = this.$refs.graphiqueEvtRepart;
+                if (!c) return;
+                if (this._chartEvtRepart) this._chartEvtRepart.destroy();
+
+                const data = this.stats?.evenements_par_nom ?? [];
+                if (!data.length) return;
+
+                this._chartEvtRepart = new Chart(c, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.map(e => e.nom),
+                        datasets: [{
+                            data: data.map(e => e.total),
+                            backgroundColor: this.couleursChart,
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        cutout: '75%',
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            },
+
+            totalEvenements() {
+                return (this.stats?.evenements_par_nom ?? []).reduce((s, e) => s + e.total, 0);
+            },
+
+            totalSessionsEvenements() {
+                return (this.stats?.evenements_par_nom ?? []).reduce((s, e) => s + (e.sessions || 0), 0);
+            },
+
+            // Nouvelle métrique
+            moyenneEvtParSession() {
+                const total = this.totalEvenements();
+                const sessions = this.totalSessionsEvenements();
+                if (!sessions) return 0;
+                return (total / sessions).toFixed(1);
             },
         }
     }

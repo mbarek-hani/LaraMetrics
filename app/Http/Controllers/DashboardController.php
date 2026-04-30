@@ -56,6 +56,7 @@ class DashboardController extends Controller
             "appareils" => $service->parAppareil($debut, $fin),
             "evenements_par_nom" => $service->evenementsParNom($debut, $fin),
             "evenements_par_jour" => $service->evenementsParJour($debut, $fin),
+            "evenements_par_page" => $service->evenementsParPage($debut, $fin),
             "derniers_evenements" => $service->derniersEvenements($debut, $fin),
             "periode" => [
                 "debut" => $debut->format("d/m/Y"),
