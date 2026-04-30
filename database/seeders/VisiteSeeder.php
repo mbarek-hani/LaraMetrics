@@ -3,15 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\Site;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class VisiteSeeder extends Seeder
 {
     private array $navigateurs = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'];
+
     private array $systemes = ['Windows', 'macOS', 'Linux', 'Android', 'iOS'];
+
     private array $appareils = ['ordinateur', 'mobile', 'tablette', 'inconnu'];
 
     private array $pays = [
@@ -80,7 +82,9 @@ class VisiteSeeder extends Seeder
     ];
 
     private array $utmSources = [null, 'google', 'facebook', 'twitter', 'newsletter', 'linkedin'];
+
     private array $utmMediums = [null, 'cpc', 'social', 'email', 'organic', 'referral'];
+
     private array $utmCampagnes = [null, 'lancement-v2', 'promo-ete', 'black-friday', 'newsletter-juin'];
 
     public function run(): void
@@ -109,7 +113,7 @@ class VisiteSeeder extends Seeder
             $visites[] = [
                 'site_id' => $site->id,
                 'session_id' => $sessionId,
-                'url' => 'https://' . $site->domaine . $chemin,
+                'url' => 'https://'.$site->domaine.$chemin,
                 'chemin' => $chemin,
                 'titre' => $this->titres[$chemin] ?? null,
                 'referent' => $this->referents[$refIndex],

@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Site;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class EvenementSeeder extends Seeder
 {
@@ -101,7 +101,7 @@ class EvenementSeeder extends Seeder
 
             $evenements[] = [
                 'site_id' => $site->id,
-                'visite_id' => !empty($visiteIds) ? $visiteIds[array_rand($visiteIds)] : null,
+                'visite_id' => ! empty($visiteIds) ? $visiteIds[array_rand($visiteIds)] : null,
                 'session_id' => hash('sha256', Str::random(32)),
                 'type' => $type,
                 'nom' => $details['nom'],
