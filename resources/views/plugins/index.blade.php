@@ -1,23 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-lg font-semibold text-gray-900">Plugins</h2>
-    </x-slot>
-
     <div class="py-4">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            @if(session('succes'))
-                <div class="mb-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded p-3">
-                    {{ session('succes') }}
-                </div>
-            @endif
-
-            @if(session('erreur'))
-                <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded p-3">
-                    {{ session('erreur') }}
-                </div>
-            @endif
-
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Plugins</h2>
             @if(empty($plugins))
                 <x-card>
                     <div class="text-center py-8">

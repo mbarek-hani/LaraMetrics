@@ -1,44 +1,22 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Sites</h2>
-            <x-button variant="primary" href="{{ route('sites.create') }}">
-                <x-custom-icon name="plus" class="w-4 h-4" />
-                Ajouter un site
-            </x-button>
-        </div>
-    </x-slot>
-
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            @if(session('succes'))
-                <div class="mb-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded p-3">
-                    {{ session('succes') }}
-                </div>
-            @endif
-
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Sites</h2>
+                <x-button variant="primary" href="{{ route('sites.create') }}">
+                    <x-custom-icon name="plus" class="w-4 h-4" />
+                    Ajouter un site
+                </x-button>
+            </div>
             @if($sites->isEmpty())
                 <x-card>
                     <div class="text-center py-8">
                         <x-custom-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
                         <p class="mt-2 text-sm text-gray-500">Aucun site pour le moment.</p>
-                        <div class="mt-3">
-                            <x-button variant="primary" href="{{ route('sites.create') }}">
-                                <x-custom-icon name="plus" class="w-4 h-4" />
-                                Ajouter un site
-                            </x-button>
-                        </div>
                     </div>
                 </x-card>
             @else
                 <div class="space-y-3">
-                    <div class="flex justify-end">
-                        <x-button variant="primary" href="{{ route('sites.create') }}">
-                            <x-custom-icon name="plus" class="w-4 h-4" />
-                            Ajouter un site
-                        </x-button>
-                    </div>
                     @foreach($sites as $site)
                         <x-card>
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

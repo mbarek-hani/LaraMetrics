@@ -18,12 +18,20 @@
         <style>
             [x-cloak] { display: none !important; }
         </style>
+        <script defer src="http://localhost:8000/tracker.js" data-token="0d69cd2b36d0384c7a42dd3fbf7de1a8c189ba32273b9b94b5d74a32ae4dde92"></script>
     </head>
     <body class="font-sans antialiased bg-gray-100">
         <div
             x-data="{ouvert: false}"
             class="min-h-screen flex"
         >
+            @if(session('succes'))
+                <x-alert type="succes" :message="session('succes')" />
+            @endif
+
+            @if(session('erreur'))
+                <x-alert type="erreur" :message="session('erreur')" />
+            @endif
             {{-- ══════ OVERLAY MOBILE ══════ --}}
             <div
                 x-show="ouvert"

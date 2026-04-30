@@ -1,17 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-lg font-semibold text-gray-900">Réglages</h2>
-    </x-slot>
-
     <div class="py-4">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-
-            @if(session('succes'))
-                <div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded p-3">
-                    {{ session('succes') }}
-                </div>
-            @endif
-
+        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Réglages</h2>
             {{-- Réglages Core (toujours visible) --}}
             <x-card>
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">

@@ -1,15 +1,12 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">{{ $site->nom }}</h2>
-            <x-button href="{{ route('sites.index') }}">
-                Retour
-            </x-button>
-        </div>
-    </x-slot>
-
     <div class="py-4">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-900">{{ $site->nom }}</h2>
+                <x-button href="{{ route('sites.index') }}">
+                    Retour
+                </x-button>
+            </div>
 
             {{-- Infos du site --}}
             <x-card titre="Informations">
@@ -58,7 +55,7 @@
                         <span x-show="!copie">
                             <x-custom-icon name="clipboard" class="w-4 h-4 text-gray-500" />
                         </span>
-                        
+
                         <span x-show="copie" x-cloak>
                             <x-custom-icon name="check" class="w-4 h-4 text-green-600" />
                         </span>
