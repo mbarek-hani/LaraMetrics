@@ -5,6 +5,7 @@ namespace App\Core\Plugin;
 use App\Models\Evenement;
 use App\Models\Plugin as PluginModele;
 use App\Models\Visite;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
