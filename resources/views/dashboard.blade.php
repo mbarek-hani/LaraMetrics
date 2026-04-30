@@ -1,10 +1,11 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-lg font-semibold text-gray-900">Tableau de bord</h2>
+<x-app-layout titre="Tableau de bord">
+    <x-slot name="titre">
+        Tableau de bord
     </x-slot>
 
     <div class="py-4">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Tableau de bord</h2>
 
             @if($aucunSite)
                 <x-card>

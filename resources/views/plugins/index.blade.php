@@ -1,4 +1,7 @@
 <x-app-layout>
+    <x-slot name="titre">
+        Plugins
+    </x-slot>
     <div class="py-4">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Plugins</h2>

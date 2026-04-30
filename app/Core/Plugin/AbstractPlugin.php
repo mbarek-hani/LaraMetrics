@@ -23,7 +23,7 @@ abstract class AbstractPlugin implements PluginInterface
 
     protected function chargerManifest(): void
     {
-        $chemin = $this->cheminRacine.'/manifest.json';
+        $chemin = $this->cheminRacine . "/manifest.json";
 
         if (file_exists($chemin)) {
             $this->manifest =
@@ -42,22 +42,22 @@ abstract class AbstractPlugin implements PluginInterface
 
     protected function enregistrerRoutes(): void
     {
-        $fichier = $this->cheminRacine.'/routes/web.php';
+        $fichier = $this->cheminRacine . "/routes/web.php";
 
         if (file_exists($fichier)) {
-            Route::middleware(['web', 'auth'])
-                ->prefix('plugins/'.$this->getIdentifiant())
-                ->name('plugin.'.$this->getIdentifiant().'.')
+            Route::middleware(["web", "auth"])
+                ->prefix("plugins/" . $this->getIdentifiant())
+                ->name("plugins." . $this->getIdentifiant() . ".")
                 ->group($fichier);
         }
     }
 
     protected function enregistrerVues(): void
     {
-        $dossier = $this->cheminRacine.'/resources/views';
+        $dossier = $this->cheminRacine . "/resources/views";
 
         if (is_dir($dossier)) {
-            app('view')->addNamespace($this->getIdentifiant(), $dossier);
+            app("view")->addNamespace($this->getIdentifiant(), $dossier);
         }
     }
 
@@ -66,24 +66,24 @@ abstract class AbstractPlugin implements PluginInterface
      */
     protected function publierAssets(): void
     {
-        $source = $this->cheminRacine.'/resources/assets';
-        $dest = public_path('plugins/'.$this->getIdentifiant());
+        $source = $this->cheminRacine . "/resources/assets";
+        $dest = public_path("plugins/" . $this->getIdentifiant());
 
-        if (! is_dir($source)) {
+        if (!is_dir($source)) {
             return;
         }
 
-        if (! is_dir($dest)) {
+        if (!is_dir($dest)) {
             mkdir($dest, 0755, true);
         }
 
-        $fichiers = glob($source.'/*');
+        $fichiers = glob($source . "/*");
         foreach ($fichiers as $fichier) {
             $nomFichier = basename($fichier);
-            $destFichier = $dest.'/'.$nomFichier;
+            $destFichier = $dest . "/" . $nomFichier;
 
             if (
-                ! file_exists($destFichier) ||
+                !file_exists($destFichier) ||
                 filemtime($fichier) > filemtime($destFichier)
             ) {
                 copy($fichier, $destFichier);
@@ -93,12 +93,12 @@ abstract class AbstractPlugin implements PluginInterface
 
     public function activer(): void
     {
-        $dossier = $this->cheminRacine.'/database/migrations';
+        $dossier = $this->cheminRacine . "/database/migrations";
 
         if (is_dir($dossier)) {
-            Artisan::call('migrate', [
-                '--path' => str_replace(base_path().'/', '', $dossier),
-                '--force' => true,
+            Artisan::call("migrate", [
+                "--path" => str_replace(base_path() . "/", "", $dossier),
+                "--force" => true,
             ]);
         }
 
@@ -113,9 +113,9 @@ abstract class AbstractPlugin implements PluginInterface
     public function desinstaller(): void
     {
         // Supprimer les assets publiés
-        $dest = public_path('plugins/'.$this->getIdentifiant());
+        $dest = public_path("plugins/" . $this->getIdentifiant());
         if (is_dir($dest)) {
-            array_map('unlink', glob($dest.'/*'));
+            array_map("unlink", glob($dest . "/*"));
             rmdir($dest);
         }
 
@@ -164,7 +164,7 @@ abstract class AbstractPlugin implements PluginInterface
 
     public function getCssPath(): ?string
     {
-        $chemin = 'plugins/'.$this->getIdentifiant().'/style.css';
+        $chemin = "plugins/" . $this->getIdentifiant() . "/style.css";
 
         if (file_exists(public_path($chemin))) {
             return $chemin;
@@ -186,11 +186,11 @@ abstract class AbstractPlugin implements PluginInterface
     protected function config(string $cle, mixed $defaut = null): mixed
     {
         $plugin = Plugin::where(
-            'identifiant',
+            "identifiant",
             $this->getIdentifiant(),
         )->first();
 
-        if (! $plugin || ! $plugin->configuration) {
+        if (!$plugin || !$plugin->configuration) {
             return $defaut;
         }
 
@@ -200,9 +200,9 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * Chemin absolu vers la racine du plugin.
      */
-    protected function chemin(string $relatif = ''): string
+    protected function chemin(string $relatif = ""): string
     {
-        return $this->cheminRacine.
-            ($relatif ? '/'.ltrim($relatif, '/') : '');
+        return $this->cheminRacine .
+            ($relatif ? "/" . ltrim($relatif, "/") : "");
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Plugins\AiAnalytics\Services\AiService;
+use Plugins\AiAnalytics\Models\AiAnalyticsReport;
 
 class AiReportController extends Controller
 {
@@ -19,17 +20,29 @@ class AiReportController extends Controller
     public function generer(Request $request): JsonResponse
     {
         $request->validate([
-            'site_id' => ['required', 'exists:sites,id'],
-            'date_debut' => ['required', 'date', 'before_or_equal:today', 'before_or_equal:date_fin'],
-            'date_fin' => ['required', 'date', 'before_or_equal:today'],
+            "site_id" => ["required", "exists:sites,id"],
+            "date_debut" => [
+                "required",
+                "date",
+                "before_or_equal:today",
+                "before_or_equal:date_fin",
+            ],
+            "date_fin" => ["required", "date", "before_or_equal:today"],
         ]);
 
-        $config = Plugin::where('identifiant', 'ai-analytics')->value('configuration') ?? [];
+        $config =
+            Plugin::where("identifiant", "ai-analytics")->value(
+                "configuration",
+            ) ?? [];
 
-        if (empty($config['cle_api'])) {
-            return response()->json([
-                'erreur' => 'Clé API non configurée. Rendez-vous dans Réglages.',
-            ], 422);
+        if (empty($config["cle_api"])) {
+            return response()->json(
+                [
+                    "erreur" =>
+                        "Clé API non configurée. Rendez-vous dans Réglages.",
+                ],
+                422,
+            );
         }
 
         $site = Site::findOrFail($request->site_id);
@@ -37,30 +50,28 @@ class AiReportController extends Controller
         $fin = Carbon::parse($request->date_fin)->endOfDay();
 
         try {
-            $service = new AiService;
+            $service = new AiService();
             $rapport = $service->genererRapportPeriode($site, $debut, $fin);
 
-            $id = DB::table('ai_analytics_reports')->insertGetId([
-                'site_id' => $site->id,
-                'score' => $rapport['score'],
-                'resume' => $rapport['resume'],
-                'points_cles' => json_encode($rapport['points_cles']),
-                'recommandations' => json_encode($rapport['recommandations']),
-                'tendances' => json_encode($rapport['tendances']),
-                'fournisseur' => $rapport['fournisseur'],
-                'modele' => $rapport['modele'],
-                'date_debut' => $debut->toDateString(),
-                'date_fin' => $fin->toDateString(),
-                'cree_le' => now(),
+            $rapport_cree = AiAnalyticsReport::create([
+                "site_id" => $site->id,
+                "score" => $rapport["score"],
+                "resume" => $rapport["resume"],
+                "points_cles" => $rapport["points_cles"],
+                "recommandations" => $rapport["recommandations"],
+                "tendances" => $rapport["tendances"],
+                "fournisseur" => $rapport["fournisseur"],
+                "modele" => $rapport["modele"],
+                "date_debut" => $debut->toDateString(),
+                "date_fin" => $fin->toDateString(),
             ]);
 
             return response()->json([
-                'succes' => true,
-                'rapport' => array_merge($rapport, ['id' => $id]),
+                "succes" => true,
+                "rapport" => array_merge($rapport, ["id" => $rapport_cree->id]),
             ]);
-
         } catch (\Exception $e) {
-            return response()->json(['erreur' => $e->getMessage()], 422);
+            return response()->json(["erreur" => $e->getMessage()], 422);
         }
     }
 
@@ -70,60 +81,47 @@ class AiReportController extends Controller
     public function dernier(Request $request): JsonResponse
     {
         $request->validate([
-            'site_id' => ['required', 'exists:sites,id'],
+            "site_id" => ["required", "exists:sites,id"],
         ]);
 
-        $rapport = DB::table('ai_analytics_reports')
-            ->where('site_id', $request->site_id)
-            ->latest('cree_le')
+        $rapport = AiAnalyticsReport::where("site_id", $request->site_id)
+            ->latest()
             ->first();
 
         return response()->json([
-            'rapport' => $rapport ? $this->formaterRapport($rapport) : null,
-        ]);
-    }
-
-    /**
-     * Un rapport spécifique par ID.
-     */
-    public function show(int $id): JsonResponse
-    {
-        $rapport = DB::table('ai_analytics_reports')->find($id);
-
-        if (! $rapport) {
-            return response()->json(['rapport' => null], 404);
-        }
-
-        return response()->json([
-            'rapport' => $this->formaterRapport($rapport),
+            "rapport" => $rapport ? $this->formaterRapport($rapport) : null,
         ]);
     }
 
     /**
      * Historique des rapports d'un site.
      */
-    public function historique(Request $request): JsonResponse
-    {
-        $request->validate([
-            'site_id' => ['required', 'exists:sites,id'],
-        ]);
+    // public function historique(Request $request): JsonResponse
+    // {
+    //     $request->validate([
+    //         "site_id" => ["required", "exists:sites,id"],
+    //     ]);
 
-        $rapports = DB::table('ai_analytics_reports')
-            ->where('site_id', $request->site_id)
-            ->orderByDesc('cree_le')
-            ->limit(10)
-            ->get()
-            ->map(fn ($r) => [
-                'id' => $r->id,
-                'score' => $r->score,
-                'resume' => $r->resume,
-                'fournisseur' => $r->fournisseur,
-                'modele' => $r->modele,
-                'genere_le' => Carbon::parse($r->cree_le)->format('d/m/Y à H:i'),
-            ]);
+    //     $rapports = DB::table("ai_analytics_reports")
+    //         ->where("site_id", $request->site_id)
+    //         ->orderByDesc("created_at")
+    //         ->limit(10)
+    //         ->get()
+    //         ->map(
+    //             fn($r) => [
+    //                 "id" => $r->id,
+    //                 "score" => $r->score,
+    //                 "resume" => $r->resume,
+    //                 "fournisseur" => $r->fournisseur,
+    //                 "modele" => $r->modele,
+    //                 "genere_le" => Carbon::parse($r->created_at)->format(
+    //                     "d/m/Y à H:i",
+    //                 ),
+    //             ],
+    //         );
 
-        return response()->json(['rapports' => $rapports]);
-    }
+    //     return response()->json(["rapports" => $rapports]);
+    // }
 
     /**
      * Formate un rapport complet.
@@ -131,15 +129,42 @@ class AiReportController extends Controller
     private function formaterRapport(object $rapport): array
     {
         return [
-            'id' => $rapport->id,
-            'score' => $rapport->score,
-            'resume' => $rapport->resume,
-            'points_cles' => json_decode($rapport->points_cles, true) ?? [],
-            'recommandations' => json_decode($rapport->recommandations, true) ?? [],
-            'tendances' => json_decode($rapport->tendances, true) ?? [],
-            'fournisseur' => $rapport->fournisseur,
-            'modele' => $rapport->modele,
-            'genere_le' => Carbon::parse($rapport->cree_le)->format('d/m/Y à H:i'),
+            "id" => $rapport->id,
+            "score" => $rapport->score,
+            "resume" => $rapport->resume,
+            "points_cles" => $rapport->points_cles ?? [],
+            "recommandations" => $rapport->recommandations ?? [],
+            "tendances" => $rapport->tendances ?? [],
+            "fournisseur" => $rapport->fournisseur,
+            "modele" => $rapport->modele,
+            "genere_le" => Carbon::parse($rapport->created_at)->format(
+                "d/m/Y à H:i",
+            ),
         ];
+    }
+
+    public function index(Request $request)
+    {
+        $query = AiAnalyticsReport::with("site")->latest();
+
+        if ($request->filled("site_id")) {
+            $query->where("site_id", $request->site_id);
+        }
+
+        return view("ai-analytics::index", [
+            "rapports" => $query->paginate(15),
+            "sites" => Site::all(),
+        ]);
+    }
+
+    public function show(AiAnalyticsReport $rapport)
+    {
+        return view("ai-analytics::show", compact("rapport"));
+    }
+
+    public function destroy(AiAnalyticsReport $rapport)
+    {
+        $rapport->delete();
+        return response()->json(["success" => true]);
     }
 }

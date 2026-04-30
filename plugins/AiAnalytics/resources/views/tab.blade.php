@@ -212,47 +212,6 @@
                 </template>
             </ul>
         </x-card>
-
-        {{-- Historique — responsive corrigé --}}
-        <x-card titre="Historique des rapports">
-            <div x-show="historique.length === 0"
-                 class="text-center text-sm text-gray-400 py-4">
-                Aucun rapport précédent.
-            </div>
-
-            <div x-show="historique.length > 0" class="space-y-2">
-                <template x-for="h in historique" :key="h.id">
-                    <div
-                        @click="afficherRapport(h)"
-                        class="flex flex-col sm:flex-row sm:items-center gap-2 p-3
-                               border border-gray-200 rounded cursor-pointer
-                               hover:bg-gray-50 transition"
-                        :class="rapport?.id === h.id ? 'bg-gray-50 border-gray-400' : ''"
-                    >
-                        {{-- Score --}}
-                        <span
-                            class="shrink-0 inline-flex items-center justify-center
-                                   w-12 text-center text-xs font-bold px-1.5 py-0.5 rounded"
-                            :class="{
-                                'bg-green-100 text-green-700' : h.score >= 7,
-                                'bg-amber-100 text-amber-700' : h.score >= 4 && h.score < 7,
-                                'bg-red-100 text-red-700'     : h.score < 4,
-                            }"
-                            x-text="h.score + '/10'"
-                        ></span>
-
-                        {{-- Résumé --}}
-                        <p class="flex-1 text-sm text-gray-700 truncate" x-text="h.resume"></p>
-
-                        {{-- Meta --}}
-                        <div class="flex items-center gap-2 shrink-0 text-xs text-gray-400">
-                            <span x-text="h.fournisseur + ' · ' + h.modele"></span>
-                            <span x-text="h.genere_le"></span>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </x-card>
     </div>
 </div>
 
@@ -359,9 +318,6 @@ function aiAnalytics() {
 
                 const data   = await r.json();
                 this.rapport = data.rapport ? { ...data.rapport, id: data.rapport.id ?? 'dernier' } : null;
-
-                this.chargerHistorique();
-
             } catch (e) {
                 this.erreur = e.message;
             } finally {
@@ -405,46 +361,11 @@ function aiAnalytics() {
                 }
 
                 this.rapport = { ...data.rapport, id: 'nouveau' };
-                this.chargerHistorique();
-
             } catch (e) {
                 this.erreur = 'Erreur réseau : ' + e.message;
             } finally {
                 this.generation = false;
             }
-        },
-
-        // ─── Charger historique ──────────────────────────────────
-        async chargerHistorique() {
-            try {
-                const r = await fetch(
-                    `/plugins/ai-analytics/historique?site_id=${this.siteId}`,
-                    { headers: this.headers() }
-                );
-                if (r.ok) {
-                    const data     = await r.json();
-                    this.historique = data.rapports ?? [];
-                }
-            } catch {
-                // Silencieux
-            }
-        },
-
-        afficherRapport(h) {
-            // Charger le rapport complet depuis le serveur
-            fetch(`/plugins/ai-analytics/rapport/${h.id}`, {
-                headers: this.headers()
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.rapport) {
-                    this.rapport = { ...data.rapport, id: h.id };
-                }
-            })
-            .catch(() => {
-                // Fallback : afficher ce qu'on a
-                this.rapport = { ...h };
-            });
         },
 
         // ─── Headers ────────────────────────────────────────────

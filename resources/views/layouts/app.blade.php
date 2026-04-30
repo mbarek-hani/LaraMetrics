@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'LaraMetrics') }}</title>
+        <title>{{ config('app.name', 'LaraMetrics') . ' | ' . $titre }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -18,7 +18,6 @@
         <style>
             [x-cloak] { display: none !important; }
         </style>
-        <script defer src="http://localhost:8000/tracker.js" data-token="0d69cd2b36d0384c7a42dd3fbf7de1a8c189ba32273b9b94b5d74a32ae4dde92"></script>
     </head>
     <body class="font-sans antialiased bg-gray-100">
         <div
@@ -98,36 +97,72 @@
                             <p class="px-2 mb-1 text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Plugins
                             </p>
-                            @foreach($navItems as $item)
-                                <a
-                                    href="{{ route($item['route']) }}"
-                                    class="flex items-center gap-2.5 px-2 py-2 rounded text-sm font-medium transition
-                                        {{ request()->routeIs($item['route'] . '*')
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-                                >
-                                    @if(isset($item['icone']))
-                                        <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
-                                    @endif
-                                    {{ $item['label'] }}
-                                </a>
 
-                                {{-- Sous-menus --}}
-                                @if(!empty($item['sous_menus']))
-                                    <div class="ml-6 mt-0.5 space-y-0.5">
-                                        @foreach($item['sous_menus'] as $sousMenu)
-                                            <a
-                                                href="{{ route($sousMenu['route']) }}"
-                                                class="flex items-center gap-2 px-2 py-1.5 rounded text-sm transition
-                                                    {{ request()->routeIs($sousMenu['route'])
-                                                        ? 'text-gray-900 font-medium'
-                                                        : 'text-gray-500 hover:text-gray-900' }}"
-                                            >
-                                                {{ $sousMenu['label'] }}
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @endif
+                            @foreach($navItems as $item)
+                                <div x-data="{ open: {{ collect($item['sous_menus'] ?? [])->contains(fn($s) => request()->routeIs($s['route'])) ? 'true' : 'false' }} }" class="w-full">
+                                    @if(!empty($item['sous_menus']))
+                                        {{-- Cas avec sous-menu : Bouton Toggle --}}
+                                        <button
+                                            @click="open = !open"
+                                            type="button"
+                                            class="w-full flex items-center gap-2.5 px-2 py-2 rounded text-sm font-medium transition-colors focus:outline-none text-gray-900
+                                                {{ collect($item['sous_menus'])->contains(fn($s) => request()->routeIs($s['route']))
+                                                    ? ''
+                                                    : 'hover:bg-gray-100' }}"
+                                        >
+                                            @if(isset($item['icone']))
+                                                <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
+                                            @endif
+
+                                            <span class="flex-1 text-left">{{ $item['label'] }}</span>
+
+                                            <span x-show="!open" x-claok>
+                                                <x-custom-icon
+                                                    name="chevron-down"
+                                                    class="w-3.5 h-3.5 transform transition-transform duration-200"
+                                                />
+                                            </span>
+                                            <span x-show="open" x-claok>
+                                                <x-custom-icon
+                                                    name="chevron-up"
+                                                    class="w-3.5 h-3.5 transform transition-transform duration-200"
+                                                />
+                                            </span>
+                                        </button>
+
+                                        <div
+                                            x-show="open"
+                                            x-cloak
+                                            class="ml-6 mt-0.5 space-y-0.5"
+                                        >
+                                            @foreach($item['sous_menus'] as $sousMenu)
+                                                <a
+                                                    href="{{ route($sousMenu['route']) }}"
+                                                    class="flex items-center gap-2 px-2 py-1.5 rounded text-sm transition text-gray-900
+                                                        {{ request()->routeIs($sousMenu['route'])
+                                                            ? 'bg-gray-200'
+                                                            : 'hover:bg-gray-100' }}"
+                                                >
+                                                    {{ $sousMenu['label'] }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        {{-- Cas sans sous-menu : Lien direct --}}
+                                        <a
+                                            href="{{ route($item['route']) }}"
+                                            class="flex items-center gap-2.5 px-2 py-2 rounded text-sm font-medium transition text-gray-900
+                                                {{ request()->routeIs($item['route'] . '*')
+                                                    ? 'bg-gray-200'
+                                                    : 'hover:bg-gray-100' }}"
+                                        >
+                                            @if(isset($item['icone']))
+                                                <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
+                                            @endif
+                                            {{ $item['label'] }}
+                                        </a>
+                                    @endif
+                                </div>
                             @endforeach
                         </div>
                     @endif
