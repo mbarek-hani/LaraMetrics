@@ -22,7 +22,7 @@
     </head>
     <body class="font-sans antialiased bg-gray-100">
         <div
-            x-data="{ouvert: false}"
+            x-data="sidebar()"
             class="min-h-screen flex"
         >
             @if(session('succes'))
@@ -239,5 +239,10 @@
         </div>
 
         @stack('scripts')
+        <script>
+            function sidebar() {
+                return { ouvert: window.innerWidth >= 1024 };
+            }
+        </script>
     </body>
 </html>
