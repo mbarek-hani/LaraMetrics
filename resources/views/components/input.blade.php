@@ -25,7 +25,7 @@
         placeholder="{{ $placeholder }}"
         value="{{ $value }}"
         {{ $required ? 'required' : '' }}
-        {{ $attributes->merge(['class' => 'block w-full rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500']) }}
+        {{ $attributes->merge(['class' => 'block w-full rounded border-emerald-500 text-sm focus:border-emerald-600 focus:ring-emerald-600']) }}
     >
 
     @if($aide)
