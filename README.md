@@ -1,6 +1,6 @@
-# LaraMetrics
+# Flux
 
-LaraMetrics est une application modulaire de suivi analytique et d'événements pour sites web, développée avec **Laravel 13**, **Alpine.js**, et **Tailwind CSS**.
+Flux est une application modulaire de suivi analytique et d'événements pour sites web, développée avec **Laravel 13**, **Alpine.js**, et **Tailwind CSS**.
 
 Elle permet de collecter, analyser et visualiser les statistiques de vos sites internet avec un système de tracking performant et une interface élégante.
 
@@ -12,7 +12,7 @@ Elle permet de collecter, analyser et visualiser les statistiques de vos sites i
 
 ## Système de Plugins
 
-LaraMetrics a été conçu pour être facilement extensible. Les développeurs peuvent créer des plugins pour :
+Flux a été conçu pour être facilement extensible. Les développeurs peuvent créer des plugins pour :
 - Ajouter des onglets au tableau de bord.
 - Créer des pages complètes avec leur propre navigation.
 - Gérer leurs propres tables de base de données.

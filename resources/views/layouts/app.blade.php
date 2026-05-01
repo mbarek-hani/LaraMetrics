@@ -49,10 +49,7 @@
                 {{-- Logo + Toggle --}}
                 <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200 shrink-0">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                        <x-custom-icon name="chart-bar" class="w-5 h-5 text-gray-900" />
-                        <span class="font-bold text-sm text-gray-900">
-                            {{ config('app.name', 'LaraMetrics') }}
-                        </span>
+                        <x-application-logo class="h-12 w-auto" />
                     </a>
                     <button
                         @click="ouvert = false"

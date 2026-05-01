@@ -1,9 +1,9 @@
-# Guide de Développement de Plugins LaraMetrics
+# Guide de Développement de Plugins Flux
 
-> **Version LaraMetrics** : Laravel 13 · Alpine.js · Tailwind CSS
-> **Objectif** : Étendre les fonctionnalités de LaraMetrics sans modifier son code source (*core*).
+> **Version Flux** : Laravel 13 · Alpine.js · Tailwind CSS
+> **Objectif** : Étendre les fonctionnalités de Flux sans modifier son code source (*core*).
 
-LaraMetrics repose sur une architecture modulaire robuste. Le **core** gère le tracking, l'authentification et l'interface principale, tandis que toutes les fonctionnalités spécifiques ou expérimentales peuvent être implémentées via des **plugins**.
+Flux repose sur une architecture modulaire robuste. Le **core** gère le tracking, l'authentification et l'interface principale, tandis que toutes les fonctionnalités spécifiques ou expérimentales peuvent être implémentées via des **plugins**.
 
 ---
 
@@ -23,7 +23,7 @@ LaraMetrics repose sur une architecture modulaire robuste. Le **core** gère le 
 
 ## 1. Démarrage Rapide
 
-La méthode la plus simple pour démarrer le développement d'un plugin est d'utiliser l'interface en ligne de commande de Laravel (Artisan) incluse avec LaraMetrics.
+La méthode la plus simple pour démarrer le développement d'un plugin est d'utiliser l'interface en ligne de commande de Laravel (Artisan) incluse avec Flux.
 
 ### Créer un nouveau plugin
 
@@ -39,7 +39,7 @@ php artisan make:plugin MonPlugin
 
 ### Activer le plugin
 
-1. Rendez-vous dans le tableau de bord LaraMetrics, section **Plugins**.
+1. Rendez-vous dans le tableau de bord Flux, section **Plugins**.
 2. Trouvez "MonPlugin" dans la liste et cliquez sur **Activer**.
 
 ### Supprimer un plugin
@@ -79,7 +79,7 @@ plugins/
 
 ## 3. Le fichier `manifest.json`
 
-Le fichier `manifest.json` est la carte d'identité de votre plugin. Il est lu par LaraMetrics au démarrage pour "découvrir" votre plugin.
+Le fichier `manifest.json` est la carte d'identité de votre plugin. Il est lu par Flux au démarrage pour "découvrir" votre plugin.
 
 ```json
 {
@@ -133,7 +133,7 @@ class MonPlugin extends AbstractPlugin
 
 ## 5. Étendre l'Interface Utilisateur (UI)
 
-Vous pouvez greffer des éléments visuels à LaraMetrics directement depuis votre classe principale.
+Vous pouvez greffer des éléments visuels à Flux directement depuis votre classe principale.
 
 ### 5.1 Ajouter un lien dans le menu de navigation
 
@@ -154,7 +154,7 @@ public function getNavigationItems(): array
 
 ### 5.2 Créer une page de réglages dédiée
 
-Chaque plugin bénéficie d'une section isolée dans la page "Réglages" de LaraMetrics. Déclarez vos champs :
+Chaque plugin bénéficie d'une section isolée dans la page "Réglages" de Flux. Déclarez vos champs :
 
 ```php
 public function getReglages(): array
@@ -197,7 +197,7 @@ public function rendrePourHook(string $hook, array $donnees = []): string
 
 ## 6. Manipuler le Tracking et les Données
 
-La véritable puissance des plugins LaraMetrics réside dans la manipulation du pipeline de tracking.
+La véritable puissance des plugins Flux réside dans la manipulation du pipeline de tracking.
 
 ### 6.1 Modifier ou filtrer les données (Avant Enregistrement)
 
@@ -284,7 +284,7 @@ PluginMetadonnee::enregistrer(
 
 ## 8. Composants UI Disponibles
 
-Pour que votre plugin s'intègre parfaitement au design de LaraMetrics, utilisez nos composants Blade Tailwind/Alpine prêts à l'emploi dans vos fichiers `resources/views/` :
+Pour que votre plugin s'intègre parfaitement au design de Flux, utilisez nos composants Blade Tailwind/Alpine prêts à l'emploi dans vos fichiers `resources/views/` :
 
 | Composant | Utilisation |
 |---|---|
@@ -295,7 +295,7 @@ Pour que votre plugin s'intègre parfaitement au design de LaraMetrics, utilisez
 | **Stats** | `<x-stats-card titre="Total" valeur="42" icon="users" />` |
 
 > [!TIP]
-> LaraMetrics utilise **Tailwind CSS**. Les classes utilisées dans vos vues Blade (`plugins/*/resources/views/**/*.blade.php`) sont automatiquement analysées et compilées par Vite (via `npm run build`).
+> Flux utilise **Tailwind CSS**. Les classes utilisées dans vos vues Blade (`plugins/*/resources/views/**/*.blade.php`) sont automatiquement analysées et compilées par Vite (via `npm run build`).
 
 ---
 
@@ -334,4 +334,4 @@ public function desinstaller(): void
 
 ---
 
-**Bon développement avec LaraMetrics !**
+**Bon développement avec Flux !**
