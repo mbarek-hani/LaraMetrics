@@ -1,3 +1,6 @@
+@import './variables.css';
+@import './components/alert.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

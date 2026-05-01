@@ -1,0 +1,33 @@
+:root {
+    /* Brand Primary */
+    --color-primary: #10b981;
+    --color-primary-light: #a7f3d0;
+
+    /* Success Semantic Palette */
+    --success-bg: #ecfdf5;
+    --success-border: #a7f3d0;
+    --success-accent: #10b981;
+    --success-text: #047857;
+
+    /* Error Semantic Palette */
+    --error-bg: #fef2f2;
+    --error-border: #fecaca;
+    --error-accent: #ef4444;
+    --error-text: #b91c1c;
+
+    /* Info Semantic Palette */
+    --info-bg: #eff6ff;
+    --info-border: #bfdbfe;
+    --info-accent: #3b82f6;
+    --info-text: #1d4ed8;
+}
+
+[data-theme='dark'] {
+    /* In dark mode, we flip the relationship */
+    --success-bg: #064e3b;
+    --success-border: #065f46;
+    --success-text: #d1fae5;
+    --success-accent: #34d399;
+
+    /* ... repeat for error/info */
+}
