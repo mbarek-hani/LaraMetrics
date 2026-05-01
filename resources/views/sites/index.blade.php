@@ -1,4 +1,7 @@
 <x-app-layout>
+    <x-slot name="titre">
+        Sites
+    </x-slot>
     <div class="py-4">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between mb-4">
@@ -22,7 +25,8 @@
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full {{ $site->actif ? 'bg-green-500' : 'bg-gray-300' }}"></div>
+                                        <div class="w-2 h-2 rounded-full {{ $site->actif ? 'bg-green-500' : 'bg-gray-300' }}">
+                                        </div>
                                         <h3 class="text-sm font-semibold text-gray-900">{{ $site->nom }}</h3>
                                     </div>
                                     <p class="text-sm text-gray-500 mt-0.5 ml-4">{{ $site->domaine }}</p>
@@ -36,7 +40,7 @@
                                         Code
                                     </x-button>
                                     <form method="POST" action="{{ route('sites.destroy', $site) }}"
-                                          onsubmit="return confirm('Supprimer ce site et toutes ses données ?')">
+                                        onsubmit="return confirm('Supprimer ce site et toutes ses données ?')">
                                         @csrf
                                         @method('DELETE')
                                         <x-button variant="danger" size="sm" type="submit">

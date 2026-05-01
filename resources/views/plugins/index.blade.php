@@ -61,10 +61,14 @@
                                 </div>
 
                                 <div class="flex items-center gap-2 sm:shrink-0 ml-8 sm:ml-0">
+                                    <x-button href="{{ route('plugins.show', $plugin['identifiant']) }}" size="sm">
+                                        <x-custom-icon name="eye" class="w-3.5 h-3.5" />
+                                        Détails
+                                    </x-button>
                                     @if($plugin['actif'])
                                         <form method="POST" action="{{ route('plugins.desactiver', $plugin['identifiant']) }}">
                                             @csrf
-                                            <x-button type="submit" size="sm">
+                                            <x-button type="submit" variant="danger" size="sm">
                                                 <x-custom-icon name="stop" class="w-3.5 h-3.5" />
                                                 Désactiver
                                             </x-button>

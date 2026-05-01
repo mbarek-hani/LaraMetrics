@@ -35,6 +35,38 @@ class PluginController extends Controller
         return view('plugins.index', compact('plugins'));
     }
 
+    public function show(string $identifiant)
+    {
+        $manager = app(PluginManager::class);
+        $decouverts = $manager->getPluginsDecouverts();
+
+        if (!isset($decouverts[$identifiant])) {
+            abort(404, 'Plugin non trouvé');
+        }
+
+        $plugin = $decouverts[$identifiant];
+        $enBdd = PluginModele::where('identifiant', $identifiant)->first();
+
+        $details = [
+            'identifiant' => $identifiant,
+            'nom' => $plugin->getNom(),
+            'version' => $plugin->getVersion(),
+            'description' => $plugin->getManifest()['description'] ?? 'Aucune description disponible.',
+            'auteur' => $plugin->getManifest()['auteur'] ?? 'Inconnu',
+            'licence' => $plugin->getManifest()['licence'] ?? 'Non spécifiée',
+            'url' => $plugin->getManifest()['url'] ?? null,
+            'actif' => $enBdd?->actif ?? false,
+            'installe' => $enBdd?->installe ?? false,
+            'active_le' => $enBdd?->active_le ?? null,
+            'onglets' => $plugin->getOnglets(),
+            'hooks' => $plugin->getHooks(),
+            'navigation' => $plugin->getNavigationItems(),
+            'reglages' => $plugin->getReglages(),
+        ];
+
+        return view('plugins.show', compact('details'));
+    }
+
     public function activer(Request $request, string $identifiant)
     {
         $manager = app(PluginManager::class);

@@ -28,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/plugins', [PluginController::class, 'index'])->name(
         'plugins.index',
     );
+    Route::get('/plugins/{identifiant}', [PluginController::class, 'show'])->name(
+        'plugins.show',
+    );
     Route::post('/plugins/{identifiant}/activer', [
         PluginController::class,
         'activer',
