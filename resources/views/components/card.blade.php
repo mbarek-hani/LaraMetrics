@@ -3,14 +3,14 @@
     'padding' => true,
 ])
 
-<div {{ $attributes->merge(['class' => 'bg-gray-50 border border-gray-200 rounded']) }}>
+<div {{ $attributes->merge(['class' => 'c-card']) }}>
     @if($titre)
-        <div class="px-4 py-3 border-b border-gray-200">
-            <h3 class="text-sm font-semibold text-gray-900">{{ $titre }}</h3>
+        <div class="c-card__header">
+            <h3 class="c-card__title">{{ $titre }}</h3>
         </div>
     @endif
 
-    <div class="{{ $padding ? 'p-4' : '' }}">
+    <div class="{{ $padding ? 'c-card__body--padded' : '' }}">
         {{ $slot }}
     </div>
 </div>
