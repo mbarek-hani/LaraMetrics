@@ -40,7 +40,7 @@ class PluginController extends Controller
         $manager = app(PluginManager::class);
         $decouverts = $manager->getPluginsDecouverts();
 
-        if (!isset($decouverts[$identifiant])) {
+        if (! isset($decouverts[$identifiant])) {
             abort(404, 'Plugin non trouvé');
         }
 
