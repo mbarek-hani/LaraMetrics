@@ -47,9 +47,7 @@ Route::middleware(['auth'])->group(function () {
         SettingsController::class,
         'sauvegarderReglages',
     ])->name('settings.reglages');
-});
 
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name(
         'profile.edit',
     );
