@@ -1,6 +1,7 @@
 @import './variables.css';
 @import './components/alert.css';
 @import './components/application-logo.css';
+@import './components/button.css';
 
 @tailwind base;
 @tailwind components;

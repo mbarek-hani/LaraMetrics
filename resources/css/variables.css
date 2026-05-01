@@ -20,6 +20,14 @@
     --info-border: #bfdbfe;
     --info-accent: #3b82f6;
     --info-text: #1d4ed8;
+
+    /* Grayscale / Neutrals */
+    --gray-50: #f9fafb;
+    --gray-300: #d1d5db;
+    --gray-700: #374151;
+
+    /* Semantic States */
+    --ring-offset: #ffffff;
 }
 
 [data-theme='dark'] {
@@ -30,4 +38,8 @@
     --success-accent: #34d399;
 
     /* ... repeat for error/info */
+    --gray-50: #1f2937;
+    --gray-300: #4b5563;
+    --gray-700: #f3f4f6;
+    --ring-offset: #111827;
 }
