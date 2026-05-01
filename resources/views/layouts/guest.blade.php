@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'LaraMetrics') }}</title>
+    <title>{{ config('app.name', 'Flux') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -26,7 +27,7 @@
         </div>
 
         <p class="mt-6 text-xs text-gray-400">
-            &copy; {{ date('Y') }} {{ config('app.name', 'LaraMetrics') }}
+            &copy; {{ date('Y') }} {{ config('app.name', 'Flux') }}
         </p>
     </div>
 </body>
