@@ -43,6 +43,15 @@ class SiteController extends Controller
         return view('sites.show', compact('site'));
     }
 
+    public function toggleActif(Site $site)
+    {
+        $site->update(['actif' => !$site->actif]);
+
+        return redirect()
+            ->route('sites.index')
+            ->with('succes', 'Statut du site modifié avec succès.');
+    }
+
     public function destroy(Site $site)
     {
         $site->delete();

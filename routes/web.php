@@ -24,6 +24,10 @@ Route::middleware(['auth'])->group(function () {
     ])->name('dashboard.reglages');
 
     Route::resource('sites', SiteController::class);
+    Route::post('/sites/{site}/toggle-actif', [
+        SiteController::class,
+        'toggleActif',
+    ])->name('sites.toggle-actif');
 
     Route::get('/plugins', [PluginController::class, 'index'])->name(
         'plugins.index',

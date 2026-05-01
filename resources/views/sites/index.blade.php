@@ -35,6 +35,13 @@
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-2 ml-4 sm:ml-0">
+                                    <form method="POST" action="{{ route('sites.toggle-actif', $site) }}">
+                                        @csrf
+                                        <x-button size="sm" type="submit" variant="{{ $site->actif ? 'default' : 'primary' }}">
+                                            <x-custom-icon name="{{ $site->actif ? 'pause' : 'play' }}" class="w-3.5 h-3.5" />
+                                            {{ $site->actif ? 'Désactiver' : 'Activer' }}
+                                        </x-button>
+                                    </form>
                                     <x-button size="sm" href="{{ route('sites.show', $site) }}">
                                         <x-custom-icon name="code" class="w-3.5 h-3.5" />
                                         Code
