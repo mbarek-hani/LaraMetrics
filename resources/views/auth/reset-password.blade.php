@@ -1,11 +1,11 @@
 <x-guest-layout>
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Réinitialiser le mot de passe</h2>
+    <h2 class="p-auth__title">Réinitialiser le mot de passe</h2>
 
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-        <div class="space-y-4">
+        <div class="p-auth__form-group">
             <x-input
                 name="email"
                 label="Adresse e-mail"
@@ -32,8 +32,8 @@
             />
         </div>
 
-        <div class="mt-6">
-            <x-button variant="primary" type="submit" class="w-full justify-center">
+        <div class="p-auth__submit">
+            <x-button variant="primary" type="submit">
                 Réinitialiser
             </x-button>
         </div>
