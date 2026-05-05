@@ -1,17 +1,17 @@
 <x-guest-layout>
-    <h2 class="text-lg font-semibold text-gray-900 mb-2">Vérification de l'e-mail</h2>
-    <p class="text-sm text-gray-500 mb-4">
+    <h2 class="p-auth__title">Vérification de l'e-mail</h2>
+    <p class="p-auth__text">
         Merci de vérifier votre adresse e-mail en cliquant sur le lien que nous venons de vous envoyer.
     </p>
 
     @if(session('status') == 'verification-link-sent')
-        <div class="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-3">
+        <div class="p-auth__status">
             Un nouveau lien de vérification a été envoyé.
         </div>
     @endif
 
-    <div class="flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
+    <div class="p-auth__actions">
+        <form method="POST" action="{{ route('verification.send') }}" style="margin-right: 1rem;">
             @csrf
             <x-button variant="primary" type="submit">
                 Renvoyer le lien
