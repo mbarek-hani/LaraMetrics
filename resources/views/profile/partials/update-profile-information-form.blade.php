@@ -1,7 +1,7 @@
 <x-card>
-    <div class="mb-4 pb-3 border-b border-gray-200">
-        <h3 class="text-sm font-semibold text-gray-900">Informations du profil</h3>
-        <p class="text-xs text-gray-500 mt-0.5">Mettez à jour votre nom et adresse e-mail.</p>
+    <div class="p-section__header">
+        <h3 class="p-section__title">Informations du profil</h3>
+        <p class="p-section__subtitle">Mettez à jour votre nom et adresse e-mail.</p>
     </div>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -12,7 +12,7 @@
         @csrf
         @method('patch')
 
-        <div class="space-y-4 max-w-lg">
+        <div class="p-form-group">
             <x-input
                 name="name"
                 label="Nom"
@@ -34,16 +34,16 @@
 
                 @if($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                     <div class="mt-2">
-                        <p class="text-sm text-gray-600">
+                        <p class="p-text--muted">
                             Votre adresse e-mail n'est pas vérifiée.
                             <button form="send-verification"
-                                    class="text-gray-900 font-medium underline hover:no-underline">
+                                    class="p-text--bold" style="text-decoration: underline; cursor: pointer; background: none; border: none;">
                                 Renvoyer le lien
                             </button>
                         </p>
 
                         @if(session('status') === 'verification-link-sent')
-                            <p class="mt-1 text-sm text-green-600">
+                            <p class="p-flash--success p-mt-1">
                                 Un nouveau lien a été envoyé.
                             </p>
                         @endif
@@ -52,13 +52,13 @@
             </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
+        <div class="p-card-footer">
             <x-button variant="primary" size="sm" type="submit">
                 Sauvegarder
             </x-button>
 
             @if(session('status') === 'profile-updated')
-                <span class="text-sm text-green-600" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition>
+                <span class="p-flash--success" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition>
                     Sauvegardé.
                 </span>
             @endif
