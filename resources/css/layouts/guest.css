@@ -1,0 +1,39 @@
+.l-guest {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-100);
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.l-guest__logo-link {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-900);
+    text-decoration: none;
+}
+
+.l-guest__card {
+    width: 100%;
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .l-guest__card {
+        max-width: 28rem;
+    }
+}
+
+.l-guest__footer {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}

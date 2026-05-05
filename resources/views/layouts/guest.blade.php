@@ -16,17 +16,17 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+    <div class="l-guest">
 
-        <a href="/" class="mb-6 flex items-center gap-2 text-gray-900">
+        <a href="/" class="l-guest__logo-link">
             <x-application-logo class="h-12 w-auto" />
         </a>
 
-        <div class="w-full sm:max-w-md bg-gray-50 border border-gray-200 rounded p-6">
+        <div class="l-guest__card">
             {{ $slot }}
         </div>
 
-        <p class="mt-6 text-xs text-gray-400">
+        <p class="l-guest__footer">
             &copy; {{ date('Y') }} {{ config('app.name', 'Flux') }}
         </p>
     </div>
