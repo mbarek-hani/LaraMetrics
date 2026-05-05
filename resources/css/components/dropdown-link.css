@@ -1,0 +1,18 @@
+.c-dropdown-link {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    text-align: start;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-700);
+    transition: background-color 0.15s ease-in-out;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.c-dropdown-link:hover,
+.c-dropdown-link:focus {
+    background-color: var(--gray-100);
+    outline: none;
+}
