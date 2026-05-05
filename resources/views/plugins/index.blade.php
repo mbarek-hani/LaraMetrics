@@ -4,7 +4,7 @@
     </x-slot>
     <div class="p-page">
         <div class="p-container p-container--md">
-        <h2 class="p-page__title">Plugins</h2>
+            <h2 class="p-page__title">Plugins</h2>
             @if(empty($plugins))
                 <x-card>
                     <div class="p-empty">
@@ -22,7 +22,7 @@
                             <div class="p-list-item p-list-item--top">
                                 <div class="p-row" style="align-items: flex-start; gap: 0.75rem;">
                                     <div class="p-mt-sm">
-                                        <x-custom-icon name="puzzle" class="w-5 h-5 text-gray-400" />
+                                        <x-custom-icon name="puzzle" class="c-icon--md c-icon--gray-400" />
                                     </div>
                                     <div>
                                         <div class="p-row">
@@ -51,7 +51,7 @@
 
                                         @if(!empty($plugin['hooks']))
                                             <div class="p-row p-mt-2">
-                                                <x-custom-icon name="bolt" class="w-3 h-3" style="color: var(--gray-300);" />
+                                                <x-custom-icon name="bolt" class="c-icon--xs c-icon--gray-300" />
                                                 <span class="p-text--xs">
                                                     Hooks : {{ implode(', ', $plugin['hooks']) }}
                                                 </span>
@@ -62,22 +62,23 @@
 
                                 <div class="p-actions p-indent">
                                     <x-button href="{{ route('plugins.show', $plugin['identifiant']) }}" size="sm">
-                                        <x-custom-icon name="eye" class="w-3.5 h-3.5" />
+                                        <x-custom-icon name="eye" class="c-icon--xs" />
                                         Détails
                                     </x-button>
+
                                     @if($plugin['actif'])
                                         <form method="POST" action="{{ route('plugins.desactiver', $plugin['identifiant']) }}">
                                             @csrf
-                                            <x-button type="submit" variant="danger" size="sm">
-                                                <x-custom-icon name="stop" class="w-3.5 h-3.5" />
+                                            <x-button variant="danger" size="sm" type="submit">
+                                                <x-custom-icon name="stop" class="c-icon--xs" />
                                                 Désactiver
                                             </x-button>
                                         </form>
                                     @else
                                         <form method="POST" action="{{ route('plugins.activer', $plugin['identifiant']) }}">
                                             @csrf
-                                            <x-button variant="primary" type="submit" size="sm">
-                                                <x-custom-icon name="play" class="w-3.5 h-3.5" />
+                                            <x-button variant="primary" size="sm" type="submit">
+                                                <x-custom-icon name="play" class="c-icon--xs" />
                                                 Activer
                                             </x-button>
                                         </form>

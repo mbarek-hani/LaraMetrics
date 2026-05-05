@@ -46,13 +46,13 @@
                 {{-- Logo + Toggle --}}
                 <div class="l-sidebar__header">
                     <a href="{{ route('dashboard') }}" class="l-sidebar__logo-link">
-                        <x-application-logo class="h-12 w-auto" />
+                        <x-application-logo />
                     </a>
                     <button
                         @click="ouvert = false"
                         class="l-sidebar__close"
                     >
-                        <x-custom-icon name="x-mark" class="w-4 h-4" />
+                        <x-custom-icon name="x-mark" class="c-icon--sm" />
                     </button>
                 </div>
 
@@ -93,7 +93,7 @@
                             </p>
 
                             @foreach($navItems as $item)
-                                <div x-data="{ open: {{ collect($item['sous_menus'] ?? [])->contains(fn($s) => request()->routeIs($s['route'])) ? 'true' : 'false' }} }" class="w-full">
+                                <div x-data="{ open: {{ collect($item['sous_menus'] ?? [])->contains(fn($s) => request()->routeIs($s['route'])) ? 'true' : 'false' }} }">
                                     @if(!empty($item['sous_menus']))
                                         {{-- Cas avec sous-menu : Bouton Toggle --}}
                                         <button
@@ -102,7 +102,7 @@
                                             class="l-sidebar__menu-btn {{ collect($item['sous_menus'])->contains(fn($s) => request()->routeIs($s['route'])) ? '' : '' }}"
                                         >
                                             @if(isset($item['icone']))
-                                                <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
+                                                <x-custom-icon :name="$item['icone']" class="c-icon--sm c-icon--no-shrink" />
                                             @endif
 
                                             <span class="flex-1 text-left">{{ $item['label'] }}</span>
@@ -110,13 +110,13 @@
                                             <span x-show="!open" x-claok>
                                                 <x-custom-icon
                                                     name="chevron-down"
-                                                    class="w-3.5 h-3.5 transform transition-transform duration-200"
+                                                    class="c-icon--xs"
                                                 />
                                             </span>
                                             <span x-show="open" x-claok>
                                                 <x-custom-icon
                                                     name="chevron-up"
-                                                    class="w-3.5 h-3.5 transform transition-transform duration-200"
+                                                    class="c-icon--xs"
                                                 />
                                             </span>
                                         </button>
@@ -142,7 +142,7 @@
                                             class="l-sidebar__menu-btn {{ request()->routeIs($item['route'] . '*') ? 'c-sidebar-link--active' : '' }}"
                                         >
                                             @if(isset($item['icone']))
-                                                <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
+                                                <x-custom-icon :name="$item['icone']" class="c-icon--sm c-icon--no-shrink" />
                                             @endif
                                             {{ $item['label'] }}
                                         </a>
@@ -174,8 +174,8 @@
                             </p>
                         </div>
                         <div class="l-sidebar__user-icons">
-                            <x-custom-icon name="chevron-up" class="w-4 h-4 text-gray-900 shrink-0" />
-                            <x-custom-icon name="chevron-down" class="w-4 h-4 text-gray-900 shrink-0" />
+                            <x-custom-icon name="chevron-up" class="c-icon--sm c-icon--gray-900 c-icon--no-shrink" />
+                            <x-custom-icon name="chevron-down" class="c-icon--sm c-icon--gray-900 c-icon--no-shrink" />
                         </div>
                     </button>
 
@@ -188,12 +188,12 @@
                     >
                         <a href="{{ route('settings.index') }}"
                             class="l-sidebar__dropdown-link">
-                            <x-custom-icon name="cog" class="w-4 h-4" />
+                             <x-custom-icon name="cog" class="c-icon--sm" />
                             Réglages
                         </a>
                         <a href="{{ route('profile.edit') }}"
                             class="l-sidebar__dropdown-link">
-                            <x-custom-icon name="users" class="w-4 h-4" />
+                             <x-custom-icon name="users" class="c-icon--sm" />
                             Profil
                         </a>
                         <div class="l-sidebar__dropdown-divider"></div>
@@ -201,7 +201,7 @@
                             @csrf
                             <button type="submit"
                                 class="l-sidebar__dropdown-link l-sidebar__dropdown-link--danger">
-                                <x-custom-icon name="arrow-right-on-rectangle" class="w-4 h-4" />
+                                 <x-custom-icon name="arrow-right-on-rectangle" class="c-icon--sm" />
                                 Déconnexion
                             </button>
                         </form>
@@ -221,7 +221,7 @@
                         @click="ouvert = true"
                         class="l-topbar__btn"
                     >
-                        <x-custom-icon name="bars-3" class="w-5 h-5" />
+                        <x-custom-icon name="bars-3" class="c-icon--md" />
                     </button>
                     <span class="l-topbar__title">
                         {{ config('app.name', 'LaraMetrics') }}
@@ -239,10 +239,10 @@
                         :title="ouvert ? 'Réduire le menu' : 'Ouvrir le menu'"
                     >
                         <span x-show="ouvert" x-cloak>
-                            <x-custom-icon name="chevron-left" class="w-6 h-6" />
+                            <x-custom-icon name="chevron-left" class="c-icon--lg" />
                         </span>
                         <span x-show="!ouvert" x-cloak>
-                            <x-custom-icon name="chevron-right" class="w-6 h-6" />
+                            <x-custom-icon name="chevron-right" class="c-icon--lg" />
                         </span>
                     </button>
                 </div>

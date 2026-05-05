@@ -43,7 +43,7 @@
         </div>
 
         <div class="p-auth__submit">
-            <x-button variant="primary" type="submit" class="w-full justify-center">
+            <x-button variant="primary" type="submit">
                 Se connecter
             </x-button>
         </div>

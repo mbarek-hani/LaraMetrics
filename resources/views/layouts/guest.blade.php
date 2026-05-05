@@ -15,11 +15,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans text-gray-900 antialiased">
+<body class="l-body">
     <div class="l-guest">
 
         <a href="/" class="l-guest__logo-link">
-            <x-application-logo class="h-12 w-auto" />
+            <x-application-logo />
         </a>
 
         <div class="l-guest__card">

@@ -52,11 +52,11 @@
                         "
                         class="p-copy-btn">
                         <span x-show="!copie">
-                            <x-custom-icon name="clipboard" class="w-4 h-4 text-gray-500" />
+                            <x-custom-icon name="clipboard" class="c-icon--sm c-icon--gray-500" />
                         </span>
 
                         <span x-show="copie" x-cloak>
-                            <x-custom-icon name="check" class="w-4 h-4 text-green-600" />
+                            <x-custom-icon name="check" class="c-icon--sm c-icon--success" />
                         </span>
                     </button>
 

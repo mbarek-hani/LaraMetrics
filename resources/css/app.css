@@ -1,4 +1,5 @@
 @import './variables.css';
+@import './base.css';
 @import './components/alert.css';
 @import './components/application-logo.css';
 @import './components/button.css';
@@ -9,6 +10,7 @@
 @import './components/dropdown-link.css';
 @import './components/modal.css';
 @import './components/sidebar-link.css';
+@import './components/icon.css';
 
 @import './layouts/app-layout.css';
 @import './layouts/guest.css';
@@ -16,7 +18,3 @@
 @import './pages/auth.css';
 @import './pages/common.css';
 @import './pages/dashboard.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;

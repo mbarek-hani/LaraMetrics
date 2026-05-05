@@ -15,7 +15,7 @@
                         <p class="p-empty__text">Ajoutez votre premier site pour commencer.</p>
                         <div class="p-mt-3">
                             <x-button variant="primary" href="{{ route('sites.create') }}">
-                                <x-custom-icon name="plus" class="w-4 h-4" />
+                                <x-custom-icon name="plus" class="c-icon--sm" />
                                 Ajouter un site
                             </x-button>
                         </div>
@@ -81,7 +81,7 @@
                                 : ''"
                             class="p-dash__tab"
                         >
-                            <x-custom-icon name="chart-bar" class="w-4 h-4" />
+                            <x-custom-icon name="chart-bar" class="c-icon--sm" />
                             Vue d'ensemble
                         </button>
 
@@ -92,7 +92,7 @@
                                 : ''"
                             class="p-dash__tab"
                         >
-                            <x-custom-icon name="cursor-click" class="w-4 h-4" />
+                            <x-custom-icon name="cursor-click" class="c-icon--sm" />
                             Événements
                         </button>
 
@@ -105,7 +105,7 @@
                                     : ''"
                                 class="p-dash__tab"
                             >
-                                <x-custom-icon :name="$onglet['icone']" class="w-4 h-4" />
+                                <x-custom-icon :name="$onglet['icone']" class="c-icon--sm" />
                                 {{ $onglet['label'] }}
                             </button>
                         @endforeach

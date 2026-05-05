@@ -7,7 +7,7 @@
             <div class="p-page__header">
                 <h2 class="p-page__title" style="margin-bottom: 0;">Sites</h2>
                 <x-button variant="primary" href="{{ route('sites.create') }}">
-                    <x-custom-icon name="plus" class="w-4 h-4" />
+                    <x-custom-icon name="plus" class="c-icon--sm" />
                     Ajouter un site
                 </x-button>
             </div>
@@ -39,20 +39,20 @@
                                     <form method="POST" action="{{ route('sites.toggle-actif', $site) }}">
                                         @csrf
                                         <x-button size="sm" type="submit" variant="{{ $site->actif ? 'default' : 'primary' }}">
-                                            <x-custom-icon name="{{ $site->actif ? 'stop' : 'play' }}" class="w-3.5 h-3.5" />
+                                            <x-custom-icon name="{{ $site->actif ? 'stop' : 'play' }}" class="c-icon--xs" />
                                             {{ $site->actif ? 'Désactiver' : 'Activer' }}
                                         </x-button>
                                     </form>
-                                    <x-button size="sm" href="{{ route('sites.show', $site) }}">
-                                        <x-custom-icon name="code" class="w-3.5 h-3.5" />
-                                        Code
+                                    <x-button href="{{ route('sites.show', $site) }}" size="sm">
+                                        <x-custom-icon name="code" class="c-icon--xs" />
+                                        Script
                                     </x-button>
                                     <form method="POST" action="{{ route('sites.destroy', $site) }}"
-                                        onsubmit="return confirm('Supprimer ce site et toutes ses données ?')">
+                                        onsubmit="return confirm('Supprimer ce site ?')">
                                         @csrf
                                         @method('DELETE')
-                                        <x-button variant="danger" size="sm" type="submit">
-                                            <x-custom-icon name="trash" class="w-3.5 h-3.5" />
+                                        <x-button size="sm" variant="danger" type="submit">
+                                            <x-custom-icon name="trash" class="c-icon--xs" />
                                             Supprimer
                                         </x-button>
                                     </form>

@@ -62,7 +62,7 @@
                             <span x-text="sauvegarde ? 'Sauvegarde...' : 'Sauvegarder'"></span>
                         </x-button>
                         <span x-show="succes" x-transition class="p-row p-flash--success">
-                            <x-custom-icon name="check" class="w-4 h-4" />
+                            <x-custom-icon name="check" class="c-icon--sm" />
                             Sauvegardé
                         </span>
                         <span x-show="erreur" x-transition class="p-text" style="color: var(--error-accent);" x-text="erreur"></span>

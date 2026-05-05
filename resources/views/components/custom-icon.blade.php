@@ -1,6 +1,6 @@
 @props([
     'name'  => 'question-mark-circle',
-    'class' => 'w-5 h-5',
+    'class' => 'c-icon',
 ])
 
 @php

@@ -20,7 +20,7 @@
         </div>
 
         <button @click="show = false" class="c-alert__close">
-            <x-custom-icon name="x-mark" style="width: 1rem; height: 1rem;" />
+            <x-custom-icon name="x-mark" class="c-icon--sm" />
         </button>
     </div>
 </div>
