@@ -133,8 +133,8 @@
 }
 
 .p-dash__tab--active {
-    border-bottom-color: var(--gray-900);
-    color: var(--gray-900);
+    border-bottom-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 /* Loading */
