@@ -1,14 +1,14 @@
 <x-card>
-    <div class="mb-4 pb-3 border-b border-gray-200">
-        <h3 class="text-sm font-semibold text-gray-900">Mot de passe</h3>
-        <p class="text-xs text-gray-500 mt-0.5">Utilisez un mot de passe long et unique.</p>
+    <div class="p-section__header">
+        <h3 class="p-section__title">Mot de passe</h3>
+        <p class="p-section__subtitle">Utilisez un mot de passe long et unique.</p>
     </div>
 
     <form method="post" action="{{ route('password.update') }}">
         @csrf
         @method('put')
 
-        <div class="space-y-4 max-w-lg">
+        <div class="p-form-group">
             <x-input
                 name="current_password"
                 label="Mot de passe actuel"
@@ -34,13 +34,13 @@
             />
         </div>
 
-        <div class="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
+        <div class="p-card-footer">
             <x-button variant="primary" size="sm" type="submit">
                 Mettre à jour
             </x-button>
 
             @if(session('status') === 'password-updated')
-                <span class="text-sm text-green-600" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition>
+                <span class="p-flash--success" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition>
                     Mis à jour.
                 </span>
             @endif
