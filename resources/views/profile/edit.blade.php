@@ -2,8 +2,8 @@
     <x-slot name="titre">
         Profil
     </x-slot>
-    <div class="py-4">
-        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+    <div class="p-page">
+        <div class="p-container p-container--sm p-stack">
             @include('profile.partials.update-profile-information-form')
             @include('profile.partials.update-password-form')
         </div>
