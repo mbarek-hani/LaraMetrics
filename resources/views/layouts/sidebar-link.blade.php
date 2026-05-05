@@ -2,11 +2,8 @@
 
 <a
     href="{{ route($route) }}"
-    class="flex items-center gap-2.5 px-2 py-2 rounded text-sm font-medium transition text-gray-900
-           {{ request()->routeIs($route . '*') || request()->routeIs($route)
-               ? 'bg-gray-200'
-               : 'hover:bg-gray-100' }}"
+    class="c-sidebar-link {{ request()->routeIs($route . '*') || request()->routeIs($route) ? 'c-sidebar-link--active' : '' }}"
 >
-    <x-custom-icon :name="$icon" class="w-4 h-4 shrink-0" />
+    <x-custom-icon :name="$icon" class="c-sidebar-link__icon w-4 h-4 shrink-0" />
     {{ $label }}
 </a>

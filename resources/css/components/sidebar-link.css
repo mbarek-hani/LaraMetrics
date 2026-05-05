@@ -1,0 +1,20 @@
+.c-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    color: var(--gray-900);
+    text-decoration: none;
+}
+
+.c-sidebar-link:hover {
+    background-color: var(--gray-100);
+}
+
+.c-sidebar-link--active {
+    background-color: var(--gray-200);
+}
