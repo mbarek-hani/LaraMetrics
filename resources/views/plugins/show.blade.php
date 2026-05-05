@@ -3,14 +3,14 @@
         Détails du Plugin : {{ $details['nom'] }}
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="p-page">
+        <div class="p-container p-container--md p-stack">
             <!-- En-tête -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-xl font-bold text-gray-900">{{ $details['nom'] }}</h2>
+            <div class="p-page__header">
+                <div class="p-row">
+                    <h2 class="p-page__title" style="margin-bottom: 0;">{{ $details['nom'] }}</h2>
                 </div>
-                <div class="flex gap-2">
+                <div class="p-actions">
                     <x-button href="{{ route('plugins.index') }}" size="sm" variant="secondary">
                         <x-custom-icon name="arrow-left" class="w-4 h-4" />
                         Retour
@@ -36,54 +36,53 @@
             </div>
 
             <!-- Informations principales -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-grid p-grid--3" style="align-items: start;">
                 <!-- Colonne de gauche (2/3) -->
-                <div class="md:col-span-2 space-y-6">
+                <div class="p-dash__col-span-2 p-stack">
                     <x-card titre="Description">
-                        <p class="text-gray-700 text-sm leading-relaxed">
+                        <p class="p-text--muted" style="line-height: 1.625;">
                             {{ $details['description'] }}
                         </p>
                     </x-card>
 
                     <x-card titre="Fonctionnalités intégrées">
-                        <div class="space-y-4">
                             @if(empty($details['onglets']) && empty($details['hooks']) && empty($details['navigation']) && empty($details['reglages']))
-                                <p class="text-sm text-gray-500 italic">Ce plugin n'expose aucune fonctionnalité d'interface utilisateur standard.</p>
+                                <p class="p-text" style="font-style: italic;">Ce plugin n'expose aucune fonctionnalité d'interface utilisateur standard.</p>
                             @else
                                 @if(!empty($details['onglets']))
-                                    <div>
-                                        <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                            <x-custom-icon name="folder" class="w-4 h-4 text-gray-400" /> Onglets Dashboard
+                                    <div class="p-mb-3">
+                                        <h4 class="p-section__title" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <x-custom-icon name="folder" class="p-section__icon" style="color: var(--gray-400);" /> Onglets Dashboard
                                         </h4>
-                                        <ul class="list-disc list-inside text-sm text-gray-600 ml-4">
+                                        <ul class="p-indent" style="list-style: disc inside; font-size: 0.875rem; color: var(--gray-600);">
                                             @foreach($details['onglets'] as $onglet)
-                                                <li>{{ $onglet['label'] ?? 'Onglet' }} (ID: <code class="text-xs bg-gray-100 px-1 rounded">{{ $onglet['id'] ?? 'N/A' }}</code>)</li>
+                                                <li>{{ $onglet['label'] ?? 'Onglet' }} (ID: <code class="p-code">{{ $onglet['id'] ?? 'N/A' }}</code>)</li>
                                             @endforeach
                                         </ul>
                                     </div>
                                 @endif
                                 
                                 @if(!empty($details['navigation']))
-                                    <div>
-                                        <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-2 mt-4 flex items-center gap-2">
-                                            <x-custom-icon name="bars-3" class="w-4 h-4 text-gray-400" /> Liens de Navigation
+                                    <div class="p-mb-3">
+                                        <h4 class="p-section__title" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <x-custom-icon name="bars-3" class="p-section__icon" style="color: var(--gray-400);" /> Liens de Navigation
                                         </h4>
-                                        <ul class="list-disc list-inside text-sm text-gray-600 ml-4">
+                                        <ul class="p-indent" style="list-style: disc inside; font-size: 0.875rem; color: var(--gray-600);">
                                             @foreach($details['navigation'] as $nav)
-                                                <li>{{ $nav['label'] ?? 'Lien' }} (Route: <code class="text-xs bg-gray-100 px-1 rounded">{{ $nav['route'] ?? 'N/A' }}</code>)</li>
+                                                <li>{{ $nav['label'] ?? 'Lien' }} (Route: <code class="p-code">{{ $nav['route'] ?? 'N/A' }}</code>)</li>
                                             @endforeach
                                         </ul>
                                     </div>
                                 @endif
 
                                 @if(!empty($details['hooks']))
-                                    <div>
-                                        <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-2 mt-4 flex items-center gap-2">
-                                            <x-custom-icon name="bolt" class="w-4 h-4 text-gray-400" /> Hooks Visuels
+                                    <div class="p-mb-3">
+                                        <h4 class="p-section__title" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <x-custom-icon name="bolt" class="p-section__icon" style="color: var(--gray-400);" /> Hooks Visuels
                                         </h4>
-                                        <div class="flex flex-wrap gap-2 ml-4">
+                                        <div class="p-row p-row--wrap p-indent">
                                             @foreach($details['hooks'] as $hook)
-                                                <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded">
+                                                <span class="p-badge p-badge--info">
                                                     {{ $hook }}
                                                 </span>
                                             @endforeach
@@ -92,13 +91,13 @@
                                 @endif
                                 
                                 @if(!empty($details['reglages']))
-                                    <div>
-                                        <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-2 mt-4 flex items-center gap-2">
-                                            <x-custom-icon name="cog" class="w-4 h-4 text-gray-400" /> Champs de Réglages
+                                    <div class="p-mb-3">
+                                        <h4 class="p-section__title" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <x-custom-icon name="cog" class="p-section__icon" style="color: var(--gray-400);" /> Champs de Réglages
                                         </h4>
-                                        <ul class="list-disc list-inside text-sm text-gray-600 ml-4">
+                                        <ul class="p-indent" style="list-style: disc inside; font-size: 0.875rem; color: var(--gray-600);">
                                             @foreach($details['reglages'] as $reglage)
-                                                <li>{{ $reglage['label'] ?? 'Réglage' }} <span class="text-gray-400">({{ $reglage['type'] ?? 'text' }})</span></li>
+                                                <li>{{ $reglage['label'] ?? 'Réglage' }} <span style="color: var(--gray-400);">({{ $reglage['type'] ?? 'text' }})</span></li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -109,42 +108,42 @@
                 </div>
 
                 <!-- Colonne de droite (1/3) -->
-                <div class="space-y-6">
+                <div class="p-stack">
                     <x-card titre="Métadonnées">
-                        <div class="space-y-3 text-sm">
-                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                <span class="text-gray-500">Statut</span>
+                        <div class="p-stack--sm" style="font-size: 0.875rem;">
+                            <div class="p-row p-row--between" style="padding: 0.25rem 0; border-bottom: 1px solid var(--gray-100);">
+                                <span class="p-info-label">Statut</span>
                                 @if($details['actif'])
-                                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-green-50 text-green-700 border border-green-200 rounded">Actif</span>
+                                    <span class="p-badge p-badge--success">Actif</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 rounded">Inactif</span>
+                                    <span class="p-badge p-badge--neutral">Inactif</span>
                                 @endif
                             </div>
                             
-                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                <span class="text-gray-500">Version</span>
-                                <span class="font-medium text-gray-900">v{{ $details['version'] }}</span>
+                            <div class="p-row p-row--between" style="padding: 0.25rem 0; border-bottom: 1px solid var(--gray-100);">
+                                <span class="p-info-label">Version</span>
+                                <span class="p-info-value">v{{ $details['version'] }}</span>
                             </div>
                             
-                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                <span class="text-gray-500">Identifiant</span>
-                                <code class="text-xs bg-gray-100 px-1 py-0.5 rounded text-gray-800">{{ $details['identifiant'] }}</code>
+                            <div class="p-row p-row--between" style="padding: 0.25rem 0; border-bottom: 1px solid var(--gray-100);">
+                                <span class="p-info-label">Identifiant</span>
+                                <code class="p-code" style="color: var(--gray-800);">{{ $details['identifiant'] }}</code>
                             </div>
 
-                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                <span class="text-gray-500">Auteur</span>
-                                <span class="text-xs text-gray-900">{{ $details['auteur'] }}</span>
+                            <div class="p-row p-row--between" style="padding: 0.25rem 0; border-bottom: 1px solid var(--gray-100);">
+                                <span class="p-info-label">Auteur</span>
+                                <span class="p-text--xs" style="color: var(--gray-900);">{{ $details['auteur'] }}</span>
                             </div>
                             
-                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                <span class="text-gray-500">Licence</span>
-                                <span class="text-xs text-gray-900">{{ $details['licence'] }}</span>
+                            <div class="p-row p-row--between" style="padding: 0.25rem 0; border-bottom: 1px solid var(--gray-100);">
+                                <span class="p-info-label">Licence</span>
+                                <span class="p-text--xs" style="color: var(--gray-900);">{{ $details['licence'] }}</span>
                             </div>
                             
                             @if($details['active_le'])
-                                <div class="flex justify-between items-center py-1">
-                                    <span class="text-gray-500">Activé le</span>
-                                    <span class="text-gray-900">{{ \Carbon\Carbon::parse($details['active_le'])->format('d/m/Y H:i') }}</span>
+                                <div class="p-row p-row--between" style="padding: 0.25rem 0;">
+                                    <span class="p-info-label">Activé le</span>
+                                    <span class="p-info-value" style="font-weight: 400; font-size: 0.875rem;">{{ \Carbon\Carbon::parse($details['active_le'])->format('d/m/Y H:i') }}</span>
                                 </div>
                             @endif
                         </div>
@@ -152,11 +151,11 @@
 
                     @if(!empty($details['url']))
                         <x-card>
-                            <div class="flex items-start gap-3">
-                                <x-custom-icon name="globe-alt" class="w-5 h-5 text-gray-400" />
+                        <div class="p-row" style="align-items: flex-start; gap: 0.75rem;">
+                                <x-custom-icon name="globe-alt" class="p-section__icon" style="color: var(--gray-400); width: 1.25rem; height: 1.25rem;" />
                                 <div>
-                                    <h4 class="text-sm font-semibold text-gray-900">Site Web</h4>
-                                    <a href="{{ $details['url'] }}" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-1 block break-all">
+                                    <h4 class="p-section__title">Site Web</h4>
+                                    <a href="{{ $details['url'] }}" target="_blank" rel="noopener noreferrer" class="p-text" style="color: var(--info-text); text-decoration: none; display: block; margin-top: 0.25rem; word-break: break-all;">
                                         {{ $details['url'] }}
                                     </a>
                                 </div>
