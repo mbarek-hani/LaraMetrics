@@ -105,15 +105,15 @@
                                                 <x-custom-icon :name="$item['icone']" class="c-icon--sm c-icon--no-shrink" />
                                             @endif
 
-                                            <span class="flex-1 text-left">{{ $item['label'] }}</span>
+                                            <span class="u-flex-1 u-text-left">{{ $item['label'] }}</span>
 
-                                            <span x-show="!open" x-claok>
+                                            <span x-show="!open" x-cloak>
                                                 <x-custom-icon
                                                     name="chevron-down"
                                                     class="c-icon--xs"
                                                 />
                                             </span>
-                                            <span x-show="open" x-claok>
+                                            <span x-show="open" x-cloak>
                                                 <x-custom-icon
                                                     name="chevron-up"
                                                     class="c-icon--xs"

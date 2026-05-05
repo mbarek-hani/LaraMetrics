@@ -359,4 +359,10 @@
 .p-mb-3 { margin-bottom: 0.75rem; }
 
 /* Hidden helper */
-.p-hidden { display: none; }
+/* Utilities */
+.u-flex-1 { flex: 1; }
+.u-text-left { text-align: left; }
+.u-text-right { text-align: right; }
+.u-text-center { text-align: center; }
+.u-w-full { width: 100%; }
+
