@@ -1,0 +1,49 @@
+.c-input-group {
+    /* wrapping div */
+}
+
+.c-input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: 0.25rem;
+}
+
+.c-input-required {
+    color: var(--error-accent);
+}
+
+.c-input {
+    display: block;
+    width: 100%;
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-primary);
+    font-size: 0.875rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #ffffff;
+    color: var(--gray-900);
+    padding: 0.5rem 0.75rem;
+}
+
+.c-input::placeholder {
+    color: var(--gray-300);
+}
+
+.c-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--ring-offset), 0 0 0 3px var(--color-primary-light);
+    outline: none;
+}
+
+.c-input-help {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--gray-300);
+}
+
+.c-input-error {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--error-accent);
+}

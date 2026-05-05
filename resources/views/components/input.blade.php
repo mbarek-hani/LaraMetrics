@@ -8,12 +8,12 @@
     'value'       => null,
 ])
 
-<div>
+<div class="c-input-group">
     @if($label)
-        <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 mb-1">
+        <label for="{{ $name }}" class="c-input-label">
             {{ $label }}
             @if($required)
-                <span class="text-red-500">*</span>
+                <span class="c-input-required">*</span>
             @endif
         </label>
     @endif
@@ -25,14 +25,14 @@
         placeholder="{{ $placeholder }}"
         value="{{ $value }}"
         {{ $required ? 'required' : '' }}
-        {{ $attributes->merge(['class' => 'block w-full rounded border-emerald-500 text-sm focus:border-emerald-600 focus:ring-emerald-600']) }}
+        {{ $attributes->merge(['class' => 'c-input']) }}
     >
 
     @if($aide)
-        <p class="mt-1 text-xs text-gray-400">{{ $aide }}</p>
+        <p class="c-input-help">{{ $aide }}</p>
     @endif
 
     @error($name)
-        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+        <p class="c-input-error">{{ $message }}</p>
     @enderror
 </div>
