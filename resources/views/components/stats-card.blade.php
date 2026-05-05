@@ -4,16 +4,16 @@
     'icon'  => null,
 ])
 
-<div class="bg-gray-50 border border-gray-200 rounded p-4">
-    <div class="flex items-center gap-3">
+<div class="c-stats-card">
+    <div class="c-stats-card__content">
         @if($icon)
-            <div class="shrink-0">
-                <x-custom-icon :name="$icon" class="w-5 h-5 text-gray-500" />
+            <div class="c-stats-card__icon-wrapper">
+                <x-custom-icon :name="$icon" class="c-stats-card__icon" />
             </div>
         @endif
-        <div class="min-w-0">
-            <p class="text-xs text-gray-500 font-medium truncate">{{ $titre }}</p>
-            <p class="text-lg font-bold text-gray-900 mt-0.5">
+        <div class="c-stats-card__info">
+            <p class="c-stats-card__title">{{ $titre }}</p>
+            <p class="c-stats-card__value">
                 @if($valeur instanceof \Illuminate\View\ComponentSlot)
                     {{ $valeur }}
                 @else
