@@ -1,22 +1,24 @@
 <x-guest-layout>
-    <h2 class="text-lg font-semibold text-gray-900 mb-2">Confirmation requise</h2>
-    <p class="text-sm text-gray-500 mb-4">
+    <h2 class="p-auth__title">Confirmation requise</h2>
+    <p class="p-auth__text">
         Veuillez confirmer votre mot de passe avant de continuer.
     </p>
 
     <form method="POST" action="{{ route('password.confirm') }}">
         @csrf
 
-        <x-input
-            name="password"
-            label="Mot de passe"
-            type="password"
-            :required="true"
-            autocomplete="current-password"
-        />
+        <div class="p-auth__form-group">
+            <x-input
+                name="password"
+                label="Mot de passe"
+                type="password"
+                :required="true"
+                autocomplete="current-password"
+            />
+        </div>
 
-        <div class="mt-6">
-            <x-button variant="primary" type="submit" class="w-full justify-center">
+        <div class="p-auth__submit">
+            <x-button variant="primary" type="submit">
                 Confirmer
             </x-button>
         </div>
