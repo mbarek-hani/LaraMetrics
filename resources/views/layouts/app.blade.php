@@ -20,11 +20,8 @@
             [x-cloak] { display: none !important; }
         </style>
     </head>
-    <body class="font-sans antialiased bg-gray-100">
-        <div
-            x-data="sidebar()"
-            class="min-h-screen flex"
-        >
+    <body class="l-body">
+        <div x-data="sidebar()" class="l-app">
             @if(session('succes'))
                 <x-alert type="succes" :message="session('succes')" />
             @endif
@@ -36,7 +33,7 @@
             <div
                 x-show="ouvert"
                 @click="ouvert = false"
-                class="fixed inset-0 bg-gray-900/50 z-20 lg:hidden"
+                class="l-app__overlay"
                 x-cloak
             ></div>
 
@@ -44,28 +41,27 @@
             <aside
                 x-show="ouvert"
                 x-cloak
-                class="fixed top-0 left-0 h-full w-64 bg-gray-50 border-r border-gray-200
-                    flex flex-col z-30"
+                class="l-sidebar"
             >
                 {{-- Logo + Toggle --}}
-                <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200 shrink-0">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                <div class="l-sidebar__header">
+                    <a href="{{ route('dashboard') }}" class="l-sidebar__logo-link">
                         <x-application-logo class="h-12 w-auto" />
                     </a>
                     <button
                         @click="ouvert = false"
-                        class="lg:hidden p-1.5 rounded hover:bg-gray-200 text-gray-900"
+                        class="l-sidebar__close"
                     >
                         <x-custom-icon name="x-mark" class="w-4 h-4" />
                     </button>
                 </div>
 
                 {{-- Navigation principale --}}
-                <nav class="flex-1 overflow-y-auto py-3">
+                <nav class="l-sidebar__nav">
 
                     {{-- Core links --}}
-                    <div class="px-3 mb-1">
-                        <p class="px-2 mb-1 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <div class="l-sidebar__section">
+                        <p class="l-sidebar__title">
                             Principal
                         </p>
                         @include('layouts.sidebar-link', [
@@ -91,8 +87,8 @@
                     @endphp
 
                     @if(!empty($navItems))
-                        <div class="px-3 mt-4 mb-1">
-                            <p class="px-2 mb-1 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        <div class="l-sidebar__section">
+                            <p class="l-sidebar__title">
                                 Plugins
                             </p>
 
@@ -103,10 +99,7 @@
                                         <button
                                             @click="open = !open"
                                             type="button"
-                                            class="w-full flex items-center gap-2.5 px-2 py-2 rounded text-sm font-medium transition-colors focus:outline-none text-gray-900
-                                                {{ collect($item['sous_menus'])->contains(fn($s) => request()->routeIs($s['route']))
-                                                    ? ''
-                                                    : 'hover:bg-gray-100' }}"
+                                            class="l-sidebar__menu-btn {{ collect($item['sous_menus'])->contains(fn($s) => request()->routeIs($s['route'])) ? '' : '' }}"
                                         >
                                             @if(isset($item['icone']))
                                                 <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
@@ -131,15 +124,12 @@
                                         <div
                                             x-show="open"
                                             x-cloak
-                                            class="ml-6 mt-0.5 space-y-0.5"
+                                            class="l-sidebar__submenu"
                                         >
                                             @foreach($item['sous_menus'] as $sousMenu)
                                                 <a
                                                     href="{{ route($sousMenu['route']) }}"
-                                                    class="flex items-center gap-2 px-2 py-1.5 rounded text-sm transition text-gray-900
-                                                        {{ request()->routeIs($sousMenu['route'])
-                                                            ? 'bg-gray-200'
-                                                            : 'hover:bg-gray-100' }}"
+                                                    class="l-sidebar__submenu-link {{ request()->routeIs($sousMenu['route']) ? 'l-sidebar__submenu-link--active' : '' }}"
                                                 >
                                                     {{ $sousMenu['label'] }}
                                                 </a>
@@ -149,10 +139,7 @@
                                         {{-- Cas sans sous-menu : Lien direct --}}
                                         <a
                                             href="{{ route($item['route']) }}"
-                                            class="flex items-center gap-2.5 px-2 py-2 rounded text-sm font-medium transition text-gray-900
-                                                {{ request()->routeIs($item['route'] . '*')
-                                                    ? 'bg-gray-200'
-                                                    : 'hover:bg-gray-100' }}"
+                                            class="l-sidebar__menu-btn {{ request()->routeIs($item['route'] . '*') ? 'c-sidebar-link--active' : '' }}"
                                         >
                                             @if(isset($item['icone']))
                                                 <x-custom-icon :name="$item['icone']" class="w-4 h-4 shrink-0" />
@@ -167,26 +154,26 @@
                 </nav>
 
                 {{-- Bas de sidebar — User dropdown --}}
-                <div class="border-t border-gray-200 shrink-0 relative" x-data="{ userMenu: false }">
+                <div class="l-sidebar__footer" x-data="{ userMenu: false }">
                     {{-- Clickable user row --}}
                     <button
                         @click="userMenu = !userMenu"
-                        class="w-full flex items-center gap-2.5 px-5 py-3 hover:bg-gray-200 transition text-left"
+                        class="l-sidebar__user-btn"
                     >
-                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
-                            <span class="text-xs font-semibold text-gray-900">
+                        <div class="l-sidebar__user-avatar">
+                            <span class="l-sidebar__user-initial">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </span>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-gray-900 truncate">
+                        <div class="l-sidebar__user-info">
+                            <p class="l-sidebar__user-name">
                                 {{ Auth::user()->name }}
                             </p>
-                            <p class="text-xs text-gray-600 truncate">
+                            <p class="l-sidebar__user-email">
                                 {{ Auth::user()->email }}
                             </p>
                         </div>
-                        <div class="flex flex-col">
+                        <div class="l-sidebar__user-icons">
                             <x-custom-icon name="chevron-up" class="w-4 h-4 text-gray-900 shrink-0" />
                             <x-custom-icon name="chevron-down" class="w-4 h-4 text-gray-900 shrink-0" />
                         </div>
@@ -196,28 +183,24 @@
                     <div
                         x-show="userMenu"
                         @click.outside="userMenu = false"
-                        class="absolute bottom-full left-3 right-3 mb-1 bg-gray-50 border border-gray-200
-                            rounded-lg shadow-lg py-1 z-50"
+                        class="l-sidebar__dropdown"
                         x-cloak
                     >
                         <a href="{{ route('settings.index') }}"
-                            class="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-900
-                                hover:bg-gray-200 transition">
+                            class="l-sidebar__dropdown-link">
                             <x-custom-icon name="cog" class="w-4 h-4" />
                             Réglages
                         </a>
                         <a href="{{ route('profile.edit') }}"
-                            class="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-900
-                                hover:bg-gray-200 transition">
+                            class="l-sidebar__dropdown-link">
                             <x-custom-icon name="users" class="w-4 h-4" />
                             Profil
                         </a>
-                        <div class="border-t border-gray-200 my-1"></div>
+                        <div class="l-sidebar__dropdown-divider"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm
-                                    text-red-700 hover:bg-gray-200 transition">
+                                class="l-sidebar__dropdown-link l-sidebar__dropdown-link--danger">
                                 <x-custom-icon name="arrow-right-on-rectangle" class="w-4 h-4" />
                                 Déconnexion
                             </button>
@@ -228,33 +211,31 @@
 
             {{-- ══════ CONTENU PRINCIPAL ══════ --}}
             <div
-                :class="ouvert ? 'lg:ml-64' : 'lg:ml-0'"
-                class="flex-1 flex flex-col min-w-0"
+                :class="ouvert ? 'l-main-wrapper--shifted' : ''"
+                class="l-main-wrapper"
             >
 
                 {{-- Topbar (juste le toggle) --}}
-                <div class="sticky top-0 z-10 bg-gray-50 border-b border-gray-200 h-14 flex items-center px-4 gap-3 lg:hidden">
+                <div class="l-topbar">
                     <button
                         @click="ouvert = true"
-                        class="p-1.5 rounded hover:bg-gray-200 text-gray-900"
+                        class="l-topbar__btn"
                     >
                         <x-custom-icon name="bars-3" class="w-5 h-5" />
                     </button>
-                    <span class="font-semibold text-sm text-gray-900">
+                    <span class="l-topbar__title">
                         {{ config('app.name', 'LaraMetrics') }}
                     </span>
                 </div>
 
                 {{-- Toggle desktop (collapsible) --}}
                 <div
-                    :class="ouvert ? 'left-[252px]' : 'left-0'"
-                    class="hidden lg:flex fixed top-5 z-40"
+                    :class="ouvert ? 'l-toggle-desktop--shifted' : 'l-toggle-desktop--unshifted'"
+                    class="l-toggle-desktop"
                 >
                     <button
                         @click="ouvert = !ouvert"
-                        class="w-8 h-8 flex items-center justify-center
-                            bg-gray-50 border border-gray-200 rounded shadow-sm
-                            text-gray-900 hover:bg-gray-200"
+                        class="l-toggle-desktop__btn"
                         :title="ouvert ? 'Réduire le menu' : 'Ouvrir le menu'"
                     >
                         <span x-show="ouvert" x-cloak>
@@ -265,7 +246,7 @@
                         </span>
                     </button>
                 </div>
-                <main class="flex-1">
+                <main class="l-content">
                     {{ $slot }}
                 </main>
             </div>
