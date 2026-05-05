@@ -2,9 +2,9 @@
     <x-slot name="titre">
         Site : {{ $site->nom }}
     </x-slot>
-    <div class="py-4">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-            <div class="flex items-center justify-between">
+    <div class="p-page">
+        <div class="p-container p-container--md p-stack">
+            <div class="p-row p-row--between">
                 <x-button href="{{ route('sites.index') }}">
                     Retour
                 </x-button>
@@ -12,45 +12,45 @@
 
             {{-- Infos du site --}}
             <x-card titre="Informations">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div class="p-grid p-grid--2 p-grid--gap-md" style="font-size: 0.875rem;">
                     <div>
-                        <span class="text-gray-500">Domaine</span>
-                        <p class="font-medium text-gray-900">{{ $site->domaine }}</p>
+                        <span class="p-info-label">Domaine</span>
+                        <p class="p-info-value">{{ $site->domaine }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-500">Statut</span>
-                        <p class="font-medium {{ $site->actif ? 'text-green-700' : 'text-gray-500' }}">
+                        <span class="p-info-label">Statut</span>
+                        <p class="p-info-value {{ $site->actif ? 'p-info-value--active' : 'p-info-value--inactive' }}">
                             {{ $site->actif ? 'Actif' : 'Inactif' }}
                         </p>
                     </div>
                     <div>
-                        <span class="text-gray-500">Créé le</span>
-                        <p class="font-medium text-gray-900">{{ $site->created_at->format('d/m/Y à H:i') }}</p>
+                        <span class="p-info-label">Créé le</span>
+                        <p class="p-info-value">{{ $site->created_at->format('d/m/Y à H:i') }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-500">Token</span>
-                        <p class="font-mono text-xs text-gray-600 break-all">{{ $site->token_tracking }}</p>
+                        <span class="p-info-label">Token</span>
+                        <p class="p-info-value--mono">{{ $site->token_tracking }}</p>
                     </div>
                 </div>
             </x-card>
 
             {{-- Script de tracking --}}
             <x-card titre="Script de tracking">
-                <p class="text-sm text-gray-500 mb-3">
+                <p class="p-text p-mb-3">
                     Copiez ce code et collez-le juste avant la balise <code
-                        class="text-xs bg-gray-100 px-1 py-0.5 rounded">&lt;/head&gt;</code> de votre site.
+                        class="p-code">&lt;/head&gt;</code> de votre site.
                 </p>
 
-                <div x-data="{ copie: false }" class="relative">
+                <div x-data="{ copie: false }" class="p-copy-wrapper">
                     <pre
-                        class="bg-gray-100 border border-gray-200 rounded p-3 text-xs font-mono text-gray-800 overflow-x-auto"><code>{{ $site->getScriptTracking() }}</code></pre>
+                        class="p-code-block"><code>{{ $site->getScriptTracking() }}</code></pre>
 
                     <button @click="
                             navigator.clipboard.writeText($refs.code.textContent);
                             copie = true;
                             setTimeout(() => copie = false, 2000);
                         "
-                        class="absolute top-2 right-2 p-1.5 rounded border border-gray-300 bg-white hover:bg-gray-50 transition">
+                        class="p-copy-btn">
                         <span x-show="!copie">
                             <x-custom-icon name="clipboard" class="w-4 h-4 text-gray-500" />
                         </span>
@@ -60,7 +60,7 @@
                         </span>
                     </button>
 
-                    <span x-ref="code" class="hidden">{{ $site->getScriptTracking() }}</span>
+                    <span x-ref="code" class="p-hidden">{{ $site->getScriptTracking() }}</span>
                 </div>
             </x-card>
 
