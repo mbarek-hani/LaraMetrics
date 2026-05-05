@@ -2,13 +2,13 @@
     <x-slot name="titre">
         Ajouter un site
     </x-slot>
-    <div class="py-4">
-        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="p-page">
+        <div class="p-container p-container--sm">
             <x-card>
                 <form method="POST" action="{{ route('sites.store') }}">
                     @csrf
 
-                    <div class="space-y-4">
+                    <div class="p-form-group">
                         <x-input name="nom" label="Nom du site" placeholder="Mon blog" :required="true"
                             value="{{ old('nom') }}" />
 
@@ -16,7 +16,7 @@
                             aide="Sans http:// ni www. Exemple : monsite.fr" value="{{ old('domaine') }}" />
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-gray-200 flex items-center gap-3">
+                    <div class="p-card-footer">
                         <x-button variant="primary" type="submit">
                             Ajouter le site
                         </x-button>
