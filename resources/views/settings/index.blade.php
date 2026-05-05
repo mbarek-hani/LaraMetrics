@@ -2,17 +2,17 @@
     <x-slot name="titre">
         Réglages
     </x-slot>
-    <div class="py-4">
-        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Réglages</h2>
+    <div class="p-page">
+        <div class="p-container p-container--sm p-stack">
+            <h2 class="p-page__title">Réglages</h2>
             {{-- Réglages Core (toujours visible) --}}
             <x-card>
-                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-                    <x-custom-icon name="cog" class="w-4 h-4 text-gray-500" />
-                    <h4 class="text-sm font-semibold text-gray-900">Flux</h4>
-                    <span class="text-xs text-gray-400 ml-auto">Core</span>
+                <div class="p-section__header--with-icon">
+                    <x-custom-icon name="cog" class="p-section__icon" />
+                    <h4 class="p-section__title">Flux</h4>
+                    <span class="p-section__badge">Core</span>
                 </div>
-                <p class="text-sm text-gray-500">
+                <p class="p-text">
                     Aucun réglage core pour le moment.
                     Les réglages des plugins actifs apparaissent ci-dessous.
                 </p>
@@ -21,54 +21,51 @@
             {{-- Réglages des plugins --}}
             @forelse($reglages as $pluginId => $plugin)
                 <x-card x-data="reglagesPlugin('{{ $pluginId }}', {{ json_encode($valeurs[$pluginId] ?? []) }})">
-                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-                        <x-custom-icon name="puzzle" class="w-4 h-4 text-gray-500" />
-                        <h4 class="text-sm font-semibold text-gray-900">{{ $plugin['nom'] }}</h4>
-                        <span class="text-xs text-gray-400 ml-auto">Plugin</span>
+                    <div class="p-section__header--with-icon">
+                        <x-custom-icon name="puzzle" class="p-section__icon" />
+                        <h4 class="p-section__title">{{ $plugin['nom'] }}</h4>
+                        <span class="p-section__badge">Plugin</span>
                     </div>
 
-                    <div class="space-y-4 max-w-lg">
+                    <div class="p-form-group">
                         @foreach($plugin['champs'] as $champ)
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                <label class="c-input-label">
                                     {{ $champ['label'] }}
                                     @if($champ['obligatoire'] ?? false)
-                                        <span class="text-red-500">*</span>
+                                        <span class="c-input-required">*</span>
                                     @endif
                                 </label>
 
                                 @if(($champ['type'] ?? 'text') === 'select')
-                                    <select x-model="valeurs['{{ $champ['cle'] }}']" class="block w-full rounded border-gray-300 text-sm
-                                                           focus:border-blue-500 focus:ring-blue-500">
+                                    <select x-model="valeurs['{{ $champ['cle'] }}']" class="c-input">
                                         @foreach($champ['options'] ?? [] as $option)
                                             <option value="{{ $option }}">{{ ucfirst($option) }}</option>
                                         @endforeach
                                     </select>
                                 @elseif(($champ['type'] ?? 'text') === 'textarea')
-                                    <textarea x-model="valeurs['{{ $champ['cle'] }}']" rows="3" class="block w-full rounded border-gray-300 text-sm
-                                                           focus:border-blue-500 focus:ring-blue-500"></textarea>
+                                    <textarea x-model="valeurs['{{ $champ['cle'] }}']" rows="3" class="c-input"></textarea>
                                 @else
                                     <input type="{{ $champ['type'] ?? 'text' }}" x-model="valeurs['{{ $champ['cle'] }}']"
-                                        placeholder="{{ $champ['placeholder'] ?? '' }}" class="block w-full rounded border-gray-300 text-sm
-                                                           focus:border-blue-500 focus:ring-blue-500">
+                                        placeholder="{{ $champ['placeholder'] ?? '' }}" class="c-input">
                                 @endif
 
                                 @if(isset($champ['aide']))
-                                    <p class="mt-1 text-xs text-gray-400">{{ $champ['aide'] }}</p>
+                                    <p class="c-input-help">{{ $champ['aide'] }}</p>
                                 @endif
                             </div>
                         @endforeach
                     </div>
 
-                    <div class="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
+                    <div class="p-card-footer">
                         <x-button variant="primary" size="sm" @click="sauvegarder()" x-bind:disabled="sauvegarde">
                             <span x-text="sauvegarde ? 'Sauvegarde...' : 'Sauvegarder'"></span>
                         </x-button>
-                        <span x-show="succes" x-transition class="flex items-center gap-1 text-sm text-green-600">
+                        <span x-show="succes" x-transition class="p-row p-flash--success">
                             <x-custom-icon name="check" class="w-4 h-4" />
                             Sauvegardé
                         </span>
-                        <span x-show="erreur" x-transition class="text-sm text-red-600" x-text="erreur"></span>
+                        <span x-show="erreur" x-transition class="p-text" style="color: var(--error-accent);" x-text="erreur"></span>
                     </div>
                 </x-card>
             @empty
