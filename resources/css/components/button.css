@@ -23,7 +23,7 @@
     background-color: var(--color-primary);
     border-color: var(--color-primary);
     color: #ffffff;
-    --ring-color: var(--success-200);
+    --ring-color: var(--color-primary-light);
 }
 
 .c-btn--primary:hover {
@@ -31,10 +31,10 @@
 }
 
 .c-btn--danger {
-    background-color: var(--error-500);
-    border-color: var(--error-500);
+    background-color: var(--error-accent);
+    border-color: var(--error-accent);
     color: #ffffff;
-    --ring-color: var(--error-200);
+    --ring-color: var(--error-border);
 }
 
 .c-btn--danger:hover {
