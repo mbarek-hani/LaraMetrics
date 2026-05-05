@@ -1,34 +1,34 @@
-@props(['align' => 'right', 'width' => '48', 'contentClasses' => 'py-1 bg-white'])
+@props(['align' => 'right', 'width' => '48', 'contentClasses' => 'c-dropdown__menu'])
 
 @php
 $alignmentClasses = match ($align) {
-    'left' => 'ltr:origin-top-left rtl:origin-top-right start-0',
-    'top' => 'origin-top',
-    default => 'ltr:origin-top-right rtl:origin-top-left end-0',
+    'left' => 'c-dropdown__content--align-left',
+    'top' => 'c-dropdown__content--align-top',
+    default => 'c-dropdown__content--align-right',
 };
 
 $width = match ($width) {
-    '48' => 'w-48',
+    '48' => 'c-dropdown__content--w48',
     default => $width,
 };
 @endphp
 
-<div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
+<div class="c-dropdown" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
     <div @click="open = ! open">
         {{ $trigger }}
     </div>
 
     <div x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-            class="absolute z-50 mt-2 {{ $width }} rounded-md shadow-lg {{ $alignmentClasses }}"
+            x-transition:enter="c-transition-fade-enter"
+            x-transition:enter-start="c-transition-fade-enter-start"
+            x-transition:enter-end="c-transition-fade-enter-end"
+            x-transition:leave="c-transition-fade-leave"
+            x-transition:leave-start="c-transition-fade-leave-start"
+            x-transition:leave-end="c-transition-fade-leave-end"
+            class="c-dropdown__content {{ $width }} {{ $alignmentClasses }}"
             style="display: none;"
             @click="open = false">
-        <div class="rounded-md ring-1 ring-black ring-opacity-5 {{ $contentClasses }}">
+        <div class="{{ $contentClasses }}">
             {{ $content }}
         </div>
     </div>
