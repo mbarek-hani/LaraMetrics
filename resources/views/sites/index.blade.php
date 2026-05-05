@@ -2,10 +2,10 @@
     <x-slot name="titre">
         Sites
     </x-slot>
-    <div class="py-4">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-900">Sites</h2>
+    <div class="p-page">
+        <div class="p-container p-container--md">
+            <div class="p-page__header">
+                <h2 class="p-page__title" style="margin-bottom: 0;">Sites</h2>
                 <x-button variant="primary" href="{{ route('sites.create') }}">
                     <x-custom-icon name="plus" class="w-4 h-4" />
                     Ajouter un site
@@ -13,32 +13,33 @@
             </div>
             @if($sites->isEmpty())
                 <x-card>
-                    <div class="text-center py-8">
-                        <x-custom-icon name="globe" class="w-10 h-10 text-gray-300 mx-auto" />
-                        <p class="mt-2 text-sm text-gray-500">Aucun site pour le moment.</p>
+                    <div class="p-empty">
+                        <x-custom-icon name="globe" class="p-empty__icon" />
+                        <p class="p-empty__text">Aucun site pour le moment.</p>
                     </div>
                 </x-card>
             @else
-                <div class="space-y-3">
+                <div class="p-stack--sm">
                     @foreach($sites as $site)
                         <x-card>
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="p-list-item">
                                 <div>
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full {{ $site->actif ? 'bg-green-500' : 'bg-gray-300' }}">
+                                    <div class="p-row">
+                                        <div
+                                            class="p-status-dot {{ $site->actif ? 'p-status-dot--active' : 'p-status-dot--inactive' }}">
                                         </div>
-                                        <h3 class="text-sm font-semibold text-gray-900">{{ $site->nom }}</h3>
+                                        <h3 class="p-section__title">{{ $site->nom }}</h3>
                                     </div>
-                                    <p class="text-sm text-gray-500 mt-0.5 ml-4">{{ $site->domaine }}</p>
-                                    <p class="text-xs text-gray-400 mt-1 ml-4">
+                                    <p class="p-text p-indent" style="margin-top: 0.125rem;">{{ $site->domaine }}</p>
+                                    <p class="p-text--xs p-indent" style="margin-top: 0.25rem;">
                                         {{ $site->visites_count ?? 0 }} visites enregistrées
                                     </p>
                                 </div>
-                                <div class="flex items-center gap-2 ml-4 sm:ml-0">
+                                <div class="p-actions p-indent">
                                     <form method="POST" action="{{ route('sites.toggle-actif', $site) }}">
                                         @csrf
                                         <x-button size="sm" type="submit" variant="{{ $site->actif ? 'default' : 'primary' }}">
-                                            <x-custom-icon name="{{ $site->actif ? 'pause' : 'play' }}" class="w-3.5 h-3.5" />
+                                            <x-custom-icon name="{{ $site->actif ? 'stop' : 'play' }}" class="w-3.5 h-3.5" />
                                             {{ $site->actif ? 'Désactiver' : 'Activer' }}
                                         </x-button>
                                     </form>
