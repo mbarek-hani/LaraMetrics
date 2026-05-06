@@ -21,6 +21,12 @@
     --info-accent: #3b82f6;
     --info-text: #1d4ed8;
 
+    /* Warning Semantic Palette */
+    --warning-bg: #fffbeb;
+    --warning-border: #fde68a;
+    --warning-accent: #f59e0b;
+    --warning-text: #b45309;
+
     /* Grayscale / Neutrals */
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;

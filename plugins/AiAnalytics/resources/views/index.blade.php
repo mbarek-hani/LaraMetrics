@@ -2,19 +2,20 @@
     <x-slot name="titre">
         Historique des analyses IA
     </x-slot>
-    <div x-data="aiHistory()" class="space-y-4 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div x-data="aiHistory()" class="p-ai p-container p-container--lg">
         {{-- En-tête & Filtre --}}
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="p-ai__header">
             <div>
-                <h2 class="text-xl font-bold text-gray-900">Analyses IA</h2>
-                <p class="text-sm text-gray-500">Consultez et gérez l'historique de vos rapports intelligents.</p>
+                <h2 class="p-page__title" style="margin-bottom: 0.25rem;">Analyses IA</h2>
+                <p class="p-text">Consultez et gérez l'historique de vos rapports intelligents.</p>
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="p-row">
                 <select
                     x-model="siteId"
                     @change="filter()"
-                    class="rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500"
+                    class="c-input"
+                    style="width: auto;"
                 >
                     <option value="">Tous les sites</option>
                     @foreach($sites as $site)
@@ -26,48 +27,51 @@
 
         {{-- Liste des rapports --}}
         <x-card>
-            <div class="overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div style="overflow-x: auto;">
+                <table class="p-ai__table">
+                    <thead>
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Résumé</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Site / Modèle</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th>Score</th>
+                            <th>Résumé</th>
+                            <th>Site / Modèle</th>
+                            <th>Date</th>
+                            <th style="text-align: right;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
+                    <tbody>
                         @forelse($rapports as $r)
-                            <tr class="hover:bg-white transition-colors group">
-                                <td class="px-4 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm
-                                        {{ $r->score >= 7 ? 'bg-green-100 text-green-700' : ($r->score >= 4 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700') }}">
+                            <tr @click="window.location.href='{{ route('plugins.ai-analytics.historique.show', $r->id) }}'" style="cursor: pointer;">
+                                <td>
+                                    <span class="p-ai__score-circle {{ $r->score >= 7 ? 'p-ai__score--good' : ($r->score >= 4 ? 'p-ai__score--warning' : 'p-ai__score--danger') }}">
                                         {{ $r->score }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-4 cursor-pointer" @click="window.location.href='{{ route('plugins.ai-analytics.historique.show', $r->id) }}'">
-                                    <p class="text-sm text-gray-900 line-clamp-2">{{ $r->resume }}</p>
+                                <td>
+                                    <p class="p-text" style="color: var(--gray-900); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $r->resume }}</p>
                                 </td>
-                                <td class="px-4 py-4 whitespace-nowrap text-xs text-gray-500">
-                                    <div class="font-medium text-gray-700">{{ $r->site->nom }}</div>
-                                    <div>{{ $r->fournisseur }} · {{ $r->modele }}</div>
+                                <td>
+                                    <div class="p-text--bold" style="font-size: 0.75rem;">{{ $r->site->nom }}</div>
+                                    <div class="p-text--xs">{{ $r->fournisseur }} · {{ $r->modele }}</div>
                                 </td>
-                                <td class="px-4 py-4 whitespace-nowrap text-xs text-gray-500">
-                                    {{ $r->created_at?->format('d/m/Y H:i') }}
+                                <td>
+                                    <div class="p-text--xs">
+                                        {{ $r->created_at?->format('d/m/Y H:i') }}
+                                    </div>
                                 </td>
-                                <td class="px-4 py-4 whitespace-nowrap text-right">
+                                <td style="text-align: right;">
                                     <button
-                                        @click="confirmerSuppression({{ $r->id }})"
-                                        class="text-gray-400 hover:text-red-600 transition"
+                                        @click.stop="confirmerSuppression({{ $r->id }})"
+                                        style="color: var(--gray-400); background: none; border: none; cursor: pointer; transition: color 0.2s;"
+                                        onmouseover="this.style.color='var(--error-accent)'"
+                                        onmouseout="this.style.color='var(--gray-400)'"
                                     >
-                                        <x-custom-icon name="trash" class="w-5 h-5" />
+                                        <x-custom-icon name="trash" class="c-icon--sm" />
                                     </button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
+                                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray-500);">
                                     Aucun rapport trouvé.
                                 </td>
                             </tr>
@@ -77,7 +81,7 @@
             </div>
 
             {{-- Pagination --}}
-            <div class="mt-4">
+            <div class="p-mt-2">
                 {{ $rapports->links() }}
             </div>
         </x-card>

@@ -6,6 +6,7 @@
         <div class="p-container p-container--md p-stack">
             <div class="p-row p-row--between">
                 <x-button href="{{ route('sites.index') }}">
+                    <x-custom-icon name="arrow-left" class="c-icon c-icon--sm"></x-custom-icon>
                     Retour
                 </x-button>
             </div>
@@ -43,7 +44,7 @@
 
                 <div x-data="{ copie: false }" class="p-copy-wrapper">
                     <pre
-                        class="p-code-block"><code>{{ $site->getScriptTracking() }}</code></pre>
+                        class="p-code-block"><code x-ref="code">{{ $site->getScriptTracking() }}</code></pre>
 
                     <button @click="
                             navigator.clipboard.writeText($refs.code.textContent);
@@ -51,7 +52,7 @@
                             setTimeout(() => copie = false, 2000);
                         "
                         class="p-copy-btn">
-                        <span x-show="!copie">
+                        <span x-show="!copie" x-cloak>
                             <x-custom-icon name="clipboard" class="c-icon--sm c-icon--gray-500" />
                         </span>
 
@@ -59,8 +60,6 @@
                             <x-custom-icon name="check" class="c-icon--sm c-icon--success" />
                         </span>
                     </button>
-
-                    <span x-ref="code" class="p-hidden">{{ $site->getScriptTracking() }}</span>
                 </div>
             </x-card>
 

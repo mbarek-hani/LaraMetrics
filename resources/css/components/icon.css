@@ -24,4 +24,5 @@
 .c-icon--success { color: var(--success-accent); }
 .c-icon--error { color: var(--error-accent); }
 .c-icon--info { color: var(--info-accent); }
+.c-icon--warning { color: var(--warning-accent); }
 

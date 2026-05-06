@@ -3,10 +3,10 @@
     x-init="init()"
 >
     {{-- En-tête --}}
-    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+    <div class="p-ai__header p-mb-3">
         <div>
-            <h3 class="text-sm font-semibold text-gray-900">Rapport d'analyse IA</h3>
-            <p class="text-xs text-gray-500 mt-0.5">
+            <h3 class="p-section__title">Rapport d'analyse IA</h3>
+            <p class="p-text--xs p-mt-sm">
                 Analyse intelligente de votre trafic par intelligence artificielle.
             </p>
         </div>
@@ -19,7 +19,7 @@
         >
             <x-custom-icon
                 name="arrow-path"
-                class="w-3.5 h-3.5"
+                class="c-icon--xs"
                 x-bind:class="generation ? 'animate-spin' : ''"
             />
             <span x-text="generation ? 'Analyse...' : 'Générer un rapport'"></span>
@@ -27,47 +27,45 @@
     </div>
 
     {{-- Sélecteur de dates --}}
-    <x-card class="mb-4">
-        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-            <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-700 mb-1">Du</label>
+    <x-card class="p-mb-3">
+        <div class="p-ai__date-row">
+            <div class="u-flex-1">
+                <label class="c-input-label" style="font-size: 0.75rem;">Du</label>
                 <input
                     type="date"
                     x-model="dateDebut"
                     :max="dateMax()"
                     @change="validerDates()"
-                    class="block w-full rounded border-gray-300 text-sm
-                           focus:border-blue-500 focus:ring-blue-500"
+                    class="c-input"
                 >
             </div>
-            <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-700 mb-1">Au</label>
+            <div class="u-flex-1">
+                <label class="c-input-label" style="font-size: 0.75rem;">Au</label>
                 <input
                     type="date"
                     x-model="dateFin"
                     :max="dateMax()"
                     :min="dateDebut"
                     @change="validerDates()"
-                    class="block w-full rounded border-gray-300 text-sm
-                           focus:border-blue-500 focus:ring-blue-500"
+                    class="c-input"
                 >
             </div>
-            <div class="shrink-0">
-                <p class="text-xs text-gray-400" x-show="!erreurDates">
+            <div class="p-text--xs">
+                <p x-show="!erreurDates" class="p-text--muted">
                     <span x-text="nbJours()"></span> jours analysés
                 </p>
-                <p class="text-xs text-red-500" x-show="erreurDates" x-text="erreurDates"></p>
+                <p class="p-text--error" x-show="erreurDates" x-text="erreurDates"></p>
             </div>
         </div>
     </x-card>
 
     {{-- Erreur configuration --}}
-    <div x-show="erreurConfig" class="bg-amber-50 border border-amber-200 rounded p-4 mb-4">
-        <div class="flex items-start gap-2">
-            <x-custom-icon name="exclamation" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+    <div x-show="erreurConfig" class="p-flash p-flash--warning p-mb-3">
+        <div class="p-row">
+            <x-custom-icon name="exclamation" class="c-icon--sm c-icon--warning" />
             <div>
-                <p class="text-sm font-medium text-amber-800">Configuration requise</p>
-                <p class="text-xs text-amber-700 mt-1">
+                <p class="p-text--bold">Configuration requise</p>
+                <p class="p-text--xs p-mt-sm">
                     Configurez votre clé API dans
                     <a href="{{ route('settings.index') }}" class="underline font-medium">Réglages</a>
                     pour utiliser l'analyse IA.
@@ -79,22 +77,22 @@
     {{-- Erreur API --}}
     <div
         x-show="erreur && !erreurConfig"
-        class="bg-red-50 border border-red-200 rounded p-3 mb-4"
+        class="p-flash p-flash--error p-mb-3"
     >
-        <div class="flex items-start gap-2">
-            <x-custom-icon name="x-mark" class="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
-            <p class="text-sm text-red-700" x-text="erreur"></p>
+        <div class="p-row">
+            <x-custom-icon name="x-mark" class="c-icon--sm c-icon--error" />
+            <p class="p-text" x-text="erreur"></p>
         </div>
     </div>
 
     {{-- Génération en cours --}}
-    <div x-show="generation" class="mb-4">
+    <div x-show="generation" class="p-mb-3">
         <x-card>
-            <div class="flex flex-col items-center justify-center py-8 gap-3">
-                <x-custom-icon name="arrow-path" class="w-8 h-8 text-gray-400 animate-spin" />
-                <div class="text-center">
-                    <p class="text-sm font-medium text-gray-900">Analyse en cours...</p>
-                    <p class="text-xs text-gray-500 mt-1">
+            <div class="p-ai__loading">
+                <x-custom-icon name="arrow-path" class="c-icon--lg animate-spin c-icon--gray-400" />
+                <div class="u-text-center">
+                    <p class="p-text--bold">Analyse en cours...</p>
+                    <p class="p-text--xs p-mt-sm">
                         L'IA analyse votre trafic. Cela peut prendre quelques secondes.
                     </p>
                 </div>
@@ -103,9 +101,11 @@
     </div>
 
     {{-- Chargement initial --}}
-    <div x-show="chargement && !generation" class="flex items-center justify-center py-12">
-        <x-custom-icon name="arrow-path" class="w-5 h-5 text-gray-400 animate-spin" />
-        <span class="ml-2 text-sm text-gray-500">Chargement...</span>
+    <div x-show="chargement && !generation" class="p-ai__loading">
+        <div class="p-row">
+            <x-custom-icon name="arrow-path" class="c-icon--sm animate-spin c-icon--gray-400" />
+            <span class="p-text">Chargement...</span>
+        </div>
     </div>
 
     {{-- État vide --}}
@@ -114,10 +114,10 @@
         x-cloak
     >
         <x-card>
-            <div class="text-center py-10">
-                <x-custom-icon name="cpu" class="w-10 h-10 text-gray-300 mx-auto" />
-                <h4 class="mt-3 text-sm font-semibold text-gray-900">Aucun rapport généré</h4>
-                <p class="mt-1 text-sm text-gray-500">
+            <div class="p-ai__empty">
+                <x-custom-icon name="cpu" class="c-icon--xl c-icon--gray-300" style="margin-bottom: 1rem;" />
+                <h4 class="p-section__title u-text-center">Aucun rapport généré</h4>
+                <p class="p-text u-text-center p-mt-sm">
                     Sélectionnez une période et cliquez sur "Générer un rapport".
                 </p>
             </div>
@@ -125,74 +125,71 @@
     </div>
 
     {{-- Rapport --}}
-    <div x-show="rapport && !chargement && !generation" x-cloak class="space-y-4">
+    <div x-show="rapport && !chargement && !generation" x-cloak class="p-stack">
 
         {{-- Score --}}
         <x-card>
-            <div class="flex items-start gap-4">
-                <div class="shrink-0 flex flex-col items-center justify-center
-                            w-16 h-16 rounded bg-gray-100 border border-gray-200">
+            <div class="p-ai__report-layout">
+                <div class="p-ai__score-circle p-ai__score-circle--md">
                     <span
                         class="text-2xl font-bold"
                         :class="{
-                            'text-green-700' : rapport?.score >= 7,
-                            'text-amber-600' : rapport?.score >= 4 && rapport?.score < 7,
-                            'text-red-600'   : rapport?.score < 4,
+                            'p-ai__score-text--good'    : rapport?.score >= 7,
+                            'p-ai__score-text--warning' : rapport?.score >= 4 && rapport?.score < 7,
+                            'p-ai__score-text--danger'  : rapport?.score < 4,
                         }"
                         x-text="rapport?.score"
                     ></span>
-                    <span class="text-xs text-gray-400">/10</span>
+                    <span class="p-text--xs">/10</span>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex flex-wrap items-center gap-2 mb-1">
-                        <h4 class="text-sm font-semibold text-gray-900">Score de performance</h4>
+                <div class="p-ai__report-content">
+                    <div class="p-row p-mb-1">
+                        <h4 class="p-section__title">Score de performance</h4>
                         <span
-                            class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border"
+                            class="p-badge"
                             :class="{
-                                'bg-green-50 text-green-700 border-green-200' : rapport?.score >= 7,
-                                'bg-amber-50 text-amber-700 border-amber-200' : rapport?.score >= 4 && rapport?.score < 7,
-                                'bg-red-50 text-red-700 border-red-200'       : rapport?.score < 4,
+                                'p-badge--success' : rapport?.score >= 7,
+                                'p-badge--warning' : rapport?.score >= 4 && rapport?.score < 7,
+                                'p-badge--error'   : rapport?.score < 4,
                             }"
                             x-text="rapport?.score >= 7 ? 'Bon' : rapport?.score >= 4 ? 'Moyen' : 'Faible'"
                         ></span>
                     </div>
-                    <p class="text-sm text-gray-600" x-text="rapport?.resume"></p>
+                    <p class="p-text p-text--muted" x-text="rapport?.resume"></p>
                 </div>
             </div>
-            <div class="mt-3 pt-3 border-t border-gray-200 flex flex-wrap items-center
-                        justify-between gap-2 text-xs text-gray-400">
+            <div class="p-ai__report-meta">
                 <span x-text="'Généré le ' + rapport?.genere_le"></span>
                 <span x-text="rapport?.fournisseur + ' · ' + rapport?.modele"></span>
             </div>
         </x-card>
 
         {{-- Points clés + Recommandations --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-grid p-grid--2 p-grid--gap-md">
             <x-card titre="Points clés">
-                <ul class="space-y-2">
+                <ul class="p-ai__list">
                     <template x-for="(point, i) in rapport?.points_cles ?? []" :key="i">
-                        <li class="flex items-start gap-2 text-sm text-gray-700">
-                            <x-custom-icon name="check" class="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                        <li class="p-ai__list-item">
+                            <x-custom-icon name="check" class="c-icon--lg c-icon--success" />
                             <span x-text="point"></span>
                         </li>
                     </template>
                     <template x-if="!rapport?.points_cles?.length">
-                        <li class="text-sm text-gray-400">Aucun point clé.</li>
+                        <li class="p-text--xs p-text--muted">Aucun point clé.</li>
                     </template>
                 </ul>
             </x-card>
 
             <x-card titre="Recommandations">
-                <ul class="space-y-2">
+                <ul class="p-ai__list">
                     <template x-for="(reco, i) in rapport?.recommandations ?? []" :key="i">
-                        <li class="flex items-start gap-2 text-sm text-gray-700">
-                            <span class="text-gray-400 shrink-0 font-mono text-xs mt-0.5"
-                                  x-text="(i + 1) + '.'"></span>
+                        <li class="p-ai__list-item">
+                            <span class="p-ai__reco-num" x-text="i + 1"></span>
                             <span x-text="reco"></span>
                         </li>
                     </template>
                     <template x-if="!rapport?.recommandations?.length">
-                        <li class="text-sm text-gray-400">Aucune recommandation.</li>
+                        <li class="p-text--xs p-text--muted">Aucune recommandation.</li>
                     </template>
                 </ul>
             </x-card>
@@ -200,17 +197,17 @@
 
         {{-- Tendances --}}
         <x-card titre="Tendances observées">
-            <ul class="space-y-2">
+            <div class="p-grid p-grid--2 p-grid--gap-md">
                 <template x-for="(tendance, i) in rapport?.tendances ?? []" :key="i">
-                    <li class="flex items-start gap-2 text-sm text-gray-700">
-                        <x-custom-icon name="arrow-trending-down" class="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                    <div class="p-ai__trend-card">
+                        <x-custom-icon name="arrow-trending-up" class="c-icon--lg c-icon--info" />
                         <span x-text="tendance"></span>
-                    </li>
+                    </div>
                 </template>
                 <template x-if="!rapport?.tendances?.length">
-                    <li class="text-sm text-gray-400">Aucune tendance identifiée.</li>
+                    <p class="p-text--xs p-text--muted">Aucune tendance identifiée.</p>
                 </template>
-            </ul>
+            </div>
         </x-card>
     </div>
 </div>
