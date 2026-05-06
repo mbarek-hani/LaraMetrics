@@ -211,12 +211,24 @@
                                 <x-card titre="Systèmes & Navigateurs" :padding="false">
                                     <div class="p-grid p-grid--2" style="gap: 0;">
                                         <div style="border-right: 1px solid var(--gray-200);">
-                                            <div class="p-px-3 p-py-2 p-text--bold" style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; border-bottom: 1px solid var(--gray-200);">Navigateurs</div>
                                             <table class="p-dash__table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Navigateur</th>
+                                                        <th class="p-dash__table-th--right">Visiteurs</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     <template x-for="nav in (stats?.top_navigateurs ?? []).slice(0, 5)" :key="nav.navigateur">
                                                         <tr>
-                                                            <td class="p-dash__table-cell--truncate" x-text="nav.navigateur"></td>
+                                                            <td>
+                                                                <div class="p-dash__list-name">
+                                                                    <template x-if="getBrowserIcon(nav.navigateur)">
+                                                                        <img :src="getBrowserIcon(nav.navigateur)" class="p-dash__favicon">
+                                                                    </template>
+                                                                    <span class="p-dash__table-cell--truncate" x-text="nav.navigateur"></span>
+                                                                </div>
+                                                            </td>
                                                             <td class="p-dash__table-cell--right" x-text="nav.visiteurs"></td>
                                                         </tr>
                                                     </template>
@@ -227,12 +239,24 @@
                                             </table>
                                         </div>
                                         <div>
-                                            <div class="p-px-3 p-py-2 p-text--bold" style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; border-bottom: 1px solid var(--gray-200);">Systèmes d'exploitation</div>
                                             <table class="p-dash__table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Système d'exploitation</th>
+                                                        <th class="p-dash__table-th--right">Visiteurs</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     <template x-for="sys in (stats?.top_systemes ?? []).slice(0, 5)" :key="sys.systeme_exploitation">
                                                         <tr>
-                                                            <td class="p-dash__table-cell--truncate" x-text="sys.systeme_exploitation"></td>
+                                                            <td>
+                                                                <div class="p-dash__list-name">
+                                                                    <template x-if="getOsIcon(sys.systeme_exploitation)">
+                                                                        <img :src="getOsIcon(sys.systeme_exploitation)" class="p-dash__favicon">
+                                                                    </template>
+                                                                    <span class="p-dash__table-cell--truncate" x-text="sys.systeme_exploitation"></span>
+                                                                </div>
+                                                            </td>
                                                             <td class="p-dash__table-cell--right" x-text="sys.visiteurs"></td>
                                                         </tr>
                                                     </template>
@@ -255,10 +279,23 @@
                                             </nav>
                                         </div>
                                         <table class="p-dash__table" x-show="ongletUtm === 'source'">
+                                            <thead>
+                                                <tr>
+                                                    <th>Source</th>
+                                                    <th class="p-dash__table-th--right">Visiteurs</th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 <template x-for="utm in (stats?.top_utm_sources ?? []).slice(0, 5)" :key="utm.utm_source">
                                                     <tr>
-                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_source"></td>
+                                                        <td>
+                                                            <div class="p-dash__list-name">
+                                                                <template x-if="getUtmIcon(utm.utm_source)">
+                                                                    <img :src="getUtmIcon(utm.utm_source)" class="p-dash__favicon">
+                                                                </template>
+                                                                <span class="p-dash__table-cell--truncate" x-text="utm.utm_source"></span>
+                                                            </div>
+                                                        </td>
                                                         <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
                                                     </tr>
                                                 </template>
@@ -268,6 +305,12 @@
                                             </tbody>
                                         </table>
                                         <table class="p-dash__table" x-show="ongletUtm === 'medium'" x-cloak>
+                                            <thead>
+                                                <tr>
+                                                    <th>Medium</th>
+                                                    <th class="p-dash__table-th--right">Visiteurs</th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 <template x-for="utm in (stats?.top_utm_mediums ?? []).slice(0, 5)" :key="utm.utm_medium">
                                                     <tr>
@@ -281,6 +324,12 @@
                                             </tbody>
                                         </table>
                                         <table class="p-dash__table" x-show="ongletUtm === 'campagne'" x-cloak>
+                                            <thead>
+                                                <tr>
+                                                    <th>Campagne</th>
+                                                    <th class="p-dash__table-th--right">Visiteurs</th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 <template x-for="utm in (stats?.top_utm_campaigns ?? []).slice(0, 5)" :key="utm.utm_campagne">
                                                     <tr>
@@ -588,6 +637,41 @@
                                 );
                             }
                         });
+                    },
+
+                    getBrowserIcon(name) {
+                        if (!name) return '';
+                        const n = name.toLowerCase();
+                        if (n.includes('chrome')) return 'https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/chrome/chrome_16x16.png';
+                        if (n.includes('firefox')) return 'https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/firefox/firefox_16x16.png';
+                        if (n.includes('safari')) return 'https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/safari/safari_16x16.png';
+                        if (n.includes('edge')) return 'https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/edge/edge_16x16.png';
+                        if (n.includes('opera')) return 'https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/opera/opera_16x16.png';
+                        if (n.includes('brave')) return 'https://cdnjs.cloudflare.com/ajax/libs/browser-logos/70.4.0/brave/brave_16x16.png';
+                        return '';
+                    },
+
+                    getOsIcon(name) {
+                        if (!name) return '';
+                        const n = name.toLowerCase();
+                        if (n.includes('windows')) return 'https://img.icons8.com/color/16/windows-10.png';
+                        if (n.includes('mac') || n.includes('ios')) return 'https://img.icons8.com/color/16/mac-os.png';
+                        if (n.includes('linux') || n.includes('ubuntu')) return 'https://img.icons8.com/color/16/linux.png';
+                        if (n.includes('android')) return 'https://img.icons8.com/color/16/android-os.png';
+                        return '';
+                    },
+
+                    getUtmIcon(name) {
+                        if (!name) return '';
+                        const n = name.toLowerCase();
+                        let domain = n;
+                        if (['google', 'facebook', 'twitter', 'linkedin', 'instagram', 'youtube', 'tiktok', 'pinterest', 'reddit'].includes(n)) {
+                            domain = n + '.com';
+                        }
+                        if (domain.includes('.')) {
+                            return 'https://www.google.com/s2/favicons?domain=' + domain + '&sz=16';
+                        }
+                        return '';
                     },
 
                     formaterDuree(s) {
