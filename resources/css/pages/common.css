@@ -184,16 +184,18 @@
 .p-grid {
     display: grid;
     gap: 0.75rem;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 }
 
 @media (min-width: 640px) {
-    .p-grid--2 { grid-template-columns: repeat(2, 1fr); }
+    .p-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (min-width: 1024px) {
-    .p-grid--3 { grid-template-columns: repeat(3, 1fr); }
-    .p-grid--4 { grid-template-columns: repeat(4, 1fr); }
+    .p-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .p-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .p-col-span-2 { grid-column: span 2 / span 2; }
+    .p-col-span-3 { grid-column: span 3 / span 3; }
 }
 
 .p-grid--gap-md {

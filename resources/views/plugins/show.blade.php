@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="p-page">
-        <div class="p-container p-container--md p-stack">
+        <div class="p-container p-container--lg p-stack">
             <!-- En-tête -->
             <div class="p-page__header">
                 <div class="p-row">
@@ -39,7 +39,7 @@
             <!-- Informations principales -->
             <div class="p-grid p-grid--3 u-items-start">
                 <!-- Colonne de gauche (2/3) -->
-                <div class="p-dash__col-span-2 p-stack">
+                <div class="p-col-span-2 p-stack">
                     <x-card titre="Description">
                         <p class="p-text--muted u-leading-relaxed">
                             {{ $details['description'] }}
@@ -112,9 +112,8 @@
                                 </div>
                             @endif
                         @endif
+                    </x-card>
                 </div>
-                </x-card>
-            </div>
 
             <!-- Colonne de droite (1/3) -->
             <div class="p-stack">
