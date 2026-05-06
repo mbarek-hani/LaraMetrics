@@ -9,7 +9,6 @@
         </div>
 
         <x-button variant="primary" size="sm" @click="generer()" x-bind:disabled="generation">
-            <x-custom-icon name="arrow-path" class="c-icon--xs" x-bind:class="generation ? 'animate-spin' : ''" />
             <span x-text="generation ? 'Analyse...' : 'Générer un rapport'"></span>
         </x-button>
     </div>
