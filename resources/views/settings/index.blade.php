@@ -27,7 +27,7 @@
                         <span class="p-section__badge">Plugin</span>
                     </div>
 
-                    <div class="p-form-group">
+                    <form @submit.prevent="sauvegarder" class="p-form-group">
                         @foreach($plugin['champs'] as $champ)
                             <div>
                                 <label class="c-input-label">
@@ -38,16 +38,16 @@
                                 </label>
 
                                 @if(($champ['type'] ?? 'text') === 'select')
-                                    <select x-model="valeurs['{{ $champ['cle'] }}']" class="c-input">
+                                    <select x-model="valeurs['{{ $champ['cle'] }}']" class="c-input" {{ ($champ['obligatoire'] ?? false) ? 'required' : '' }}>
                                         @foreach($champ['options'] ?? [] as $option)
                                             <option value="{{ $option }}">{{ ucfirst($option) }}</option>
                                         @endforeach
                                     </select>
                                 @elseif(($champ['type'] ?? 'text') === 'textarea')
-                                    <textarea x-model="valeurs['{{ $champ['cle'] }}']" rows="3" class="c-input"></textarea>
+                                    <textarea x-model="valeurs['{{ $champ['cle'] }}']" rows="3" class="c-input" {{ ($champ['obligatoire'] ?? false) ? 'required' : '' }}></textarea>
                                 @else
                                     <input type="{{ $champ['type'] ?? 'text' }}" x-model="valeurs['{{ $champ['cle'] }}']"
-                                        placeholder="{{ $champ['placeholder'] ?? '' }}" class="c-input">
+                                        placeholder="{{ $champ['placeholder'] ?? '' }}" class="c-input" {{ ($champ['obligatoire'] ?? false) ? 'required' : '' }}>
                                 @endif
 
                                 @if(isset($champ['aide']))
@@ -55,10 +55,10 @@
                                 @endif
                             </div>
                         @endforeach
-                    </div>
+                    </form>
 
                     <div class="p-card-footer">
-                        <x-button variant="primary" size="sm" @click="sauvegarder()" x-bind:disabled="sauvegarde">
+                        <x-button variant="primary" size="sm" @click="$el.closest('.c-card').querySelector('form').requestSubmit()" x-bind:disabled="sauvegarde">
                             <span x-text="sauvegarde ? 'Sauvegarde...' : 'Sauvegarder'"></span>
                         </x-button>
                         <span x-show="succes" x-transition class="p-row p-flash--success">
