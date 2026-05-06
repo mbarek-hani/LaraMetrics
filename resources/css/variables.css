@@ -37,6 +37,7 @@
 
     /* Semantic States */
     --ring-offset: #ffffff;
+    --surface-white: #ffffff;
 }
 
 [data-theme='dark'] {
@@ -54,4 +55,5 @@
     --gray-700: #f3f4f6;
     --gray-900: #f9fafb;
     --ring-offset: #111827;
+    --surface-white: #111827;
 }

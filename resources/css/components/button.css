@@ -42,7 +42,7 @@
 }
 
 .c-btn--default {
-    background-color: #ffffff;
+    background-color: var(--surface-white);
     border-color: var(--gray-300);
     color: var(--gray-700);
     --ring-color: var(--gray-300);
