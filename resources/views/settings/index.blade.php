@@ -6,16 +6,36 @@
         <div class="p-container p-container--sm p-stack">
             <h2 class="p-page__title">Réglages</h2>
             {{-- Réglages Core (toujours visible) --}}
-            <x-card>
+            <x-card x-data="themeSwitcher()">
                 <div class="p-section__header--with-icon">
-                    <x-custom-icon name="cog" class="p-section__icon" />
-                    <h4 class="p-section__title">Flux</h4>
+                    <x-custom-icon name="swatch" class="p-section__icon" />
+                    <h4 class="p-section__title">Apparence</h4>
                     <span class="p-section__badge">Core</span>
                 </div>
-                <p class="p-text">
-                    Aucun réglage core pour le moment.
-                    Les réglages des plugins actifs apparaissent ci-dessous.
-                </p>
+                
+                <p class="p-text">Choisissez le thème de l'application :</p>
+                
+                <div class="c-theme-switcher">
+                    <!-- Light Mode Button -->
+                    <button type="button" class="c-theme-card" :class="{ 'c-theme-card--active': theme === 'light' }" @click="setTheme('light')">
+                        <div class="c-theme-preview c-theme-preview--light">
+                            <div class="c-theme-preview__header"></div>
+                            <div class="c-theme-preview__line"></div>
+                            <div class="c-theme-preview__line c-theme-preview__line--short"></div>
+                        </div>
+                        <span class="p-text--bold" style="font-size: 0.875rem;">Clair</span>
+                    </button>
+                    
+                    <!-- Dark Mode Button -->
+                    <button type="button" class="c-theme-card" :class="{ 'c-theme-card--active': theme === 'dark' }" @click="setTheme('dark')">
+                        <div class="c-theme-preview c-theme-preview--dark">
+                            <div class="c-theme-preview__header"></div>
+                            <div class="c-theme-preview__line"></div>
+                            <div class="c-theme-preview__line c-theme-preview__line--short"></div>
+                        </div>
+                        <span class="p-text--bold" style="font-size: 0.875rem;">Sombre</span>
+                    </button>
+                </div>
             </x-card>
 
             {{-- Réglages des plugins --}}
@@ -86,6 +106,26 @@
 
     @push('scripts')
         <script>
+            function themeSwitcher() {
+                return {
+                    theme: localStorage.getItem('theme') || 'light',
+                    init() {
+                        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                            this.theme = 'dark';
+                        }
+                    },
+                    setTheme(value) {
+                        this.theme = value;
+                        localStorage.setItem('theme', value);
+                        if (value === 'dark') {
+                            document.documentElement.setAttribute('data-theme', 'dark');
+                        } else {
+                            document.documentElement.removeAttribute('data-theme');
+                        }
+                    }
+                }
+            }
+
             function reglagesPlugin(pluginId, valeursInitiales) {
                 return {
                     valeurs: valeursInitiales || {},
