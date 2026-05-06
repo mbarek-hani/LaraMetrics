@@ -187,21 +187,7 @@
                                 </x-card>
 
                                 <x-card titre="Pays">
-                                    <div class="p-dash__list-stack">
-                                        <template x-for="pays in (stats?.top_pays ?? []).slice(0, 8)" :key="pays.pays_code">
-                                            <div class="p-dash__list-row">
-                                                <div class="p-dash__list-name">
-                                                    <span x-text="drapeau(pays.pays_code)"></span>
-                                                    <span class="p-text--bold"
-                                                        x-text="pays.pays_nom || pays.pays_code"></span>
-                                                </div>
-                                                <span class="p-dash__list-value" x-text="pays.visiteurs"></span>
-                                            </div>
-                                        </template>
-                                        <template x-if="!stats?.top_pays?.length">
-                                            <p class="p-dash__table-cell--center">Aucune donnée</p>
-                                        </template>
-                                    </div>
+                                    <div x-ref="cartePays" style="width: 100%; height: 250px;"></div>
                                 </x-card>
 
                                 <x-card titre="Appareils">
@@ -359,6 +345,7 @@
     </div>
 
     @push('scripts')
+
         <script>
             function dashboard() {
                 return {
@@ -372,6 +359,7 @@
                     _chartApp: null,
                     _chartEvt: null,
                     _chartEvtRepart: null,
+                    _map: null,
                     couleursChart: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'], // Indigo, Violet, Pink, Amber, Emerald
 
                     periodes: [
@@ -400,6 +388,7 @@
                                 this.dessinerAppareils();
                                 this.dessinerEvenements();
                                 this.dessinerRepartitionEvenements();
+                                this.dessinerCarte();
                             });
                         } catch (e) {
                             this.erreur = e.message;
@@ -456,6 +445,58 @@
                                 datasets: [{ data: d.map(a => a.visiteurs), backgroundColor: ['#fab', '#afb', '#abf', '#666'], borderWidth: 0 }],
                             },
                             options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { legend: { display: false } } },
+                        });
+                    },
+
+                    dessinerCarte() {
+                        const c = this.$refs.cartePays;
+                        if (!c) return;
+
+                        const values = {};
+                        for (const p of (this.stats?.top_pays ?? [])) {
+                            const code = (p.pays_code || '').toUpperCase();
+                            if (code) {
+                                values[code] = p.visiteurs;
+                            }
+                        }
+
+                        if (this._map) {
+                            this._map.destroy();
+                        }
+
+                        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+                        this._map = new jsVectorMap({
+                            selector: c,
+                            map: 'world',
+                            backgroundColor: 'transparent',
+                            zoomOnScroll: false,
+                            regionStyle: {
+                                initial: {
+                                    fill: isDark ? '#374151' : '#e5e7eb',
+                                    stroke: isDark ? '#1f2937' : '#ffffff',
+                                    strokeWidth: 1,
+                                    fillOpacity: 1
+                                },
+                                hover: {
+                                    fill: isDark ? '#10b981' : '#34d399',
+                                    cursor: 'pointer'
+                                }
+                            },
+                            visualizeData: {
+                                scale: isDark ? ['#065f46', '#34d399'] : ['#a7f3d0', '#047857'],
+                                values: values
+                            },
+                            onRegionTooltipShow(event, tooltip, code) {
+                                const count = values[code] || 0;
+                                tooltip.text(
+                                    `<div style="text-align: center; font-family: sans-serif;">
+                                        <div style="font-weight: bold; font-size: 0.875rem;">${tooltip.text()}</div>
+                                        <div style="font-size: 0.75rem; color: #d1d5db;">${count} visiteur(s)</div>
+                                    </div>`,
+                                    true
+                                );
+                            }
                         });
                     },
 
