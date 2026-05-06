@@ -38,22 +38,22 @@
                                 <div class="p-actions p-indent">
                                     <form method="POST" action="{{ route('sites.toggle-actif', $site) }}">
                                         @csrf
-                                        <x-button size="sm" type="submit" variant="{{ $site->actif ? 'default' : 'primary' }}">
+                                        <x-button size="sm" type="submit" variant="{{ $site->actif ? 'default' : 'primary' }}" title="{{ $site->actif ? 'Désactiver' : 'Activer' }}">
                                             <x-custom-icon name="{{ $site->actif ? 'stop' : 'play' }}" class="c-icon--xs" />
-                                            {{ $site->actif ? 'Désactiver' : 'Activer' }}
+                                            <span class="u-hidden-mobile">{{ $site->actif ? 'Désactiver' : 'Activer' }}</span>
                                         </x-button>
                                     </form>
-                                    <x-button href="{{ route('sites.show', $site) }}" size="sm">
+                                    <x-button href="{{ route('sites.show', $site) }}" size="sm" title="Script">
                                         <x-custom-icon name="code" class="c-icon--xs" />
-                                        Script
+                                        <span class="u-hidden-mobile">Script</span>
                                     </x-button>
                                     <form method="POST" action="{{ route('sites.destroy', $site) }}"
                                         onsubmit="return confirm('Supprimer ce site ?')">
                                         @csrf
                                         @method('DELETE')
-                                        <x-button size="sm" variant="danger" type="submit">
+                                        <x-button size="sm" variant="danger" type="submit" title="Supprimer">
                                             <x-custom-icon name="trash" class="c-icon--xs" />
-                                            Supprimer
+                                            <span class="u-hidden-mobile">Supprimer</span>
                                         </x-button>
                                     </form>
                                 </div>

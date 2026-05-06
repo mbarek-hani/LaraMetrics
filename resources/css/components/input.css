@@ -47,3 +47,12 @@
     font-size: 0.75rem;
     color: var(--error-accent);
 }
+
+.c-input--error {
+    border-color: var(--error-accent);
+}
+
+.c-input--error:focus {
+    border-color: var(--error-accent);
+    box-shadow: 0 0 0 1px var(--ring-offset), 0 0 0 3px #fecaca;
+}

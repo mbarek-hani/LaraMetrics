@@ -8,6 +8,11 @@
     'value'       => null,
 ])
 
+@php
+    $errorKey = str_replace(['[', ']', '..'], ['.', '', '.'], $name);
+    $errorKey = rtrim($errorKey, '.');
+@endphp
+
 <div class="c-input-group">
     @if($label)
         <label for="{{ $name }}" class="c-input-label">
@@ -25,14 +30,14 @@
         placeholder="{{ $placeholder }}"
         value="{{ $value }}"
         {{ $required ? 'required' : '' }}
-        {{ $attributes->merge(['class' => 'c-input']) }}
+        {{ $attributes->merge(['class' => 'c-input' . ($errors->has($errorKey) ? ' c-input--error' : '')]) }}
     >
 
     @if($aide)
         <p class="c-input-help">{{ $aide }}</p>
     @endif
 
-    @error($name)
+    @error($errorKey)
         <p class="c-input-error">{{ $message }}</p>
     @enderror
 </div>
