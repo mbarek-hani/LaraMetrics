@@ -52,6 +52,13 @@
 }
 
 
+.c-alert--warning {
+    background-color: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning-text);
+    border-left-color: var(--warning-accent);
+}
+
 .c-alert--info {
     background-color: var(--info-bg);
     border-color: var(--info-border);

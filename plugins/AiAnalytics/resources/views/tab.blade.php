@@ -36,26 +36,26 @@
     </x-card>
 
     {{-- Erreur configuration --}}
-    <div x-show="erreurConfig" class="p-flash p-flash--warning p-mb-3">
-        <div class="p-row">
-            <x-custom-icon name="exclamation" class="c-icon--lg c-icon--warning" />
-            <div>
-                <p class="p-text--bold">Configuration requise</p>
-                <p class="p-text--xs p-mt-sm">
+    <div x-show="erreurConfig" x-cloak>
+        <template x-if="erreurConfig">
+            <x-alert type="warning">
+                <div class="p-text--bold">Configuration requise</div>
+                <div class="p-text--xs p-mt-sm">
                     Configurez votre clé API dans
                     <a href="{{ route('settings.index') }}" class="underline font-medium">Réglages</a>
                     pour utiliser l'analyse IA.
-                </p>
-            </div>
-        </div>
+                </div>
+            </x-alert>
+        </template>
     </div>
 
     {{-- Erreur API --}}
-    <div x-show="erreur && !erreurConfig" class="p-flash p-flash--error p-mb-3">
-        <div class="p-row">
-            <x-custom-icon name="x-mark" class="c-icon--sm c-icon--error" />
-            <p class="p-text" x-text="erreur"></p>
-        </div>
+    <div x-show="erreur && !erreurConfig" x-cloak>
+        <template x-if="erreur && !erreurConfig">
+            <x-alert type="erreur">
+                <span x-text="erreur"></span>
+            </x-alert>
+        </template>
     </div>
 
     {{-- Génération en cours --}}

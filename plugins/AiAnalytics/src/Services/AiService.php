@@ -251,6 +251,12 @@ class AiService
 
             return $contenu;
 
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            $erreurObj = $e->response->json('error');
+            $messageErreur = is_array($erreurObj) ? ($erreurObj['message'] ?? json_encode($erreurObj)) : ($e->response->json('error.message') ?? $e->response->body());
+            
+            Log::error("AiService API error [{$this->fournisseur}] : " . $messageErreur);
+            throw new \Exception("Erreur API {$this->fournisseur} : " . $messageErreur);
         } catch (ConnectionException $e) {
             throw new \Exception(
                 "Impossible de joindre l'API {$this->fournisseur}. Vérifiez votre connexion."

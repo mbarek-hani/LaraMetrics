@@ -61,11 +61,20 @@
                         <x-button variant="primary" size="sm" @click="$el.closest('.c-card').querySelector('form').requestSubmit()" x-bind:disabled="sauvegarde">
                             <span x-text="sauvegarde ? 'Sauvegarde...' : 'Sauvegarder'"></span>
                         </x-button>
-                        <span x-show="succes" x-transition class="p-row p-flash--success">
-                            <x-custom-icon name="check" class="c-icon--sm" />
-                            Sauvegardé
-                        </span>
-                        <span x-show="erreur" x-transition class="p-text" style="color: var(--error-accent);" x-text="erreur"></span>
+
+                        <div x-show="succes" x-cloak>
+                            <template x-if="succes">
+                                <x-alert type="succes" message="Réglages sauvegardés avec succès." />
+                            </template>
+                        </div>
+
+                        <div x-show="erreur" x-cloak>
+                            <template x-if="erreur">
+                                <x-alert type="erreur">
+                                    <span x-text="erreur"></span>
+                                </x-alert>
+                            </template>
+                        </div>
                     </div>
                 </x-card>
             @empty

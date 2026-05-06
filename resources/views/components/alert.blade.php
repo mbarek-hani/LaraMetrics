@@ -4,6 +4,7 @@
     $modifier = match ($type) {
         'succes' => 'c-alert--success',
         'erreur' => 'c-alert--erreur',
+        'warning' => 'c-alert--warning',
         default => 'c-alert--info',
     };
 @endphp
@@ -16,7 +17,10 @@
 
     <div class="c-alert {{ $modifier }}">
         <div class="c-alert__message">
-            <p>{{ $message }}</p>
+            @if($message)
+                <p>{{ $message }}</p>
+            @endif
+            {{ $slot }}
         </div>
 
         <button @click="show = false" class="c-alert__close">
