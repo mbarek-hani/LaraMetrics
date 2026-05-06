@@ -166,7 +166,7 @@
 }
 
 .p-ai__table tr:hover {
-    background-color: #ffffff;
+    background-color: var(--gray-100);
 }
 
 .p-ai__table tr:last-child td {

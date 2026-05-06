@@ -23,7 +23,7 @@
     font-size: 0.875rem;
     padding: 0.375rem 0.5rem;
     color: var(--gray-900);
-    background-color: #ffffff;
+    background-color: var(--surface-white);
 }
 
 .p-dash__select:focus {
@@ -53,7 +53,7 @@
     border: none;
     cursor: pointer;
     border-right: 1px solid var(--gray-300);
-    background-color: #ffffff;
+    background-color: var(--surface-white);
     color: var(--gray-600);
 }
 
@@ -85,7 +85,7 @@
     border: 1px solid var(--gray-300);
     font-size: 0.875rem;
     padding: 0.375rem 0.5rem;
-    background-color: #ffffff;
+    background-color: var(--surface-white);
     color: var(--gray-900);
 }
 

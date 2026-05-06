@@ -49,9 +49,9 @@
 
     /* ... repeat for error/info */
     --gray-50: #1f2937;
-    --gray-100: #1f2937;
-    --gray-200: #374151;
-    --gray-300: #4b5563;
+    --gray-100: #374151;
+    --gray-200: #4b5563;
+    --gray-300: #6b7280;
     --gray-700: #f3f4f6;
     --gray-900: #f9fafb;
     --ring-offset: #111827;
