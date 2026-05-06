@@ -45,7 +45,7 @@ class SiteController extends Controller
 
     public function toggleActif(Site $site)
     {
-        $site->update(['actif' => !$site->actif]);
+        $site->update(['actif' => ! $site->actif]);
 
         return redirect()
             ->route('sites.index')
