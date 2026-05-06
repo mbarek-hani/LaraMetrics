@@ -2,7 +2,7 @@
     <x-slot name="titre">
         Détails du rapport IA
     </x-slot>
-    <div class="p-ai p-container p-container--md">
+    <div class="p-ai p-container p-container--lg">
         {{-- Actions --}}
         <div class="p-actions p-mt-2 p-mb-2">
             <x-button href="{{ route('plugins.ai-analytics.historique.index') }}" size="sm">
