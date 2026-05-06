@@ -207,6 +207,96 @@
                                 </x-card>
                             </div>
 
+                            <div class="p-dash__grid-2 p-mt-3">
+                                <x-card titre="Systèmes & Navigateurs" :padding="false">
+                                    <div class="p-grid p-grid--2" style="gap: 0;">
+                                        <div style="border-right: 1px solid var(--gray-200);">
+                                            <div class="p-px-3 p-py-2 p-text--bold" style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; border-bottom: 1px solid var(--gray-200);">Navigateurs</div>
+                                            <table class="p-dash__table">
+                                                <tbody>
+                                                    <template x-for="nav in (stats?.top_navigateurs ?? []).slice(0, 5)" :key="nav.navigateur">
+                                                        <tr>
+                                                            <td class="p-dash__table-cell--truncate" x-text="nav.navigateur"></td>
+                                                            <td class="p-dash__table-cell--right" x-text="nav.visiteurs"></td>
+                                                        </tr>
+                                                    </template>
+                                                    <template x-if="!stats?.top_navigateurs?.length">
+                                                        <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div>
+                                            <div class="p-px-3 p-py-2 p-text--bold" style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; border-bottom: 1px solid var(--gray-200);">Systèmes d'exploitation</div>
+                                            <table class="p-dash__table">
+                                                <tbody>
+                                                    <template x-for="sys in (stats?.top_systemes ?? []).slice(0, 5)" :key="sys.systeme_exploitation">
+                                                        <tr>
+                                                            <td class="p-dash__table-cell--truncate" x-text="sys.systeme_exploitation"></td>
+                                                            <td class="p-dash__table-cell--right" x-text="sys.visiteurs"></td>
+                                                        </tr>
+                                                    </template>
+                                                    <template x-if="!stats?.top_systemes?.length">
+                                                        <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </x-card>
+
+                                <x-card titre="Campagnes Marketing (UTM)" :padding="false">
+                                    <div x-data="{ ongletUtm: 'source' }">
+                                        <div class="p-dash__tabs p-px-3 p-pt-2" style="border-bottom: 1px solid var(--gray-200); margin-bottom: 0;">
+                                            <nav class="p-dash__tab-nav">
+                                                <button @click="ongletUtm = 'source'" :class="ongletUtm === 'source' ? 'p-dash__tab--active' : ''" class="p-dash__tab" style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Source</button>
+                                                <button @click="ongletUtm = 'medium'" :class="ongletUtm === 'medium' ? 'p-dash__tab--active' : ''" class="p-dash__tab" style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Medium</button>
+                                                <button @click="ongletUtm = 'campagne'" :class="ongletUtm === 'campagne' ? 'p-dash__tab--active' : ''" class="p-dash__tab" style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Campagne</button>
+                                            </nav>
+                                        </div>
+                                        <table class="p-dash__table" x-show="ongletUtm === 'source'">
+                                            <tbody>
+                                                <template x-for="utm in (stats?.top_utm_sources ?? []).slice(0, 5)" :key="utm.utm_source">
+                                                    <tr>
+                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_source"></td>
+                                                        <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
+                                                    </tr>
+                                                </template>
+                                                <template x-if="!stats?.top_utm_sources?.length">
+                                                    <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                        <table class="p-dash__table" x-show="ongletUtm === 'medium'" x-cloak>
+                                            <tbody>
+                                                <template x-for="utm in (stats?.top_utm_mediums ?? []).slice(0, 5)" :key="utm.utm_medium">
+                                                    <tr>
+                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_medium"></td>
+                                                        <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
+                                                    </tr>
+                                                </template>
+                                                <template x-if="!stats?.top_utm_mediums?.length">
+                                                    <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                        <table class="p-dash__table" x-show="ongletUtm === 'campagne'" x-cloak>
+                                            <tbody>
+                                                <template x-for="utm in (stats?.top_utm_campaigns ?? []).slice(0, 5)" :key="utm.utm_campagne">
+                                                    <tr>
+                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_campagne"></td>
+                                                        <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
+                                                    </tr>
+                                                </template>
+                                                <template x-if="!stats?.top_utm_campaigns?.length">
+                                                    <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </x-card>
+                            </div>
+
                             @hook('dashboard.widgets')
                         </div>
 

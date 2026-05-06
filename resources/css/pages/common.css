@@ -192,6 +192,7 @@
 }
 
 @media (min-width: 1024px) {
+    .p-grid--3 { grid-template-columns: repeat(3, 1fr); }
     .p-grid--4 { grid-template-columns: repeat(4, 1fr); }
 }
 

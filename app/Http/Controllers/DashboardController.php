@@ -58,6 +58,12 @@ class DashboardController extends Controller
             'evenements_par_jour' => $service->evenementsParJour($debut, $fin),
             'evenements_par_page' => $service->evenementsParPage($debut, $fin),
             'derniers_evenements' => $service->derniersEvenements($debut, $fin),
+            'top_utm_sources' => $service->topParam($debut, $fin, 'utm_source'),
+            'top_utm_mediums' => $service->topParam($debut, $fin, 'utm_medium'),
+            'top_utm_campaigns' => $service->topParam($debut, $fin, 'utm_campagne'),
+            'top_navigateurs' => $service->topParam($debut, $fin, 'navigateur'),
+            'top_versions_navigateurs' => $service->topParam($debut, $fin, 'version_navigateur'),
+            'top_systemes' => $service->topParam($debut, $fin, 'systeme_exploitation'),
             'periode' => [
                 'debut' => $debut->format('d/m/Y'),
                 'fin' => $fin->format('d/m/Y'),

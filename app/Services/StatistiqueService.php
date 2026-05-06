@@ -191,4 +191,22 @@ class StatistiqueService
             ->orderByDesc('total')
             ->get();
     }
+
+    /**
+     * Top éléments pour une colonne donnée (ex: utm_source, navigateur).
+     */
+    public function topParam(string $debut, string $fin, string $column, int $limite = 10)
+    {
+        return Visite::where('site_id', $this->site->id)
+            ->whereBetween('cree_le', [$debut, $fin])
+            ->whereNotNull($column)
+            ->select(
+                $column,
+                DB::raw('COUNT(DISTINCT session_id) as visiteurs'),
+            )
+            ->groupBy($column)
+            ->orderByDesc('visiteurs')
+            ->limit($limite)
+            ->get();
+    }
 }
