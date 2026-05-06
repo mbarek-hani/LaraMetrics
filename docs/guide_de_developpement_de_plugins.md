@@ -1,6 +1,6 @@
 # Guide de Développement de Plugins Flux
 
-> **Version Flux** : Laravel 13 · Alpine.js · Tailwind CSS
+> **Version Flux** : Laravel 13 · Alpine.js · Vanilla CSS (BEM)
 > **Objectif** : Étendre les fonctionnalités de Flux sans modifier son code source (*core*).
 
 Flux repose sur une architecture modulaire robuste. Le **core** gère le tracking, l'authentification et l'interface principale, tandis que toutes les fonctionnalités spécifiques ou expérimentales peuvent être implémentées via des **plugins**.
@@ -8,6 +8,8 @@ Flux repose sur une architecture modulaire robuste. Le **core** gère le trackin
 ---
 
 ## Table des matières
+
+> 🎨 **Vous cherchez comment styliser votre plugin ?** Consultez le [Guide UI, Design & Styles](guide_ui_design_styles.md).
 
 1. [Démarrage Rapide](#1-️-démarrage-rapide)
 2. [Architecture d'un Plugin](#2--architecture-dun-plugin)
@@ -144,12 +146,20 @@ public function getNavigationItems(): array
 {
     return [
         [
-            'label' => 'Analyses Pro',
-            'route' => 'plugins.mon-plugin.index', // La route définie dans votre web.php
-            'icone' => 'chart-bar',                // Icône Heroicons
+            'label' => 'Analyse IA',
+            'icone' => 'cpu', // Icône Heroicons sans préfixe
+            'sous_menus' => [
+                [
+                    'label' => 'Historique des rapports',
+                    'route' => 'plugins.ai-analytics.historique.index', // La route définie dans votre web.php
+                ],
+            ],
         ],
     ];
 }
+
+> [!NOTE]
+> Il est fortement recommandé de regrouper vos liens dans un sous-menu portant le nom de votre plugin (comme l'exemple ci-dessus). Si un item possède des `sous_menus` et ne définit pas de `route` au niveau parent, le clic sur le menu parent déroulera simplement la liste des sous-menus !
 ```
 
 ### 5.2 Créer une page de réglages dédiée
@@ -174,13 +184,19 @@ public function getReglages(): array
 
 ### 5.3 Insérer du contenu via les Hooks visuels
 
-Les hooks (ex: `tab.{id}` (où `{id}` correspond à l'identifiant d'un onglet déclaré via la méthode `getOnglets()`)) permettent d'injecter du HTML sans modifier les fichiers Blade du Core.
+Les hooks permettent d'injecter du HTML sans modifier les fichiers Blade du Core.
+Flux expose notamment :
+- `tab.{id}` : Rendu du contenu d'un onglet dans le dashboard (où `{id}` correspond à l'identifiant déclaré via `getOnglets()`).
+- `dashboard.widgets` : Injection d'une carte/widget à la fin de la page principale "Vue d'ensemble" du dashboard.
 
 ```php
 // 1. Déclarer l'utilisation du hook
 public function getHooks(): array
 {
-    return ['tab.mon-plugin'];
+    return [
+        'tab.mon-plugin',
+        'dashboard.widgets'
+    ];
 }
 
 // 2. Rendre le contenu lorsqu'il est appelé
@@ -282,20 +298,24 @@ PluginMetadonnee::enregistrer(
 
 ---
 
-## 8. Composants UI Disponibles
+## 8. Interface Utilisateur & Design System
 
-Pour que votre plugin s'intègre parfaitement au design de Flux, utilisez nos composants Blade Tailwind/Alpine prêts à l'emploi dans vos fichiers `resources/views/` :
+Flux utilise **Vanilla CSS avec la méthodologie BEM** et **Alpine.js** pour l'interactivité (aucun framework CSS lourd comme Tailwind). 
+
+Pour que votre plugin s'intègre parfaitement au design de Flux et supporte le mode sombre natif, lisez impérativement le **[Guide UI, Design & Styles](guide_ui_design_styles.md)**.
+
+Utilisez toujours les composants Blade prêts à l'emploi du Core :
 
 | Composant | Utilisation |
 |---|---|
 | **Carte** | `<x-card titre="Statistiques"> Contenu... </x-card>` |
 | **Bouton** | `<x-button variant="primary"> Valider </x-button>` |
-| **Icône** | `<x-icon name="chart-bar" class="w-5 h-5 text-gray-500" />` (utilise Heroicons) |
+| **Icône** | `<x-custom-icon name="chart-bar" class="c-icon--md" />` |
 | **Input** | `<x-input name="email" label="Email" type="email" required />` |
-| **Stats** | `<x-stats-card titre="Total" valeur="42" icon="users" />` |
+| **Alerte** | `<x-alert type="warning"> Attention </x-alert>` |
 
 > [!TIP]
-> Flux utilise **Tailwind CSS**. Les classes utilisées dans vos vues Blade (`plugins/*/resources/views/**/*.blade.php`) sont automatiquement analysées et compilées par Vite (via `npm run build`).
+> **Fichiers CSS personnalisés :** Placez vos styles additionnels dans `plugins/MonPlugin/resources/assets/style.css`. Flux charge automatiquement les assets publiés des plugins actifs !
 
 ---
 
