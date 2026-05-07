@@ -1,6 +1,6 @@
 # Flux
 
-Flux est une application modulaire de suivi analytique et d'événements pour sites web, développée avec **Laravel 13**, **Alpine.js**, et **Tailwind CSS**.
+Flux est une application modulaire de suivi analytique et d'événements pour sites web, développée avec **Laravel 13**, **Alpine.js**, et **Vanilla CSS** (CSS sémantique personnalisé).
 
 Elle permet de collecter, analyser et visualiser les statistiques de vos sites internet avec un système de tracking performant et une interface élégante.
 
@@ -25,7 +25,7 @@ Flux a été conçu pour être facilement extensible. Les développeurs peuvent 
 ## Stack Technique
 
 - **Backend :** Laravel 13 (PHP)
-- **Frontend :** Blade, Alpine.js, Tailwind CSS
+- **Frontend :** Blade, Alpine.js, Vanilla CSS
 - **Icônes :** Heroicons
 
 ## Licence
