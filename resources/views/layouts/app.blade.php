@@ -45,6 +45,7 @@
             ></div>
 
             {{-- ══════ SIDEBAR ══════ --}}
+            {{-- SideBar Ouvert --}}
             <aside
                 x-show="ouvert"
                 x-cloak
@@ -216,9 +217,91 @@
                 </div>
             </aside>
 
+            {{-- SideBar Reduire --}}
+            <aside
+                x-show="!ouvert"
+                x-cloak
+                class="l-sidebar l-sidebar--collapsed"
+            >
+                {{-- Logo + Toggle --}}
+                <div class="l-sidebar__header">
+                    <button
+                        @click="ouvert = true"
+                        class="l-sidebar__close"
+                    >
+                        <x-custom-icon name="x-mark" class="c-icon--sm" />
+                    </button>
+                </div>
+
+                {{-- Navigation principale --}}
+                <nav class="l-sidebar__nav">
+
+                    {{-- Core links --}}
+                    <div class="l-sidebar__section">
+                        @include('layouts.sidebar-link', [
+                            'route' => 'dashboard',
+                            'hover' => 'Tableau de bord',
+                            'icon'  => 'chart-bar',
+                        ])
+                        @include('layouts.sidebar-link', [
+                            'route' => 'sites.index',
+                            'hover' => 'Sites',
+                            'icon'  => 'globe',
+                        ])
+                        @include('layouts.sidebar-link', [
+                            'route' => 'plugins.index',
+                            'hover' => 'Plugins',
+                            'icon'  => 'puzzle',
+                        ])
+                    </div>
+                </nav>
+
+                {{-- Bas de sidebar — User dropdown --}}
+                <div class="l-sidebar__footer" x-data="{ userMenu: false }">
+                    {{-- Clickable user row --}}
+                    <button
+                        @click="userMenu = !userMenu"
+                        class="l-sidebar__user-btn"
+                    >
+                        <div class="l-sidebar__user-avatar">
+                            <span class="l-sidebar__user-initial">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </span>
+                        </div>
+                    </button>
+
+                    {{-- Dropdown (opens upward) --}}
+                    <div
+                        x-show="userMenu"
+                        @click.outside="userMenu = false"
+                        class="l-sidebar__dropdown"
+                        x-cloak
+                    >
+                        <a href="{{ route('settings.index') }}"
+                            class="l-sidebar__dropdown-link">
+                             <x-custom-icon name="cog" class="c-icon--sm" />
+                            Réglages
+                        </a>
+                        <a href="{{ route('profile.edit') }}"
+                            class="l-sidebar__dropdown-link">
+                             <x-custom-icon name="users" class="c-icon--sm" />
+                            Profil
+                        </a>
+                        <div class="l-sidebar__dropdown-divider"></div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="l-sidebar__dropdown-link l-sidebar__dropdown-link--danger">
+                                 <x-custom-icon name="arrow-right-on-rectangle" class="c-icon--sm" />
+                                Déconnexion
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
             {{-- ══════ CONTENU PRINCIPAL ══════ --}}
             <div
-                :class="ouvert ? 'l-main-wrapper--shifted' : ''"
+                :class="ouvert ? 'l-main-wrapper--shifted' : 'l-main-wrapper--collapsed'"
                 class="l-main-wrapper"
             >
 
