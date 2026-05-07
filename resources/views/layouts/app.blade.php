@@ -56,11 +56,20 @@
                     <a href="{{ route('dashboard') }}" class="l-sidebar__logo-link">
                         <x-application-logo />
                     </a>
+                    {{-- Mobile: close sidebar --}}
                     <button
                         @click="ouvert = false"
                         class="l-sidebar__close"
                     >
                         <x-custom-icon name="x-mark" class="c-icon--sm" />
+                    </button>
+                    {{-- Desktop: collapse sidebar --}}
+                    <button
+                        @click="ouvert = false"
+                        class="l-sidebar__toggle"
+                        title="Réduire le menu"
+                    >
+                        <x-custom-icon name="chevron-left" class="c-icon--sm" />
                     </button>
                 </div>
 
@@ -227,9 +236,10 @@
                 <div class="l-sidebar__header">
                     <button
                         @click="ouvert = true"
-                        class="l-sidebar__close"
+                        class="l-sidebar__toggle"
+                        title="Ouvrir le menu"
                     >
-                        <x-custom-icon name="x-mark" class="c-icon--sm" />
+                        <x-custom-icon name="chevron-right" class="c-icon--sm" />
                     </button>
                 </div>
 
@@ -318,24 +328,6 @@
                     </span>
                 </div>
 
-                {{-- Toggle desktop (collapsible) --}}
-                <div
-                    :class="ouvert ? 'l-toggle-desktop--shifted' : 'l-toggle-desktop--unshifted'"
-                    class="l-toggle-desktop"
-                >
-                    <button
-                        @click="ouvert = !ouvert"
-                        class="l-toggle-desktop__btn"
-                        :title="ouvert ? 'Réduire le menu' : 'Ouvrir le menu'"
-                    >
-                        <span x-show="ouvert" x-cloak>
-                            <x-custom-icon name="chevron-left" class="c-icon--lg" />
-                        </span>
-                        <span x-show="!ouvert" x-cloak>
-                            <x-custom-icon name="chevron-right" class="c-icon--lg" />
-                        </span>
-                    </button>
-                </div>
                 <main class="l-content">
                     {{ $slot }}
                 </main>
@@ -345,7 +337,18 @@
         @stack('scripts')
         <script>
             function sidebar() {
-                return { ouvert: window.innerWidth >= 1024 };
+                const isDesktop = window.innerWidth >= 1024;
+                const saved = localStorage.getItem('sidebar_ouvert');
+                const ouvert = isDesktop ? (saved !== null ? saved === 'true' : true) : false;
+
+                return {
+                    ouvert,
+                    init() {
+                        this.$watch('ouvert', (val) => {
+                            localStorage.setItem('sidebar_ouvert', val);
+                        });
+                    }
+                };
             }
         </script>
     </body>
