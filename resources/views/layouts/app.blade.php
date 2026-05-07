@@ -69,7 +69,7 @@
                         class="l-sidebar__toggle"
                         title="Réduire le menu"
                     >
-                        <x-custom-icon name="chevron-left" class="c-icon--sm" />
+                        <x-custom-icon name="bars-3-bottom-left" class="c-icon--lg" />
                     </button>
                 </div>
 
@@ -104,6 +104,7 @@
                     @endphp
 
                     @if(!empty($navItems))
+                        <div class="l-sidebar__divider"></div>
                         <div class="l-sidebar__section">
                             <p class="l-sidebar__title">
                                 Plugins
@@ -239,7 +240,7 @@
                         class="l-sidebar__toggle"
                         title="Ouvrir le menu"
                     >
-                        <x-custom-icon name="chevron-right" class="c-icon--sm" />
+                        <x-custom-icon name="bars-3-bottom-right" class="c-icon--lg" />
                     </button>
                 </div>
 
@@ -264,6 +265,53 @@
                             'icon'  => 'puzzle',
                         ])
                     </div>
+
+                    {{-- Liens ajoutés par les plugins --}}
+                    @if(!empty($navItems))
+                        <div class="l-sidebar__divider"></div>
+                        <div class="l-sidebar__section">
+                            @foreach($navItems as $item)
+                                <div x-data="{ open: false }" style="position: relative;">
+                                    @if(!empty($item['sous_menus']))
+                                        {{-- Cas avec sous-menu : Bouton Toggle --}}
+                                        <button
+                                            @click="open = !open"
+                                            @click.outside="open = false"
+                                            type="button"
+                                            class="l-sidebar__menu-btn c-sidebar-link {{ collect($item['sous_menus'])->contains(fn($s) => request()->routeIs($s['route'])) ? 'c-sidebar-link--active' : '' }}"
+                                        >
+                                            @if(isset($item['icone']))
+                                                <x-custom-icon :name="$item['icone']" class="c-sidebar-link__icon c-icon--sm c-icon--no-shrink" />
+                                            @endif
+                                            <span class="c-sidebar-link__tooltip" x-show="!open">{{ $item['label'] }}</span>
+                                        </button>
+
+                                        <div
+                                            x-show="open"
+                                            x-cloak
+                                            class="l-sidebar__dropdown l-sidebar__dropdown--side"
+                                        >
+                                            @foreach($item['sous_menus'] as $sousMenu)
+                                                <a
+                                                    href="{{ route($sousMenu['route']) }}"
+                                                    class="l-sidebar__dropdown-link {{ request()->routeIs($sousMenu['route']) ? 'l-sidebar__dropdown-link--active' : '' }}"
+                                                >
+                                                    {{ $sousMenu['label'] }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        {{-- Cas sans sous-menu : Lien direct --}}
+                                        @include('layouts.sidebar-link', [
+                                            'route' => $item['route'],
+                                            'hover' => $item['label'],
+                                            'icon'  => $item['icone'] ?? 'puzzle',
+                                        ])
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </nav>
 
                 {{-- Bas de sidebar — User dropdown --}}

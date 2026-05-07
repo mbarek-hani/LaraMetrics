@@ -19,3 +19,7 @@
 .c-sidebar-link--active {
     background-color: var(--gray-200);
 }
+
+.l-sidebar--collapsed .c-sidebar-link {
+    justify-content: center;
+}

@@ -79,6 +79,11 @@
     margin-top: 1rem;
 }
 
+.l-sidebar__divider {
+    border-top: 1px solid var(--gray-200);
+    margin: 1rem 0;
+}
+
 .l-sidebar__title {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -104,6 +109,7 @@
     background: none;
     border: none;
     cursor: pointer;
+    position: relative;
 }
 
 .l-sidebar__menu-btn:hover {
@@ -220,6 +226,7 @@
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     padding: 0.25rem 0;
     z-index: 50;
+    overflow: hidden;
 }
 
 .l-sidebar__dropdown-link {
@@ -241,6 +248,11 @@
     background-color: var(--gray-200);
 }
 
+.l-sidebar__dropdown-link--active {
+    background-color: var(--gray-100);
+    font-weight: 600;
+}
+
 .l-sidebar__dropdown-link--danger {
     color: var(--error-text);
 }
@@ -249,6 +261,20 @@
     border-top: 1px solid var(--gray-200);
     margin: 0.25rem 0;
 }
+
+.l-sidebar__dropdown-header {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 0.25rem;
+}
+
+
+
 
 .l-main-wrapper {
     flex: 1;
@@ -368,6 +394,17 @@
     overflow: visible;
 }
 
+.l-sidebar--collapsed .l-sidebar__nav .c-icon,
+.l-sidebar--collapsed .l-sidebar__nav .c-icon--sm {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+}
+
+.l-sidebar--collapsed .l-sidebar__menu-btn {
+    justify-content: center;
+    width: auto;
+}
+
 .l-sidebar--collapsed .l-sidebar__dropdown {
     bottom: 0;
     left: 100%;
@@ -375,6 +412,39 @@
     margin-bottom: 0;
     margin-left: 0.5rem;
     min-width: 12rem;
+}
+
+.l-sidebar--collapsed .l-sidebar__dropdown--side {
+    top: 0;
+    bottom: auto;
+    left: 100%;
+    right: auto;
+    width: 12rem;
+    margin-top: 0;
+    margin-left: 0.5rem;
+    margin-bottom: 0;
+    padding: 0.25rem 0 !important;
+}
+
+.l-sidebar--collapsed .l-sidebar__dropdown--side::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 1.25rem;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: var(--gray-200);
+}
+
+.l-sidebar--collapsed .l-sidebar__dropdown--side::after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 1.25rem;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: var(--gray-50);
+    margin-right: -1px;
 }
 
 /* ═══════ SIDEBAR LINK TOOLTIP ═══════ */
