@@ -19,6 +19,18 @@
     class="c-alert-wrapper" x-cloak>
 
     <div class="c-alert {{ $modifier }}">
+        <div class="c-alert__icon">
+            @if($type === 'succes')
+                <x-custom-icon name="check-circle" class="c-icon--sm" />
+            @elseif($type === 'erreur')
+                <x-custom-icon name="exclamation-circle" class="c-icon--sm" />
+            @elseif($type === 'warning')
+                <x-custom-icon name="exclamation-triangle" class="c-icon--sm" />
+            @else
+                <x-custom-icon name="information-circle" class="c-icon--sm" />
+            @endif
+        </div>
+        
         <div class="c-alert__message">
             @if($message)
                 <p>{{ $message }}</p>

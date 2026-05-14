@@ -1,23 +1,47 @@
 .c-card {
-    background-color: var(--gray-50);
+    background-color: var(--surface-white);
     border: 1px solid var(--gray-200);
-    border-radius: 0.25rem;
+    border-radius: 0.75rem;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.c-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: var(--color-primary-light);
 }
 
 .c-card__header {
-    padding: 0.75rem 1rem;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--gray-200);
 }
 
 .c-card__title {
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--gray-900);
     margin: 0;
 }
 
-/* Modifier for padding */
+.c-card__body {
+    flex: 1;
+}
+
 .c-card__body--padded {
-    padding: 1rem;
+    padding: 1.5rem;
+}
+
+.c-card__footer {
+    padding: 1rem 1.5rem;
+    background-color: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    margin-top: auto;
+}
+
+[data-theme='dark'] .c-card__footer {
+    background-color: rgba(255, 255, 255, 0.03);
 }

@@ -5,9 +5,18 @@
     font-weight: 500;
     border-radius: 0.25rem;
     border: 1px solid transparent;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     cursor: pointer;
+}
+
+.c-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.c-btn:active {
+    transform: translateY(0);
 }
 
 .c-btn:focus {

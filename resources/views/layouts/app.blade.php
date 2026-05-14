@@ -29,13 +29,19 @@
     </head>
     <body class="l-body">
         <div x-data="sidebar()" class="l-app">
-            @if(session('succes'))
-                <x-alert type="succes" :message="session('succes')" />
-            @endif
+            <div class="c-toast-container">
+                @if(session('succes') || session('success') || session('status'))
+                    <x-alert type="succes" :message="session('succes') ?? session('success') ?? session('status')" />
+                @endif
 
-            @if(session('erreur'))
-                <x-alert type="erreur" :message="session('erreur')" />
-            @endif
+                @if(session('erreur') || session('error'))
+                    <x-alert type="erreur" :message="session('erreur') ?? session('error')" />
+                @endif
+
+                @if(session('warning'))
+                    <x-alert type="warning" :message="session('warning')" />
+                @endif
+            </div>
             {{-- ══════ OVERLAY MOBILE ══════ --}}
             <div
                 x-show="ouvert"

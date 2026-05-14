@@ -10,7 +10,13 @@
         </div>
     @endif
 
-    <div class="{{ $padding ? 'c-card__body--padded' : '' }}">
+    <div class="c-card__body {{ $padding ? 'c-card__body--padded' : '' }}">
         {{ $slot }}
     </div>
+
+    @if(isset($footer))
+        <div class="c-card__footer">
+            {{ $footer }}
+        </div>
+    @endif
 </div>
