@@ -2,8 +2,8 @@
 
 @php
     $modifier = match ($type) {
-        'succes' => 'c-alert--success',
-        'erreur' => 'c-alert--erreur',
+        'succes', 'success' => 'c-alert--success',
+        'erreur', 'error', 'danger' => 'c-alert--erreur',
         'warning' => 'c-alert--warning',
         default => 'c-alert--info',
     };
@@ -20,9 +20,9 @@
 
     <div class="c-alert {{ $modifier }}">
         <div class="c-alert__icon">
-            @if($type === 'succes')
+            @if(in_array($type, ['succes', 'success']))
                 <x-custom-icon name="check-circle" class="c-icon--sm" />
-            @elseif($type === 'erreur')
+            @elseif(in_array($type, ['erreur', 'error', 'danger']))
                 <x-custom-icon name="exclamation-circle" class="c-icon--sm" />
             @elseif($type === 'warning')
                 <x-custom-icon name="exclamation-triangle" class="c-icon--sm" />

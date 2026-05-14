@@ -446,6 +446,10 @@
 .u-text-gray-800 { color: var(--gray-800); }
 .u-text-gray-900 { color: var(--gray-900); }
 .u-text-info { color: var(--info-text); }
+.u-text-success { color: var(--success-text); }
+.u-text-danger { color: var(--error-text); }
+.u-text-warning { color: var(--warning-text); }
+.u-text-xs { font-size: 0.75rem; }
 
 .u-mb-0 { margin-bottom: 0; }
 .u-items-start { align-items: flex-start; }
