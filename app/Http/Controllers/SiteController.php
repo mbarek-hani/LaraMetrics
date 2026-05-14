@@ -40,6 +40,9 @@ class SiteController extends Controller
 
     public function show(Site $site)
     {
+        $site->loadCount('visites');
+        $site->visites_24h_count = $site->visites()->where('cree_le', '>=', now()->subDay())->count();
+
         return view('sites.show', compact('site'));
     }
 

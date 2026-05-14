@@ -11,10 +11,17 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $sites = Site::actifs()->orderBy('nom')->get();
-        $siteCourant = Site::latest()->first();
+        
+        $site_id = $request->get('site_id');
+        if ($site_id) {
+            $siteCourant = Site::findOrFail($site_id);
+        } else {
+            $siteCourant = Site::latest()->first();
+        }
+        
         $manager = app(PluginManager::class);
 
         if (! $siteCourant) {
