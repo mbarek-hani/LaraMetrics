@@ -10,13 +10,13 @@
 
     // Abandon si pas de token
     if (!token) {
-        console.warn("[LaraMetrics] data-token manquant sur le script.");
+        console.warn("[Flux] data-token manquant sur le script.");
         return;
     }
 
     // ─── Respect Do Not Track ─────────────────────────────────────
     if (navigator.doNotTrack === "1" || window.doNotTrack === "1") {
-        console.warn("[LaraMetrics] stop tracking due to navigator.doNotTrack");
+        console.warn("[Flux] stop tracking due to navigator.doNotTrack");
         return;
     }
 
@@ -73,7 +73,7 @@
         // Utilise sendBeacon si disponible (plus fiable au unload)
         const payload = JSON.stringify(donnees);
 
-        console.info("[LaraMetrics]: envoyons les données");
+        console.info("[Flux]: envoyons les données");
         console.log(payload);
 
         try {
@@ -91,7 +91,7 @@
             }
         } catch (err) {
             console.error(
-                `[LaraMetrics] there was an unexpected error sending ${payload}`,
+                `[Flux] there was an unexpected error sending ${payload}`,
                 err,
             );
         }
@@ -149,8 +149,8 @@
     window.addEventListener("beforeunload", envoyerDuree);
 
     // API publique pour tracker des événements personnalisés
-    // Utilisation : LaraMetrics.event('clic_bouton', { bouton: 'inscription' })
-    window.LaraMetrics = {
+    // Utilisation : Flux.event('clic_bouton', { bouton: 'inscription' })
+    window.Flux = {
         event: function (nom, donnees) {
             envoyer({
                 token: token,
