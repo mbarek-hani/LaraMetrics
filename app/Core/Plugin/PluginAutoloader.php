@@ -9,7 +9,7 @@ class PluginAutoloader
      */
     private array $prefixes = [];
 
-    public function register(): void
+    public function __construct()
     {
         spl_autoload_register([$this, 'autoload']);
     }
