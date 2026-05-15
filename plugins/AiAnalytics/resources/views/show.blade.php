@@ -1,4 +1,4 @@
-<x-app-layout titre="Détails du rapport IA">
+<x-app-layout>
     <x-slot name="titre">
         Détails du rapport IA
     </x-slot>

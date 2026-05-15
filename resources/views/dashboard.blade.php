@@ -1,4 +1,4 @@
-<x-app-layout titre="Tableau de bord">
+<x-app-layout>
     <x-slot name="titre">
         Tableau de bord
     </x-slot>
@@ -39,8 +39,8 @@
                         <div class="p-dash__periods">
                             <template x-for="p in periodes" :key="p.valeur">
                                 <button @click="periode = p.valeur; chargerStats()" :class="periode === p.valeur
-                                        ? 'p-dash__period-btn--active'
-                                        : ''" class="p-dash__period-btn" x-text="p.label"></button>
+                                            ? 'p-dash__period-btn--active'
+                                            : ''" class="p-dash__period-btn" x-text="p.label"></button>
                             </template>
                         </div>
 
@@ -57,15 +57,15 @@
                         <nav class="p-dash__tab-nav">
 
                             <button @click="ongletActif = 'apercu'" :class="ongletActif === 'apercu'
-                                    ? 'p-dash__tab--active'
-                                    : ''" class="p-dash__tab">
+                                        ? 'p-dash__tab--active'
+                                        : ''" class="p-dash__tab">
                                 <x-custom-icon name="chart-bar" class="c-icon--sm" />
                                 Vue d'ensemble
                             </button>
 
                             <button @click="ongletActif = 'evenements'" :class="ongletActif === 'evenements'
-                                    ? 'p-dash__tab--active'
-                                    : ''" class="p-dash__tab">
+                                        ? 'p-dash__tab--active'
+                                        : ''" class="p-dash__tab">
                                 <x-custom-icon name="cursor-click" class="c-icon--sm" />
                                 Événements
                             </button>
@@ -73,8 +73,8 @@
                             {{-- Onglets plugins --}}
                             @foreach($onglets as $onglet)
                                 <button @click="ongletActif = '{{ $onglet['id'] }}'" :class="ongletActif === '{{ $onglet['id'] }}'
-                                            ? 'p-dash__tab--active'
-                                            : ''" class="p-dash__tab">
+                                                    ? 'p-dash__tab--active'
+                                                    : ''" class="p-dash__tab">
                                     <x-custom-icon :name="$onglet['icone']" class="c-icon--sm" />
                                     {{ $onglet['label'] }}
                                 </button>
@@ -219,21 +219,28 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <template x-for="nav in (stats?.top_navigateurs ?? []).slice(0, 5)" :key="nav.navigateur">
+                                                    <template x-for="nav in (stats?.top_navigateurs ?? []).slice(0, 5)"
+                                                        :key="nav.navigateur">
                                                         <tr>
                                                             <td>
                                                                 <div class="p-dash__list-name">
                                                                     <template x-if="getBrowserIcon(nav.navigateur)">
-                                                                        <img :src="getBrowserIcon(nav.navigateur)" class="p-dash__favicon">
+                                                                        <img :src="getBrowserIcon(nav.navigateur)"
+                                                                            class="p-dash__favicon">
                                                                     </template>
-                                                                    <span class="p-dash__table-cell--truncate" x-text="nav.navigateur"></span>
+                                                                    <span class="p-dash__table-cell--truncate"
+                                                                        x-text="nav.navigateur"></span>
                                                                 </div>
                                                             </td>
-                                                            <td class="p-dash__table-cell--right" x-text="nav.visiteurs"></td>
+                                                            <td class="p-dash__table-cell--right" x-text="nav.visiteurs">
+                                                            </td>
                                                         </tr>
                                                     </template>
                                                     <template x-if="!stats?.top_navigateurs?.length">
-                                                        <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                        <tr>
+                                                            <td colspan="2" class="p-dash__table-cell--center-lg">Aucune
+                                                                donnée</td>
+                                                        </tr>
                                                     </template>
                                                 </tbody>
                                             </table>
@@ -247,21 +254,28 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <template x-for="sys in (stats?.top_systemes ?? []).slice(0, 5)" :key="sys.systeme_exploitation">
+                                                    <template x-for="sys in (stats?.top_systemes ?? []).slice(0, 5)"
+                                                        :key="sys.systeme_exploitation">
                                                         <tr>
                                                             <td>
                                                                 <div class="p-dash__list-name">
                                                                     <template x-if="getOsIcon(sys.systeme_exploitation)">
-                                                                        <img :src="getOsIcon(sys.systeme_exploitation)" class="p-dash__favicon">
+                                                                        <img :src="getOsIcon(sys.systeme_exploitation)"
+                                                                            class="p-dash__favicon">
                                                                     </template>
-                                                                    <span class="p-dash__table-cell--truncate" x-text="sys.systeme_exploitation"></span>
+                                                                    <span class="p-dash__table-cell--truncate"
+                                                                        x-text="sys.systeme_exploitation"></span>
                                                                 </div>
                                                             </td>
-                                                            <td class="p-dash__table-cell--right" x-text="sys.visiteurs"></td>
+                                                            <td class="p-dash__table-cell--right" x-text="sys.visiteurs">
+                                                            </td>
                                                         </tr>
                                                     </template>
                                                     <template x-if="!stats?.top_systemes?.length">
-                                                        <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                        <tr>
+                                                            <td colspan="2" class="p-dash__table-cell--center-lg">Aucune
+                                                                donnée</td>
+                                                        </tr>
                                                     </template>
                                                 </tbody>
                                             </table>
@@ -271,11 +285,21 @@
 
                                 <x-card titre="Campagnes Marketing (UTM)" :padding="false">
                                     <div x-data="{ ongletUtm: 'source' }">
-                                        <div class="p-dash__tabs p-px-3 p-pt-2" style="border-bottom: 1px solid var(--gray-200); margin-bottom: 0;">
+                                        <div class="p-dash__tabs p-px-3 p-pt-2"
+                                            style="border-bottom: 1px solid var(--gray-200); margin-bottom: 0;">
                                             <nav class="p-dash__tab-nav">
-                                                <button @click="ongletUtm = 'source'" :class="ongletUtm === 'source' ? 'p-dash__tab--active' : ''" class="p-dash__tab" style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Source</button>
-                                                <button @click="ongletUtm = 'medium'" :class="ongletUtm === 'medium' ? 'p-dash__tab--active' : ''" class="p-dash__tab" style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Medium</button>
-                                                <button @click="ongletUtm = 'campagne'" :class="ongletUtm === 'campagne' ? 'p-dash__tab--active' : ''" class="p-dash__tab" style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Campagne</button>
+                                                <button @click="ongletUtm = 'source'"
+                                                    :class="ongletUtm === 'source' ? 'p-dash__tab--active' : ''"
+                                                    class="p-dash__tab"
+                                                    style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Source</button>
+                                                <button @click="ongletUtm = 'medium'"
+                                                    :class="ongletUtm === 'medium' ? 'p-dash__tab--active' : ''"
+                                                    class="p-dash__tab"
+                                                    style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Medium</button>
+                                                <button @click="ongletUtm = 'campagne'"
+                                                    :class="ongletUtm === 'campagne' ? 'p-dash__tab--active' : ''"
+                                                    class="p-dash__tab"
+                                                    style="padding: 0.375rem 0.5rem; font-size: 0.75rem;">Campagne</button>
                                             </nav>
                                         </div>
                                         <table class="p-dash__table" x-show="ongletUtm === 'source'">
@@ -286,21 +310,27 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <template x-for="utm in (stats?.top_utm_sources ?? []).slice(0, 5)" :key="utm.utm_source">
+                                                <template x-for="utm in (stats?.top_utm_sources ?? []).slice(0, 5)"
+                                                    :key="utm.utm_source">
                                                     <tr>
                                                         <td>
                                                             <div class="p-dash__list-name">
                                                                 <template x-if="getUtmIcon(utm.utm_source)">
-                                                                    <img :src="getUtmIcon(utm.utm_source)" class="p-dash__favicon">
+                                                                    <img :src="getUtmIcon(utm.utm_source)"
+                                                                        class="p-dash__favicon">
                                                                 </template>
-                                                                <span class="p-dash__table-cell--truncate" x-text="utm.utm_source"></span>
+                                                                <span class="p-dash__table-cell--truncate"
+                                                                    x-text="utm.utm_source"></span>
                                                             </div>
                                                         </td>
                                                         <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
                                                     </tr>
                                                 </template>
                                                 <template x-if="!stats?.top_utm_sources?.length">
-                                                    <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                    <tr>
+                                                        <td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée
+                                                        </td>
+                                                    </tr>
                                                 </template>
                                             </tbody>
                                         </table>
@@ -312,14 +342,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <template x-for="utm in (stats?.top_utm_mediums ?? []).slice(0, 5)" :key="utm.utm_medium">
+                                                <template x-for="utm in (stats?.top_utm_mediums ?? []).slice(0, 5)"
+                                                    :key="utm.utm_medium">
                                                     <tr>
-                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_medium"></td>
+                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_medium">
+                                                        </td>
                                                         <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
                                                     </tr>
                                                 </template>
                                                 <template x-if="!stats?.top_utm_mediums?.length">
-                                                    <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                    <tr>
+                                                        <td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée
+                                                        </td>
+                                                    </tr>
                                                 </template>
                                             </tbody>
                                         </table>
@@ -331,14 +366,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <template x-for="utm in (stats?.top_utm_campaigns ?? []).slice(0, 5)" :key="utm.utm_campagne">
+                                                <template x-for="utm in (stats?.top_utm_campaigns ?? []).slice(0, 5)"
+                                                    :key="utm.utm_campagne">
                                                     <tr>
-                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_campagne"></td>
+                                                        <td class="p-dash__table-cell--truncate" x-text="utm.utm_campagne">
+                                                        </td>
                                                         <td class="p-dash__table-cell--right" x-text="utm.visiteurs"></td>
                                                     </tr>
                                                 </template>
                                                 <template x-if="!stats?.top_utm_campaigns?.length">
-                                                    <tr><td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée</td></tr>
+                                                    <tr>
+                                                        <td colspan="2" class="p-dash__table-cell--center-lg">Aucune donnée
+                                                        </td>
+                                                    </tr>
                                                 </template>
                                             </tbody>
                                         </table>
@@ -630,9 +670,9 @@
                                 const count = values[code] || 0;
                                 tooltip.text(
                                     `<div style="text-align: center; font-family: sans-serif;">
-                                        <div style="font-weight: bold; font-size: 0.875rem;">${tooltip.text()}</div>
-                                        <div style="font-size: 0.75rem; color: #d1d5db;">${count} visiteur(s)</div>
-                                    </div>`,
+                                            <div style="font-weight: bold; font-size: 0.875rem;">${tooltip.text()}</div>
+                                            <div style="font-size: 0.75rem; color: #d1d5db;">${count} visiteur(s)</div>
+                                        </div>`,
                                     true
                                 );
                             }
