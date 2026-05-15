@@ -59,6 +59,8 @@ interface PluginInterface
     /** @return string[] */
     public function getHooks(): array;
 
+    public function rendrePourHook(string $hook, array $donnees = []): string;
+
     // Tracking : enrichissement des données
 
     /**
