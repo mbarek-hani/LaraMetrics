@@ -12,18 +12,11 @@ class PluginServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(PluginAutoloader::class, function () {
-            $autoloader = new PluginAutoloader;
-            $autoloader->register();
-
-            return $autoloader;
-        });
+        $this->app->singleton(PluginAutoloader::class);
 
         $this->app->singleton(PluginDiscovery::class);
 
-        $this->app->singleton(PluginManager::class, function ($app) {
-            return new PluginManager($app->make(PluginDiscovery::class));
-        });
+        $this->app->singleton(PluginManager::class);
     }
 
     public function boot(): void
@@ -41,9 +34,12 @@ class PluginServiceProvider extends ServiceProvider
     private function enregistrerDirectivesBlade(): void
     {
         // @hook('dashboard.widgets')
-        Blade::directive('hook', function (string $expression) {
-            return "<?php echo implode('', app(\App\Core\Plugin\PluginManager::class)->executerHook({$expression})); ?>";
-        });
+        Blade::directive(
+            'hook',
+            fn (
+                string $expression,
+            ) => "<?php echo implode('', app(\App\Core\Plugin\PluginManager::class)->executerHook({$expression})); ?>",
+        );
     }
 
     /**
