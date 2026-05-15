@@ -84,9 +84,9 @@ class PluginDiscovery
             return null;
         }
 
-        if (! is_subclass_of($classePlugin, PluginInterface::class)) {
+        if (! is_subclass_of($classePlugin, AbstractPlugin::class)) {
             Log::error(
-                "La classe {$classePlugin} n'implémente pas PluginInterface",
+                "La classe {$classePlugin} n'hérite pas de 'AbstractPlugin'",
             );
 
             return null;
