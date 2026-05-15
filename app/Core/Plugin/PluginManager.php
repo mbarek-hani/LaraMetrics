@@ -139,9 +139,7 @@ class PluginManager
         $resultats = [];
 
         foreach ($this->hooks[$hook] ?? [] as $plugin) {
-            if (method_exists($plugin, 'rendrePourHook')) {
-                $resultats[] = $plugin->rendrePourHook($hook, $donnees);
-            }
+            $resultats[] = $plugin->rendrePourHook($hook, $donnees); // now PluginInterface has rendrePourHook
         }
 
         return $resultats;
