@@ -44,11 +44,6 @@ class PluginServiceProvider extends ServiceProvider
         Blade::directive('hook', function (string $expression) {
             return "<?php echo implode('', app(\App\Core\Plugin\PluginManager::class)->executerHook({$expression})); ?>";
         });
-
-        // @pluginActif('ai-analytics') ... @endpluginActif
-        Blade::if('pluginActif', function (string $identifiant) {
-            return app(PluginManager::class)->estActif($identifiant);
-        });
     }
 
     /**

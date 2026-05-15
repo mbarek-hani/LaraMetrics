@@ -7,6 +7,7 @@ use App\Models\Site;
 use App\Services\StatistiqueService;
 use Carbon\Carbon;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -251,12 +252,12 @@ class AiService
 
             return $contenu;
 
-        } catch (\Illuminate\Http\Client\RequestException $e) {
+        } catch (RequestException $e) {
             $erreurObj = $e->response->json('error');
             $messageErreur = is_array($erreurObj) ? ($erreurObj['message'] ?? json_encode($erreurObj)) : ($e->response->json('error.message') ?? $e->response->body());
-            
-            Log::error("AiService API error [{$this->fournisseur}] : " . $messageErreur);
-            throw new \Exception("Erreur API {$this->fournisseur} : " . $messageErreur);
+
+            Log::error("AiService API error [{$this->fournisseur}] : ".$messageErreur);
+            throw new \Exception("Erreur API {$this->fournisseur} : ".$messageErreur);
         } catch (ConnectionException $e) {
             throw new \Exception(
                 "Impossible de joindre l'API {$this->fournisseur}. Vérifiez votre connexion."
