@@ -11,11 +11,10 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(PluginManager $manager)
     {
-        $sites = Site::actifs()->orderBy('nom')->get();
-        $siteCourant = Site::latest()->first();
-        $manager = app(PluginManager::class);
+        $sites = Site::actifs()->latest()->get();
+        $siteCourant = $sites->get(0);
 
         if (! $siteCourant) {
             return view('dashboard', [
@@ -60,10 +59,22 @@ class DashboardController extends Controller
             'derniers_evenements' => $service->derniersEvenements($debut, $fin),
             'top_utm_sources' => $service->topParam($debut, $fin, 'utm_source'),
             'top_utm_mediums' => $service->topParam($debut, $fin, 'utm_medium'),
-            'top_utm_campaigns' => $service->topParam($debut, $fin, 'utm_campagne'),
+            'top_utm_campaigns' => $service->topParam(
+                $debut,
+                $fin,
+                'utm_campagne',
+            ),
             'top_navigateurs' => $service->topParam($debut, $fin, 'navigateur'),
-            'top_versions_navigateurs' => $service->topParam($debut, $fin, 'version_navigateur'),
-            'top_systemes' => $service->topParam($debut, $fin, 'systeme_exploitation'),
+            'top_versions_navigateurs' => $service->topParam(
+                $debut,
+                $fin,
+                'version_navigateur',
+            ),
+            'top_systemes' => $service->topParam(
+                $debut,
+                $fin,
+                'systeme_exploitation',
+            ),
             'periode' => [
                 'debut' => $debut->format('d/m/Y'),
                 'fin' => $fin->format('d/m/Y'),
