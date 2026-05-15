@@ -129,6 +129,11 @@ abstract class AbstractPlugin implements PluginInterface
         return [];
     }
 
+    public function rendrePourHook(string $hook, array $donnees = []): string
+    {
+        return '';
+    }
+
     public function getOnglets(): array
     {
         return [];
