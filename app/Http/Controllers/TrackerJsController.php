@@ -7,12 +7,10 @@ use Illuminate\Http\Response;
 
 class TrackerJsController extends Controller
 {
-    public function __invoke(): Response
+    public function __invoke(PluginManager $manager): Response
     {
         $coreJs = file_get_contents(resource_path('js/tracker-core.js'));
 
-        // Injecter le JS des plugins
-        $manager = app(PluginManager::class);
         $pluginJs = $manager->getTrackerJavaScript();
 
         $js = str_replace('/* PLUGIN_INJECTION */', $pluginJs, $coreJs);
