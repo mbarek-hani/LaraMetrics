@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Core\Plugin\PluginManager;
-use App\Models\Plugin as PluginModele;
+use App\Models\Plugin;
 use Illuminate\Http\Request;
 
 class PluginController extends Controller
 {
+    public function __construct(private PluginManager $manager) {}
+
     public function index()
     {
-        $manager = app(PluginManager::class);
-        $decouverts = $manager->getPluginsDecouverts();
+        $decouverts = $this->manager->getPluginsDecouverts();
 
         // Construire la liste des plugins avec leur état
         $plugins = [];
 
         foreach ($decouverts as $id => $plugin) {
-            $enBdd = PluginModele::where('identifiant', $id)->first();
+            $enBdd = Plugin::where('identifiant', $id)->first();
 
             $plugins[] = [
                 'identifiant' => $id,
@@ -37,21 +38,21 @@ class PluginController extends Controller
 
     public function show(string $identifiant)
     {
-        $manager = app(PluginManager::class);
-        $decouverts = $manager->getPluginsDecouverts();
+        $decouverts = $this->manager->getPluginsDecouverts();
 
         if (! isset($decouverts[$identifiant])) {
             abort(404, 'Plugin non trouvé');
         }
 
         $plugin = $decouverts[$identifiant];
-        $enBdd = PluginModele::where('identifiant', $identifiant)->first();
+        $enBdd = Plugin::where('identifiant', $identifiant)->first();
 
         $details = [
             'identifiant' => $identifiant,
             'nom' => $plugin->getNom(),
             'version' => $plugin->getVersion(),
-            'description' => $plugin->getManifest()['description'] ?? 'Aucune description disponible.',
+            'description' => $plugin->getManifest()['description'] ??
+                'Aucune description disponible.',
             'auteur' => $plugin->getManifest()['auteur'] ?? 'Inconnu',
             'licence' => $plugin->getManifest()['licence'] ?? 'Non spécifiée',
             'url' => $plugin->getManifest()['url'] ?? null,
@@ -69,8 +70,7 @@ class PluginController extends Controller
 
     public function activer(Request $request, string $identifiant)
     {
-        $manager = app(PluginManager::class);
-        $succes = $manager->activer($identifiant);
+        $succes = $this->manager->activer($identifiant);
 
         return redirect()
             ->route('plugins.index')
@@ -84,8 +84,7 @@ class PluginController extends Controller
 
     public function desactiver(Request $request, string $identifiant)
     {
-        $manager = app(PluginManager::class);
-        $succes = $manager->desactiver($identifiant);
+        $succes = $this->manager->desactiver($identifiant);
 
         return redirect()
             ->route('plugins.index')
