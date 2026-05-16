@@ -3,14 +3,15 @@
         Sites
     </x-slot>
     <div class="p-page">
-        <div class="p-container p-container--md">
-            <div class="p-page__header">
-                <h2 class="p-page__title" style="margin-bottom: 0;">Sites</h2>
+        <div class="p-container p-container--lg">
+            <div class="p-page__header u-mb-3">
+                <h2 class="p-page__title u-mb-0">Sites</h2>
                 <x-button variant="primary" href="{{ route('sites.create') }}">
                     <x-custom-icon name="plus" class="c-icon--sm" />
                     Ajouter un site
                 </x-button>
             </div>
+            
             @if($sites->isEmpty())
                 <x-card>
                     <div class="p-empty">
@@ -19,44 +20,43 @@
                     </div>
                 </x-card>
             @else
-                <div class="p-stack--sm">
+                <div class="p-grid p-grid--1 p-grid--2 p-grid--3 p-grid--4 p-grid--gap-md">
                     @foreach($sites as $site)
-                        <x-card>
-                            <div class="p-list-item">
-                                <div>
-                                    <div class="p-row">
-                                        <div
-                                            class="p-status-dot {{ $site->actif ? 'p-status-dot--active' : 'p-status-dot--inactive' }}">
-                                        </div>
-                                        <h3 class="p-section__title">{{ $site->nom }}</h3>
-                                    </div>
-                                    <p class="p-text p-indent" style="margin-top: 0.125rem;">{{ $site->domaine }}</p>
-                                    <p class="p-text--xs p-indent" style="margin-top: 0.25rem;">
+                        <x-card class="u-h-full u-flex-col">
+                            <div class="u-flex-1">
+                                <div class="p-row p-mb-1">
+                                    <div class="p-status-dot {{ $site->actif ? 'p-status-dot--active' : 'p-status-dot--inactive' }}"></div>
+                                    <h3 class="p-section__title u-flex-1">{{ $site->nom }}</h3>
+                                </div>
+                                <p class="p-text u-text-gray-600 u-break-all">{{ $site->domaine }}</p>
+                                <div class="p-mt-2">
+                                    <p class="p-text--xs u-text-gray-400">
+                                        <x-custom-icon name="chart-bar" class="c-icon--xs" />
                                         {{ $site->visites_count ?? 0 }} visites enregistrées
                                     </p>
                                 </div>
-                                <div class="p-actions p-indent">
+                            </div>
+                            
+                            <div class="p-card-footer u-justify-between">
+                                <div class="p-actions">
                                     <form method="POST" action="{{ route('sites.toggle-actif', $site) }}">
                                         @csrf
                                         <x-button size="sm" type="submit" variant="{{ $site->actif ? 'default' : 'primary' }}" title="{{ $site->actif ? 'Désactiver' : 'Activer' }}">
                                             <x-custom-icon name="{{ $site->actif ? 'stop' : 'play' }}" class="c-icon--xs" />
-                                            <span class="u-hidden-mobile">{{ $site->actif ? 'Désactiver' : 'Activer' }}</span>
                                         </x-button>
                                     </form>
-                                    <x-button href="{{ route('sites.show', $site) }}" size="sm" title="Script">
+                                    <x-button href="{{ route('sites.show', $site) }}" size="sm" title="Détails & Script">
                                         <x-custom-icon name="code" class="c-icon--xs" />
-                                        <span class="u-hidden-mobile">Script</span>
                                     </x-button>
-                                    <form method="POST" action="{{ route('sites.destroy', $site) }}"
-                                        onsubmit="return confirm('Supprimer ce site ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <x-button size="sm" variant="danger" type="submit" title="Supprimer">
-                                            <x-custom-icon name="trash" class="c-icon--xs" />
-                                            <span class="u-hidden-mobile">Supprimer</span>
-                                        </x-button>
-                                    </form>
                                 </div>
+                                
+                                <form method="POST" action="{{ route('sites.destroy', $site) }}" onsubmit="return confirm('Supprimer ce site ?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-button size="sm" variant="danger" type="submit" title="Supprimer">
+                                        <x-custom-icon name="trash" class="c-icon--xs" />
+                                    </x-button>
+                                </form>
                             </div>
                         </x-card>
                     @endforeach
