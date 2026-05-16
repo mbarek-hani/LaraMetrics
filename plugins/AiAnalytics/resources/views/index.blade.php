@@ -82,7 +82,7 @@
 
             {{-- Pagination --}}
             <div class="p-mt-2">
-                {{ $rapports->links() }}
+                {{ $rapports->links('vendor.pagination.custom') }}
             </div>
         </x-card>
     </div>
